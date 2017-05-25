@@ -1,0 +1,3 @@
+update [表1] set [列名]=b.[列名]
+FROM [表1] a,[表2] b
+where a.[关联列]=b.[关联列]

@@ -1,0 +1,578 @@
+unit Fileinput_menberforUnit;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, ComCtrls, Grids, DBGrids, ExtCtrls, Buttons, DB, ADODB;
+
+type
+  Tfrm_Fileinput_menberfor = class(TForm)
+    pgcMenberfor: TPageControl;
+    tbsConfig: TTabSheet;
+    tbsLowLevel: TTabSheet;
+    Panel2: TPanel;
+    Panel3: TPanel;
+    Bit_Add: TBitBtn;
+    Bit_Update: TBitBtn;
+    Bit_Delete: TBitBtn;
+    Bit_Close: TBitBtn;
+    Panel1: TPanel;
+    DBGrid2: TDBGrid;
+    Panel4: TPanel;
+    Bit_Add_Give: TBitBtn;
+    Bit_Update_Give: TBitBtn;
+    Bit_Delete_Give: TBitBtn;
+    Bit_Close_Give: TBitBtn;
+    Label3: TLabel;
+    Label24: TLabel;
+    Edit_core: TEdit;
+    Label23: TLabel;
+    Edit_levelname: TEdit;
+    Label22: TLabel;
+    Edit_level: TEdit;
+    DataSource_SetmenberGive: TDataSource;
+    ADOQuery_SetmenberGive: TADOQuery;
+    Memo_instruction: TMemo;
+    Label1: TLabel;
+    Edit_GiveNO: TEdit;
+    Edit_Giveuplimit: TEdit;
+    Label2: TLabel;
+    Label4: TLabel;
+    Edit_Givelowlimit: TEdit;
+    Memo_Giveinstruction: TMemo;
+    Label5: TLabel;
+    Label6: TLabel;
+    Edit_Givevalue: TEdit;
+    ADOQuery_Setmenberfor: TADOQuery;
+    DataSource_Setmenberfor: TDataSource;
+    DBGrid1: TDBGrid;
+    TabSheet1: TTabSheet;
+    Panel5: TPanel;
+    DBGrid_Festpack: TDBGrid;
+    Panel6: TPanel;
+    Label7: TLabel;
+    Label9: TLabel;
+    Label10: TLabel;
+    Bit_Add_Festpack: TBitBtn;
+    Bit_Update_Festpack: TBitBtn;
+    Bit__Del_Festpack: TBitBtn;
+    Bit_Close_Festpack: TBitBtn;
+    Edit_FestName: TEdit;
+    Edit_FestNo: TEdit;
+    Memo_Remark: TMemo;
+    Label11: TLabel;
+    rg_IsUse: TRadioGroup;
+    Label12: TLabel;
+    Edit_cUserNo: TEdit;
+    DataSource_Festpack: TDataSource;
+    ADOQuery_Festpack: TADOQuery;
+    procedure Bit_AddClick(Sender: TObject);
+    procedure DBGrid1DblClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure Bit_UpdateClick(Sender: TObject);
+    procedure Bit_CloseClick(Sender: TObject);
+    procedure Bit_DeleteClick(Sender: TObject);
+    procedure Bit_Close_GiveClick(Sender: TObject);
+    procedure Bit_Add_GiveClick(Sender: TObject);
+    procedure DBGrid2DblClick(Sender: TObject);
+    procedure Bit_Update_GiveClick(Sender: TObject);
+    procedure Bit_Delete_GiveClick(Sender: TObject);
+    procedure Bit_Add_FestpackClick(Sender: TObject);
+    procedure DBGrid_FestpackDblClick(Sender: TObject);
+    procedure Bit_Update_FestpackClick(Sender: TObject);
+    procedure Bit__Del_FestpackClick(Sender: TObject);
+    procedure Bit_Close_FestpackClick(Sender: TObject);
+  private
+    { Private declarations }
+        procedure InitDataBase;
+        function GetmenberGivelimitvaluecomfir(vlowlimit: string): string;
+  public
+    { Public declarations }
+  end;
+
+var
+  frm_Fileinput_menberfor: Tfrm_Fileinput_menberfor;
+
+implementation
+  
+uses ICDataModule,ICCommunalVarUnit, ICmain,ICEventTypeUnit;
+{$R *.dfm}
+
+//增加记录
+procedure Tfrm_Fileinput_menberfor.Bit_AddClick(Sender: TObject);
+
+
+var
+  strcore,strlevel,strlevelname,strMemo_instruction,strOperator:String;
+label ExitSub;
+begin
+  strcore:=Edit_core.Text;
+  strlevel:=Edit_level.Text;
+  strlevelname:=Edit_levelname.Text;
+  strOperator:=G_User.UserNO;
+  strMemo_instruction:=Memo_instruction.Text;
+
+  
+  if  Edit_level.Text=''  then
+       ShowMessage('等级不能空')
+  else if  Edit_levelname.Text='' then
+       ShowMessage('等级名称不能空')
+  else if Edit_core.Text ='' then
+       ShowMessage('积分不能空')
+
+  else  begin
+      With ADOQuery_Setmenberfor do begin
+        if(Locate('等级编号',strlevel,[]))  then begin
+            if(MessageDlg('已经存在  '+strlevel+'  要更新吗？',mtInformation,[mbYes,mbNo],0)=mrYes) then 
+               Edit
+            else
+               goto ExitSub;
+            end
+        else if (Locate('等级名称',strlevelname,[]))  then begin
+            if(MessageDlg('已经存在  '+strlevelname+'  要更新吗？',mtInformation,[mbYes,mbNo],0)=mrYes) then
+               Edit
+            else
+               goto ExitSub;
+            end
+        else
+          Append;
+          FieldByName('LevNo').AsString :=strlevel;
+          FieldByName('LevName').AsString :=strlevelname;
+          FieldByName('Score').AsString :=strcore;
+          FieldByName('cUserNo').AsString:=strOperator;
+          FieldByName('Remark').AsString := strMemo_instruction;
+       try
+          Post;
+       Except
+          on e:Exception do ShowMessage(e.Message);
+       end;
+     end;
+   ExitSub:
+
+     Edit_core.Text:='';
+     Edit_level.Text:='';
+     Edit_levelname.Text:='';
+     Memo_instruction.Text:='';
+   end;
+end;
+
+//双击记录，进入更新操作
+procedure Tfrm_Fileinput_menberfor.DBGrid1DblClick(Sender: TObject);
+begin
+  Edit_core.Text := DBGrid1.DataSource.DataSet.FieldByName('Score').AsString;
+  Edit_level.Text := DBGrid1.DataSource.DataSet.FieldByName('LevNo').AsString;
+  Edit_levelname.Text:= DBGrid1.DataSource.DataSet.FieldByName('LevName').AsString;
+  Memo_instruction.Text := DBGrid1.DataSource.DataSet.FieldByName('Remark').AsString;
+  Bit_Update.Enabled := True;
+end;
+
+//会员等级套餐更新操作
+procedure Tfrm_Fileinput_menberfor.Bit_UpdateClick(Sender: TObject);
+var
+  strcore,strlevel,strlevelname,strMemo_instruction,strOperator:String;
+begin
+    if( (Length(strlevel)>0) and (Length(strlevelname)>0) and (Length(strcore)>0) ) then   begin
+      // ShowMessage('等级名称不能空');
+       Exit;
+    end;
+       strcore:=Edit_core.Text;
+       strlevel:=Edit_level.Text;
+       strlevelname:=Edit_levelname.Text;
+       strOperator:=G_User.UserNO;
+       strMemo_instruction:=Memo_instruction.Text;
+
+    With ADOQuery_Setmenberfor do begin
+       if( not Locate('LevNo',strlevel,[]) ) then
+            Exit;
+          Edit;
+          FieldByName('LevNo').AsString :=strlevel;
+          FieldByName('LevName').AsString :=strlevelname;
+          FieldByName('Score').AsString :=strcore;
+          FieldByName('cUserNo').AsString:=strOperator;
+          FieldByName('Remark').AsString := strMemo_instruction;
+       try
+         Post;
+       Except
+         on e:Exception do ShowMessage(e.Message);
+       end;
+    end;
+
+     Edit_core.Text:='';
+     Edit_level.Text:='';
+     Edit_levelname.Text:='';
+     Memo_instruction.Text:='';
+     Bit_Update.Enabled := False;
+end;
+
+
+procedure Tfrm_Fileinput_menberfor.FormCreate(Sender: TObject);
+begin
+  EventObj:=EventUnitObj.Create;
+  EventObj.LoadEventIni;
+ // InitStringGrid;
+ // InitWorkParam;                          //初始化PLC事件定义参数
+  InitDataBase;                           //显示出型号
+ // InitEdit;                               //清空Edit框
+ // InitDuanXH;                             //初始化型号Combox_Type_JH
+ // PageControl_Set.ActivePageIndex:=0;
+
+ // InitUser;
+end;
+
+ procedure Tfrm_Fileinput_menberfor.InitDataBase;
+var
+  strSQL:String;
+begin
+    //会员等级套餐
+  with ADOQuery_Setmenberfor do begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    Active:=false;
+    SQL.Clear;
+    strSQL:='select * from [TLevel]';
+    SQL.Add(strSQL);
+    Active:=True;
+    end;
+    //积分套餐
+  with ADOQuery_SetmenberGive do begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    Active:=false;
+    SQL.Clear;
+    strSQL:='select * from [3F_MenberGivecore]';
+    SQL.Add(strSQL);
+    Active:=True;
+    end;
+      //积分套餐
+  with ADOQuery_Festpack do begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    Active:=false;
+    SQL.Clear;
+    strSQL:='select * from [FestPack]';
+    SQL.Add(strSQL);
+    Active:=True;
+    end;
+end;
+
+
+procedure Tfrm_Fileinput_menberfor.Bit_CloseClick(Sender: TObject);
+begin
+    frm_Fileinput_menberfor.Close;
+end;
+
+procedure Tfrm_Fileinput_menberfor.Bit_DeleteClick(Sender: TObject);
+var
+  strTemp:String;
+begin
+  strTemp:=ADOQuery_Setmenberfor.FieldByName('LevNo').AsString;
+  if(MessageDlg('确实要删除 等级编号为'+strTemp+' 的相关记录吗?',mtConfirmation,[mbYes,mbNo],0)=mrYes) then
+    DBGrid1.DataSource.DataSet.Delete;
+end;
+
+
+
+procedure Tfrm_Fileinput_menberfor.Bit_Close_GiveClick(Sender: TObject);
+begin
+    Close;
+end;
+
+
+//充值积分套餐新增记录
+procedure Tfrm_Fileinput_menberfor.Bit_Add_GiveClick(Sender: TObject);
+
+var
+  strcore,strlevel,strlevelname,strMemo_instruction,strOperator,struplimit,strlowlimit:String;
+label ExitSub;
+begin
+  strcore:=Edit_Givevalue.Text;
+  strlevel:=Edit_GiveNO.Text;
+  struplimit:=Edit_Giveuplimit.Text;
+  strlowlimit:=Edit_Givelowlimit.Text;
+  strOperator:=G_User.UserNO;
+  strMemo_instruction:=Memo_Giveinstruction.Text;
+
+  
+  if  Edit_GiveNO.Text=''  then
+       ShowMessage('套餐编号不能空')
+  else if  Edit_Giveuplimit.Text='' then
+       ShowMessage('送分上限值不能空')
+  else if Edit_Givelowlimit.Text ='' then
+       ShowMessage('送分下限值不能空')
+  else if Edit_Givelowlimit.Text <Edit_Givelowlimit.Text then
+       ShowMessage('送分上限值不能小于下限值')
+       
+  else if GetmenberGivelimitvaluecomfir(strlowlimit)='2' then
+       ShowMessage('输入的下限值已被包含，请输入更大的下限值')
+
+  else if Edit_Givevalue.Text ='' then
+       ShowMessage('送分不能空')
+  else  begin
+      With ADOQuery_SetmenberGive do begin
+        if(Locate('套餐编号',strlevel,[]))  then begin
+            if(MessageDlg('已经存在  '+strlevel+'  要更新吗？',mtInformation,[mbYes,mbNo],0)=mrYes) then 
+               Edit
+            else
+               goto ExitSub;
+            end
+        else
+          Append;
+          FieldByName('套餐编号').AsString :=strlevel;
+          FieldByName('送分充值上限').AsString :=struplimit;
+          FieldByName('送分充值下限').AsString :=strlowlimit;
+          FieldByName('送积分值').AsString :=strcore;
+          FieldByName('操作员').AsString:=strOperator;
+          FieldByName('备注').AsString := strMemo_instruction;
+       try
+          Post;
+       Except
+          on e:Exception do ShowMessage(e.Message);
+       end;
+     end;
+   ExitSub:
+
+     Edit_GiveNO.Text:='';
+     Edit_Giveuplimit.Text:='';
+     Edit_Givelowlimit.Text:='';
+     Edit_Givevalue.Text:='';
+     Memo_Giveinstruction.Text:='';
+   end;
+end;
+
+//判断上限、下限值是否有重叠的范围
+function Tfrm_Fileinput_menberfor.GetmenberGivelimitvaluecomfir(vlowlimit: string): string;
+var
+  ADOQ:TADOQuery;
+  strSQL:String;
+  rtn : String;
+  begin
+  rtn:='0';
+  strSQL:='select * from 3F_MenberGivecore where ([送分充值上限]>'''+vlowlimit+''') and ([送分充值下限]<'''+vlowlimit+''')';
+  ADOQ:=TADOQuery.Create(nil);
+
+  with ADOQ do begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    SQL.Clear;
+    SQL.Add(strSQL);
+    Open;
+    if(RecordCount>0) then
+    rtn:='2';
+    Close;
+    end;
+  FreeAndNil(ADOQ);
+
+  Result := rtn;
+end;
+
+//积分记录表双击更新
+procedure Tfrm_Fileinput_menberfor.DBGrid2DblClick(Sender: TObject);
+begin
+  Edit_GiveNO.Text := DBGrid2.DataSource.DataSet.FieldByName('套餐编号').AsString;
+  Edit_Giveuplimit.Text := DBGrid2.DataSource.DataSet.FieldByName('送分充值上限').AsString;
+  Edit_Givelowlimit.Text:= DBGrid2.DataSource.DataSet.FieldByName('送分充值下限').AsString;
+  Edit_Givevalue.Text := DBGrid2.DataSource.DataSet.FieldByName('送积分值').AsString;
+  Memo_Giveinstruction.Text := DBGrid2.DataSource.DataSet.FieldByName('备注').AsString;
+
+  Bit_Update_Give.Enabled := True;
+end;
+
+//积分套餐记录修改
+procedure Tfrm_Fileinput_menberfor.Bit_Update_GiveClick(Sender: TObject);
+var
+   strcore,strlevel,strlevelname,strMemo_instruction,strOperator,struplimit,strlowlimit:String;
+begin
+    if( (Length(strlevel)>0) and (Length(strlevelname)>0) and (Length(strcore)>0) ) then   begin
+      // ShowMessage('等级名称不能空');
+       Exit;
+    end;
+    strcore:=Edit_Givevalue.Text;
+    strlevel:=Edit_GiveNO.Text;
+    struplimit:=Edit_Giveuplimit.Text;
+    strlowlimit:=Edit_Givelowlimit.Text;
+    strOperator:=G_User.UserNO;
+    strMemo_instruction:=Memo_Giveinstruction.Text;
+    With ADOQuery_SetmenberGive do begin
+       if( not Locate('套餐编号',strlevel,[]) ) then
+            Exit;
+          Edit;
+          FieldByName('套餐编号').AsString :=strlevel;
+          FieldByName('送分充值上限').AsString :=struplimit;
+          FieldByName('送分充值下限').AsString :=strlowlimit;
+          FieldByName('送积分值').AsString :=strcore;
+          FieldByName('操作员').AsString:=strOperator;
+          FieldByName('备注').AsString := strMemo_instruction;
+       try
+         Post;
+       Except
+         on e:Exception do ShowMessage(e.Message);
+       end;
+    end;
+
+     Edit_GiveNO.Text:='';
+     Edit_Giveuplimit.Text:='';
+     Edit_Givelowlimit.Text:='';
+     Edit_Givevalue.Text:='';
+     Memo_Giveinstruction.Text:='';
+     Bit_Update_Give.Enabled := False;
+end;
+
+procedure Tfrm_Fileinput_menberfor.Bit_Delete_GiveClick(Sender: TObject);
+var
+  strTemp:String;
+begin
+  strTemp:=ADOQuery_SetmenberGive.FieldByName('套餐编号').AsString;
+  if(MessageDlg('确实要删除 套餐编号为'+strTemp+' 的相关记录吗?',mtConfirmation,[mbYes,mbNo],0)=mrYes) then
+    DBGrid2.DataSource.DataSet.Delete;
+end;
+
+
+
+//增加节日活动套餐
+procedure Tfrm_Fileinput_menberfor.Bit_Add_FestpackClick(Sender: TObject);
+var
+  strcore,strlevel,strlevelname,strMemo_instruction,strOperator:String;
+  strIsUse:Boolean;
+  label ExitSub;
+begin
+  strcore:=Edit_FestNo.Text;
+  strlevel:=Edit_FestName.Text;
+//  strlevelname:=Edit_cUserNo.Text;
+  strOperator:=G_User.UserNO;
+  strMemo_instruction:=Memo_Remark.Text;
+
+  if rg_IsUse.ItemIndex=0 then
+        strIsUse:=true
+  else
+        strIsUse:=false;
+
+  if  Edit_FestNo.Text=''  then
+   begin
+       ShowMessage('套餐编号不能空');
+       exit;
+   end
+ else if  Edit_FestName.Text='' then
+   begin
+       ShowMessage('套餐名称不能空');
+       exit;
+   end
+  else  begin
+      With ADOQuery_Festpack do begin
+        if(Locate('FestNo',strcore,[]))  then begin
+            if(MessageDlg('已经存在  '+strcore+'  要更新吗？',mtInformation,[mbYes,mbNo],0)=mrYes) then
+               Edit
+            else
+               goto ExitSub;
+            end
+        else if (Locate('FestName',strlevel,[]))  then begin
+            if(MessageDlg('已经存在  '+strlevel+'  要更新吗？',mtInformation,[mbYes,mbNo],0)=mrYes) then
+               Edit
+            else
+               goto ExitSub;
+            end
+        else
+          Append;
+          FieldByName('FestNo').AsString :=strcore;
+          FieldByName('FestName').AsString :=strlevel;
+          FieldByName('IsUse').AsBoolean :=strIsUse;
+          FieldByName('cUserNo').AsString:=strOperator;
+          FieldByName('Remark').AsString := strMemo_instruction;
+       try
+          Post;
+       Except
+          on e:Exception do ShowMessage(e.Message);
+       end;
+     end;
+   ExitSub:
+     Edit_FestNo.Text:='';
+     Edit_FestName.Text:='';
+     Memo_Remark.Text:='';
+   end;
+
+end;
+
+procedure Tfrm_Fileinput_menberfor.DBGrid_FestpackDblClick(
+  Sender: TObject);
+begin
+  Edit_FestNo.Text := DBGrid_Festpack.DataSource.DataSet.FieldByName('FestNo').AsString;
+  Edit_FestName.Text := DBGrid_Festpack.DataSource.DataSet.FieldByName('FestName').AsString;
+  Edit_cUserNo.Text := DBGrid_Festpack.DataSource.DataSet.FieldByName('cUserNo').AsString;
+
+  if DBGrid_Festpack.DataSource.DataSet.FieldByName('IsUse').AsBoolean=true then
+      rg_IsUse.ItemIndex := 0
+  else
+      rg_IsUse.ItemIndex := 1;
+
+  Memo_Remark.Text := DBGrid_Festpack.DataSource.DataSet.FieldByName('Remark').AsString;
+
+  Bit_Update_Festpack.Enabled := True;
+end;
+
+procedure Tfrm_Fileinput_menberfor.Bit_Update_FestpackClick(
+  Sender: TObject);
+  
+var  strcore,strlevel,strlevelname,strMemo_instruction,strOperator:String;
+  strIsUse:Boolean;
+begin
+
+  strcore:=Edit_FestNo.Text;
+  strlevel:=Edit_FestName.Text;
+//  strlevelname:=Edit_cUserNo.Text;
+  strOperator:=G_User.UserNO;
+  strMemo_instruction:=Memo_Remark.Text;
+
+  if rg_IsUse.ItemIndex=0 then
+        strIsUse:=true
+  else
+        strIsUse:=false;
+
+  if  Edit_FestNo.Text=''  then
+   begin
+       ShowMessage('套餐编号不能空');
+       exit;
+   end
+ else if  Edit_FestName.Text='' then
+   begin
+       ShowMessage('套餐名称不能空');
+       exit;
+   end
+  else  begin
+      With ADOQuery_Festpack do begin
+        if(not Locate('FestNo',strcore,[]))  then begin
+           exit;
+        end
+        else
+          Edit;
+          FieldByName('FestNo').AsString :=strcore;
+          FieldByName('FestName').AsString :=strlevel;
+          FieldByName('IsUse').AsBoolean :=strIsUse;
+          FieldByName('cUserNo').AsString:=strOperator;
+          FieldByName('Remark').AsString := strMemo_instruction;
+       try
+          Post;
+       Except
+          on e:Exception do ShowMessage(e.Message);
+       end;
+     end;
+     Edit_FestNo.Text:='';
+     Edit_FestName.Text:='';
+     Memo_Remark.Text:='';
+     Edit_cUserNo.Text:='';
+     Bit_Update_Festpack.Enabled:=false;
+
+   end;
+end;
+
+procedure Tfrm_Fileinput_menberfor.Bit__Del_FestpackClick(Sender: TObject);
+var
+  strTemp:String;
+begin
+  strTemp:=ADOQuery_Festpack.FieldByName('FestNo').AsString;
+  if(MessageDlg('确实要删除 活动编号为'+strTemp+' 的相关记录吗?',mtConfirmation,[mbYes,mbNo],0)=mrYes) then
+    DBGrid_Festpack.DataSource.DataSet.Delete;
+end;
+
+procedure Tfrm_Fileinput_menberfor.Bit_Close_FestpackClick(
+  Sender: TObject);
+begin
+    close;
+end;
+
+end.

@@ -1,0 +1,757 @@
+unit IR_EGtypegroupUnit;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, Buttons, ExtCtrls, DB, ADODB;
+
+type
+  Tfrm_IR_EGtypegroup = class(TForm)
+    GroupBox1: TGroupBox;
+    GroupBox2: TGroupBox;
+    ComboBox_01: TComboBox;
+    ComboBox_02: TComboBox;
+    ComboBox_03: TComboBox;
+    ComboBox_04: TComboBox;
+    ComboBox_05: TComboBox;
+    ComboBox_06: TComboBox;
+    ComboBox_07: TComboBox;
+    ComboBox_08: TComboBox;
+    ComboBox_09: TComboBox;
+    ComboBox_10: TComboBox;
+    ComboBox_11: TComboBox;
+    ComboBox_12: TComboBox;
+    ComboBox_13: TComboBox;
+    ComboBox_14: TComboBox;
+    ComboBox_15: TComboBox;
+    ComboBox_16: TComboBox;
+    ComboBox_17: TComboBox;
+    ComboBox_18: TComboBox;
+    ComboBox_19: TComboBox;
+    ComboBox_20: TComboBox;
+    GroupBox3: TGroupBox;
+    ComboBoxK_01: TComboBox;
+    ComboBoxK_02: TComboBox;
+    ComboBoxK_03: TComboBox;
+    ComboBoxK_04: TComboBox;
+    ComboBoxK_05: TComboBox;
+    ComboBoxK_06: TComboBox;
+    ComboBoxK_07: TComboBox;
+    ComboBoxK_08: TComboBox;
+    ComboBoxK_09: TComboBox;
+    ComboBoxK_10: TComboBox;
+    ComboBoxK_11: TComboBox;
+    ComboBoxK_12: TComboBox;
+    ComboBoxK_13: TComboBox;
+    ComboBoxK_14: TComboBox;
+    ComboBoxK_15: TComboBox;
+    ComboBoxK_16: TComboBox;
+    ComboBoxK_17: TComboBox;
+    ComboBoxK_18: TComboBox;
+    ComboBoxK_19: TComboBox;
+    ComboBoxK_20: TComboBox;
+    GroupBox4: TGroupBox;
+    ComboBox_21: TComboBox;
+    ComboBox_22: TComboBox;
+    ComboBox_23: TComboBox;
+    ComboBox_24: TComboBox;
+    ComboBox_25: TComboBox;
+    ComboBox_26: TComboBox;
+    ComboBox_27: TComboBox;
+    ComboBox_28: TComboBox;
+    ComboBox_29: TComboBox;
+    ComboBox_30: TComboBox;
+    ComboBox_31: TComboBox;
+    ComboBox_32: TComboBox;
+    ComboBox_33: TComboBox;
+    ComboBox_34: TComboBox;
+    ComboBox_35: TComboBox;
+    ComboBox_36: TComboBox;
+    ComboBox_37: TComboBox;
+    ComboBox_38: TComboBox;
+    ComboBox_39: TComboBox;
+    ComboBox_40: TComboBox;
+    Panel1: TPanel;
+    Label35: TLabel;
+    ComboBoxN_IP: TComboBox;
+    BitBtn1: TBitBtn;
+    GroupBox6: TGroupBox;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label8: TLabel;
+    Label9: TLabel;
+    Label10: TLabel;
+    Label11: TLabel;
+    Label12: TLabel;
+    Label13: TLabel;
+    Label14: TLabel;
+    Label15: TLabel;
+    Label16: TLabel;
+    Label17: TLabel;
+    Label18: TLabel;
+    Label19: TLabel;
+    Label20: TLabel;
+    GroupBox7: TGroupBox;
+    Label21: TLabel;
+    Label22: TLabel;
+    Label23: TLabel;
+    Label24: TLabel;
+    Label25: TLabel;
+    Label26: TLabel;
+    Label27: TLabel;
+    Label28: TLabel;
+    Label29: TLabel;
+    Label30: TLabel;
+    Label31: TLabel;
+    Label32: TLabel;
+    Label33: TLabel;
+    Label34: TLabel;
+    Label36: TLabel;
+    Label37: TLabel;
+    Label38: TLabel;
+    Label39: TLabel;
+    Label40: TLabel;
+    Label41: TLabel;
+    DataSource_Typegroup: TDataSource;
+    ADOQuery_Typegroup: TADOQuery;
+    DataSource_EGtype: TDataSource;
+    ADOQuery_EGtype: TADOQuery;
+    ComboBoxtypeD_03: TComboBox;
+    ComboBoxtypeD_04: TComboBox;
+    ComboBoxtypeD_05: TComboBox;
+    ComboBoxtypeD_06: TComboBox;
+    ComboBoxtypeD_07: TComboBox;
+    ComboBoxtypeD_08: TComboBox;
+    ComboBoxtypeD_09: TComboBox;
+    ComboBoxtypeD_10: TComboBox;
+    ComboBoxtypeD_11: TComboBox;
+    ComboBoxtypeD_12: TComboBox;
+    ComboBoxtypeD_13: TComboBox;
+    ComboBoxtypeD_14: TComboBox;
+    ComboBoxtypeD_15: TComboBox;
+    ComboBoxtypeD_17: TComboBox;
+    ComboBoxtypeD_16: TComboBox;
+    ComboBoxtypeD_18: TComboBox;
+    ComboBoxtypeD_19: TComboBox;
+    ComboBoxtypeD_20: TComboBox;
+    CombogroupD_03: TComboBox;
+    CombogroupD_04: TComboBox;
+    CombogroupD_05: TComboBox;
+    CombogroupD_06: TComboBox;
+    CombogroupD_07: TComboBox;
+    CombogroupD_08: TComboBox;
+    CombogroupD_09: TComboBox;
+    CombogroupD_10: TComboBox;
+    CombogroupD_11: TComboBox;
+    CombogroupD_12: TComboBox;
+    CombogroupD_13: TComboBox;
+    CombogroupD_14: TComboBox;
+    CombogroupD_15: TComboBox;
+    CombogroupD_16: TComboBox;
+    CombogroupD_17: TComboBox;
+    CombogroupD_18: TComboBox;
+    CombogroupD_19: TComboBox;
+    CombogroupD_20: TComboBox;
+    ComboBoxtypeD_21: TComboBox;
+    ComboBoxtypeD_22: TComboBox;
+    ComboBoxtypeD_23: TComboBox;
+    ComboBoxtypeD_24: TComboBox;
+    ComboBoxtypeD_25: TComboBox;
+    ComboBoxtypeD_26: TComboBox;
+    ComboBoxtypeD_27: TComboBox;
+    ComboBoxtypeD_28: TComboBox;
+    ComboBoxtypeD_29: TComboBox;
+    ComboBoxtypeD_30: TComboBox;
+    ComboBoxtypeD_31: TComboBox;
+    ComboBoxtypeD_32: TComboBox;
+    ComboBoxtypeD_33: TComboBox;
+    ComboBoxtypeD_34: TComboBox;
+    ComboBoxtypeD_35: TComboBox;
+    ComboBoxtypeD_36: TComboBox;
+    ComboBoxtypeD_37: TComboBox;
+    ComboBoxtypeD_38: TComboBox;
+    ComboBoxtypeD_39: TComboBox;
+    ComboBoxtypeD_40: TComboBox;
+    GroupBox5: TGroupBox;
+    ComboBoxK_21: TComboBox;
+    ComboBoxK_22: TComboBox;
+    ComboBoxK_23: TComboBox;
+    ComboBoxK_24: TComboBox;
+    ComboBoxK_25: TComboBox;
+    ComboBoxK_26: TComboBox;
+    ComboBoxK_27: TComboBox;
+    ComboBoxK_28: TComboBox;
+    ComboBoxK_29: TComboBox;
+    ComboBoxK_30: TComboBox;
+    ComboBoxK_31: TComboBox;
+    ComboBoxK_32: TComboBox;
+    ComboBoxK_33: TComboBox;
+    ComboBoxK_34: TComboBox;
+    ComboBoxK_35: TComboBox;
+    ComboBoxK_36: TComboBox;
+    ComboBoxK_37: TComboBox;
+    ComboBoxK_38: TComboBox;
+    ComboBoxK_39: TComboBox;
+    ComboBoxK_40: TComboBox;
+    CombogroupD_21: TComboBox;
+    CombogroupD_22: TComboBox;
+    CombogroupD_23: TComboBox;
+    CombogroupD_24: TComboBox;
+    CombogroupD_25: TComboBox;
+    CombogroupD_26: TComboBox;
+    CombogroupD_27: TComboBox;
+    CombogroupD_28: TComboBox;
+    CombogroupD_29: TComboBox;
+    CombogroupD_30: TComboBox;
+    CombogroupD_31: TComboBox;
+    CombogroupD_32: TComboBox;
+    CombogroupD_33: TComboBox;
+    CombogroupD_34: TComboBox;
+    CombogroupD_35: TComboBox;
+    CombogroupD_36: TComboBox;
+    CombogroupD_37: TComboBox;
+    CombogroupD_38: TComboBox;
+    CombogroupD_39: TComboBox;
+    CombogroupD_40: TComboBox;
+    Bit_EGtypeD_show: TBitBtn;
+    Bit_EGtypegroupD_show: TBitBtn;
+    ComboBoxtypeD_01: TComboBox;
+    ComboBoxtypeD_02: TComboBox;
+    CombogroupD_01: TComboBox;
+    CombogroupD_02: TComboBox;
+    procedure FormCreate(Sender: TObject);
+    procedure BitBtn1Click(Sender: TObject);
+    procedure Bit_EGtypeD_showClick(Sender: TObject);
+    procedure Bit_EGtypegroupD_showClick(Sender: TObject);
+  private
+    { Private declarations }
+    procedure InitDataBase;
+    procedure Inittypegroup;
+    procedure InitEGtype;
+    procedure InitComboxText;                             //清除所有内容
+    procedure InitIP_addr;                             //初始化设备IP地址
+    procedure Querytypegrouprecord(IPStr:String);  //查询设定记录
+    procedure QueryComboBoxtypeD(IPStr:String);     //查询机型地址
+    procedure QueryComboBoxtypegroupD(IPStr:String);     //查询机型分组地址
+  public
+    { Public declarations }
+  end;
+
+var
+  frm_IR_EGtypegroup: Tfrm_IR_EGtypegroup;
+
+implementation
+ uses ICCommunalVarUnit,ICFunctionUnit,ICEventTypeUnit,ICDataModule;
+{$R *.dfm}
+
+procedure Tfrm_IR_EGtypegroup.FormCreate(Sender: TObject);
+var
+IPStr:string;
+begin
+  //IPStr:='192.168.100.1';
+  EventObj:=EventUnitObj.Create;
+  EventObj.LoadEventIni;
+
+  InitDataBase;                           //显示出型号
+  InitComboxText;                             //清除所有内容
+  InitEGtype;                             //初始化型号Combox_机型
+  InitIP_addr;                             //初始化设备IP地址
+  Inittypegroup;                         //初始化型号Combox_组号
+  //PageControl_Set.ActivePageIndex:=0;
+ // Querytypegrouprecord(TrimRight(IPStr));  //调用查询相关设定值函数
+ // QueryComboBoxtypeD(TrimRight(IPStr));
+ // QueryComboBoxtypegroupD(TrimRight(IPStr));
+end;
+
+
+//初始化数据库
+procedure Tfrm_IR_EGtypegroup.InitDataBase;
+var
+  strSQL:String;
+begin
+//机型
+  with ADOQuery_EGtype do begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    Active:=false;
+    SQL.Clear;
+    strSQL:='select * from [JNYH_型号对照]';
+    SQL.Add(strSQL);
+    Active:=True;
+    end;
+    
+//分组
+  with ADOQuery_Typegroup do begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    Active:=false;
+    SQL.Clear;
+    strSQL:='select * from [3F_Typegroup]';
+    SQL.Add(strSQL);
+    Active:=True;
+    end;
+end;
+ //初始化型号Combox_机型
+procedure Tfrm_IR_EGtypegroup.InitEGtype;
+var
+  ADOQTemp:TADOQuery;
+  strSQL:String;
+begin
+  ADOQTemp:=TADOQuery.Create(nil);
+  strSQL:= 'select distinct [短型号] from [JNYH_型号对照]';
+  with ADOQTemp do begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    SQL.Clear;
+    SQL.Add(strSQL);
+    Active:=True;
+  //  ComboBox_20.Items.Clear;
+    while not Eof do begin
+                             ComboBox_01.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_02.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_03.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_04.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_05.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_06.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_07.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_08.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_09.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_10.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_11.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_12.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_13.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_14.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_15.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_16.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_17.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_18.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_19.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_20.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_21.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_22.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_23.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_24.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_25.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_26.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_27.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_28.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_29.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_30.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_31.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_32.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_33.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_34.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_35.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_36.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_37.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_38.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_39.Items.Add(FieldByName('短型号').AsString);
+                             ComboBox_40.Items.Add(FieldByName('短型号').AsString);
+      Next;
+      end;
+    end;
+  FreeAndNil(ADOQTemp);
+end;
+ //初始化型号Combox_组号
+procedure Tfrm_IR_EGtypegroup.Inittypegroup;
+var
+  ADOQTemp:TADOQuery;
+  strSQL:String;
+  nameStr:String;
+  i:integer;
+begin
+
+                 ADOQTemp:=TADOQuery.Create(nil);
+                 strSQL:= 'select distinct [组号] from [3F_Typegroup]';
+                 with ADOQTemp do
+                 begin
+                        Connection := DataModule_3F.ADOConnection_Main;
+                        SQL.Clear;
+                        SQL.Add(strSQL);
+                        Active:=True;
+                 //       (components[i] as TComboBox).Items.Clear;
+                        while not Eof do
+                        begin
+                           // (components[i] as TComboBox).Items.Add(FieldByName('组号').AsString);
+                             ComboBoxK_01.Items.Add(TrimRight(FieldByName('组号').AsString));                       
+                             ComboBoxK_02.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_03.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_04.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_05.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_06.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_07.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_08.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_09.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_10.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_11.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_12.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_13.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_14.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_15.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_16.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_17.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_18.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_19.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_20.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_21.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_22.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_23.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_24.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_25.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_26.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_27.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_28.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_29.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_30.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_31.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_32.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_33.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_34.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_35.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_36.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_37.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_38.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_39.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             ComboBoxK_40.Items.Add(TrimRight(FieldByName('组号').AsString));
+                             Next;
+                         end;
+                  end;
+                  FreeAndNil(ADOQTemp);
+
+end;
+
+
+  //初始化型号Comboxtext
+procedure Tfrm_IR_EGtypegroup.InitComboxText;
+var
+  i:integer;
+begin
+
+          for i:=0 to ComponentCount-1 do
+         begin
+                 if components[i] is TComboBox then
+                 begin
+                    (components[i] as TComboBox).Clear;
+                  end
+         end;
+
+
+
+end;
+  //初始化机型地址列表ComboBoxtypeD
+procedure Tfrm_IR_EGtypegroup.QueryComboBoxtypeD(IPStr:String);
+var
+  ADOQTemp:TADOQuery;
+  strSQL:String;
+  nameStr:String;
+  valueStr:String;
+  i:integer;
+begin
+
+                valueStr:= '短码D地址'  ;
+                 ADOQTemp:=TADOQuery.Create(nil);
+                 strSQL:= 'select distinct [IR_Daddr] from [3F_IR_Daddr] where IR_AddrType='''+valueStr+''' and IR_IPaddr='''+IPStr+'''';
+                 with ADOQTemp do
+                 begin
+                        Connection := DataModule_3F.ADOConnection_Main;
+                        SQL.Clear;
+                        SQL.Add(strSQL);
+                        Active:=True;
+                 //       (components[i] as TComboBox).Items.Clear;
+                                              ComboBoxtypeD_01.Items.Clear;
+                             ComboBoxtypeD_02.Items.Clear;
+                             ComboBoxtypeD_03.Items.Clear;
+                             ComboBoxtypeD_04.Items.Clear;
+                             ComboBoxtypeD_05.Items.Clear;
+                             ComboBoxtypeD_06.Items.Clear;
+                             ComboBoxtypeD_07.Items.Clear;
+                             ComboBoxtypeD_08.Items.Clear;
+                             ComboBoxtypeD_09.Items.Clear;
+                             ComboBoxtypeD_10.Items.Clear;
+                             ComboBoxtypeD_11.Items.Clear;
+                             ComboBoxtypeD_12.Items.Clear;
+                             ComboBoxtypeD_13.Items.Clear;
+                             ComboBoxtypeD_14.Items.Clear;
+                             ComboBoxtypeD_15.Items.Clear;
+                             ComboBoxtypeD_16.Items.Clear;
+                             ComboBoxtypeD_17.Items.Clear;
+                             ComboBoxtypeD_18.Items.Clear;
+                             ComboBoxtypeD_19.Items.Clear;
+                             ComboBoxtypeD_20.Items.Clear;
+                             ComboBoxtypeD_21.Items.Clear;
+                             ComboBoxtypeD_22.Items.Clear;
+                             ComboBoxtypeD_23.Items.Clear;
+                             ComboBoxtypeD_24.Items.Clear;
+                             ComboBoxtypeD_25.Items.Clear;
+                             ComboBoxtypeD_26.Items.Clear;
+                             ComboBoxtypeD_27.Items.Clear;
+                             ComboBoxtypeD_28.Items.Clear;
+                             ComboBoxtypeD_29.Items.Clear;
+                             ComboBoxtypeD_30.Items.Clear;
+                             ComboBoxtypeD_31.Items.Clear;
+                             ComboBoxtypeD_32.Items.Clear;
+                             ComboBoxtypeD_33.Items.Clear;
+                             ComboBoxtypeD_34.Items.Clear;
+                             ComboBoxtypeD_35.Items.Clear;
+                             ComboBoxtypeD_36.Items.Clear;
+                             ComboBoxtypeD_37.Items.Clear;
+                             ComboBoxtypeD_38.Items.Clear;
+                             ComboBoxtypeD_39.Items.Clear;
+                             ComboBoxtypeD_40.Items.Clear;  
+                        while not Eof do
+                        begin
+                           // (components[i] as TComboBox).Items.Add(FieldByName('组号').AsString);
+                             ComboBoxtypeD_01.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_02.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_03.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_04.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_05.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_06.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_07.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_08.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_09.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_10.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_11.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_12.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_13.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_14.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_15.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_16.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_17.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_18.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_19.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_20.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_21.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_22.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_23.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_24.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_25.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_26.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_27.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_28.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_29.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_30.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_31.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_32.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_33.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_34.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_35.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_36.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_37.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_38.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_39.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             ComboBoxtypeD_40.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                              Next;
+                         end;
+                  end;
+                  FreeAndNil(ADOQTemp);
+
+
+
+end;
+
+//查询机型分组地址列表
+procedure Tfrm_IR_EGtypegroup.QueryComboBoxtypegroupD(IPStr:String);     //查询机型分组地址
+ var
+  ADOQTemp:TADOQuery;
+  strSQL:String;
+  nameStr:String;
+  valueStr:String;
+  i:integer;
+begin
+
+                valueStr:= '分组D地址'  ;
+                 ADOQTemp:=TADOQuery.Create(nil);
+                 strSQL:= 'select distinct [IR_Daddr] from [3F_IR_Daddr] where IR_AddrType='''+valueStr+''' and IR_IPaddr='''+IPStr+'''';
+                 with ADOQTemp do
+                 begin
+                        Connection := DataModule_3F.ADOConnection_Main;
+                        SQL.Clear;
+                        SQL.Add(strSQL);
+                        Active:=True;
+                 //       (components[i] as TComboBox).Items.Clear;
+                             CombogroupD_01.Items.Clear;
+                             CombogroupD_02.Items.Clear;
+                             CombogroupD_03.Items.Clear;
+                             CombogroupD_04.Items.Clear;
+                             CombogroupD_05.Items.Clear;
+                             CombogroupD_06.Items.Clear;
+                             CombogroupD_07.Items.Clear;
+                             CombogroupD_08.Items.Clear;
+                             CombogroupD_09.Items.Clear;
+                             CombogroupD_10.Items.Clear;
+                             CombogroupD_12.Items.Clear;
+                             CombogroupD_13.Items.Clear;
+                             CombogroupD_14.Items.Clear;
+                             CombogroupD_15.Items.Clear;
+                             CombogroupD_16.Items.Clear;
+                             CombogroupD_17.Items.Clear;
+                             CombogroupD_18.Items.Clear;
+                             CombogroupD_19.Items.Clear;
+                             CombogroupD_20.Items.Clear;
+                             CombogroupD_21.Items.Clear;
+                             CombogroupD_22.Items.Clear;
+                             CombogroupD_23.Items.Clear;
+                             CombogroupD_24.Items.Clear;
+                             CombogroupD_25.Items.Clear;
+                             CombogroupD_26.Items.Clear;
+                             CombogroupD_27.Items.Clear;
+                             CombogroupD_28.Items.Clear;
+                             CombogroupD_29.Items.Clear;
+                             CombogroupD_30.Items.Clear;
+                             CombogroupD_31.Items.Clear;
+                             CombogroupD_32.Items.Clear;
+                             CombogroupD_33.Items.Clear;
+                             CombogroupD_34.Items.Clear;
+                             CombogroupD_35.Items.Clear;
+                             CombogroupD_36.Items.Clear;
+                             CombogroupD_37.Items.Clear;
+                             CombogroupD_38.Items.Clear;
+                             CombogroupD_39.Items.Clear;
+                             CombogroupD_40.Items.Clear;
+                        while not Eof do
+                        begin  //CombogroupD_03
+                             CombogroupD_01.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_02.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_03.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_04.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_05.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_06.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_07.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_08.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_09.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_10.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_11.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_12.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_13.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_14.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_15.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_16.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_17.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_18.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_19.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_20.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_21.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_22.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_23.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_24.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_25.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_26.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_27.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_28.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_29.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_30.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_31.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_32.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_33.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_34.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_35.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_36.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_37.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_38.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_39.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             CombogroupD_40.Items.Add(TrimRight(FieldByName('IR_Daddr').AsString));
+                             Next;
+                           end;
+                  end;
+                  FreeAndNil(ADOQTemp);
+end;
+
+
+ //初始化型号Combox_组号
+procedure Tfrm_IR_EGtypegroup.InitIP_addr;
+var
+  ADOQTemp:TADOQuery;
+  strSQL:String;
+  nameStr:String;
+  i:integer;
+begin
+
+                 ADOQTemp:=TADOQuery.Create(nil);
+                 strSQL:= 'select distinct [IP_Addr] from [3F_IP_ADD]';
+                 with ADOQTemp do
+                 begin
+                        Connection := DataModule_3F.ADOConnection_Main;
+                        SQL.Clear;
+                        SQL.Add(strSQL);
+                        Active:=True;
+                        ComboBoxN_IP.Items.Clear;
+                        while not Eof do
+                        begin
+                             ComboBoxN_IP.Items.Add(FieldByName('IP_Addr').AsString);
+                                   Next;
+                         end;
+                         
+                  end;
+                  FreeAndNil(ADOQTemp);
+
+end;
+
+//根据选择不同的设备IP号，调用对应设置好的机型和分组
+
+
+
+//根据选择的 设备IP号，查询设定记录
+ //初始化型号Combox_组号
+procedure Tfrm_IR_EGtypegroup.Querytypegrouprecord(IPStr:String);
+var
+  ADOQTemp:TADOQuery;
+  strSQL:String;
+  nameStr:String;
+  i:integer;
+begin
+
+                 ADOQTemp:=TADOQuery.Create(nil);
+                 strSQL:= 'select EGtype_Daddr,EGtypegroup_Daddr,EGtype_value,EGtypegroup_value from [3F_EGtypegroupset] where EGtype_IPaddr='''+IPStr+'''';
+                 with ADOQTemp do
+                 begin
+                        Connection := DataModule_3F.ADOConnection_Main;
+                        SQL.Clear;
+                        SQL.Add(strSQL);
+                        Active:=True;
+                        while not Eof do
+                        begin
+                            ComboBoxK_01.Items.Text:=FieldByName('EGtypegroup_value').AsString;
+                            ComboBox_01.Items.Text:=FieldByName('EGtype_value').AsString;
+                             Next;
+                         end;
+                  end;
+                  FreeAndNil(ADOQTemp);
+
+end;
+
+
+
+
+procedure Tfrm_IR_EGtypegroup.BitBtn1Click(Sender: TObject);
+var
+   IPStr:string;
+begin
+  IPStr:=ComboBoxN_IP.Text;
+  Querytypegrouprecord(TrimRight(IPStr));  //调用查询相关设定值函数
+
+end;
+
+//查询机型存储地址
+procedure Tfrm_IR_EGtypegroup.Bit_EGtypeD_showClick(Sender: TObject);
+var
+   IPStr:string;
+begin
+     IPStr:=ComboBoxN_IP.Text;
+        QueryComboBoxtypeD(TrimRight(IPStr));
+end;
+
+//查询机型分组存储地址
+procedure Tfrm_IR_EGtypegroup.Bit_EGtypegroupD_showClick(Sender: TObject);
+var
+   IPStr:string;
+begin
+  IPStr:=ComboBoxN_IP.Text;
+
+     QueryComboBoxtypegroupD(TrimRight(IPStr));
+end;
+
+end.

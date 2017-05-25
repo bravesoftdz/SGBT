@@ -1,0 +1,24 @@
+unit PS_MCtestUnit;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs;
+
+type
+  Tfrm_PS_MCtest = class(TForm)
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frm_PS_MCtest: Tfrm_PS_MCtest;
+
+implementation
+
+{$R *.dfm}
+
+end.

@@ -1,0 +1,453 @@
+unit ICCommunalVarUnit;
+
+interface
+uses
+  Windows, ExtCtrls, Classes, StdCtrls, ICEventTypeUnit;
+
+
+type
+
+  Right_ContentType = record
+    Right_NAME: string; //权限项目
+    RIGHT_CODE: string; //权限代码
+    RIGHT_ID: string; //权限ID
+    Right_Type: string; //权限类型
+    Right_Password: string; //权限密码
+  end;
+
+  TUser = record
+    UserNO: string; //用户编号
+    UserName: string; //用户姓名
+    UserPassword: string; //用户密码
+    UserOpration: string; //用户类型
+    UserRight: array of Right_ContentType; //用户权限
+    UserID: string; //绑定的管理卡ID
+  end;
+
+  CommSetType = record
+    Port: integer; //通讯端口号
+    Setting: string; //通讯设定
+    Delay: integer; //通讯延迟
+  end;
+
+  IDKaType = record //ID卡类型
+    Port: integer; //通讯端口号
+    Setting: string; //通讯设定
+    Area: string; //通讯区域
+    IDLength: integer; //ID数据长度
+  end;
+
+  SystemWorkgroundType = record
+    DB_Provider: string; //数据源 驱动
+    DB_Path: string; //数据源 文件路径
+    DB_DatabaseName: string; //数据源 文件名字
+    DB_DatabaseRecorderTableName: string; //数据源 记录数据表名
+    DB_StoreTime: integer; //数据保留时间
+    DB_UpdateTime: string; //数据变更时间
+    DatabaseConnectType: string; //数据库连接方式 1为本地连接 0远程连接
+    IPAddress: string; //后台IP地地
+    PLC_CommSet: CommSetType;
+    ReadID, WriteID: IDKaType; //读写卡区域
+    ReadIDValue, WriteidValue: string; //读写ID的值
+    RFID_ReadValue: string;
+    PLCRequestFDJ: string; //PLC请求发动机=D6000
+    PCReCallRequestFDJ: string; //PC回应请求发动机=D6100
+    PLCRequestClearTP: string; //PLC请求清托盘=D6002
+    PCReCallClearTP: string; //PC回应清托盘=D6102
+    PLCRequestWriteTP: string; //PLC请求写托盘=D6004
+    PCReCallWriteTP: string; //PC回应写托盘=D6104
+
+    PCWriteLD: string; //PC写入料道号=D6020
+    PCReadFanHao: string; //PC读出番号=D6250
+    PCWriteFanHao: string; //PC写入番号=D6021
+    PCWriteType: string; //PC写入机型=D6025
+    PCWriteTZ: string; //PC写入特征码=D6040
+    PCReadFDJ: string; //PC读出机型=D6254
+    PCReadTZ: string; //PC读出特征码=D6270
+    PCReadLS: string; //PC读出流水=D6276
+    PCReadYear: string; //PC读出年=D6277
+
+    PCRun: string; //PC运行
+    PLCRun: string; //PLC运行
+    HaveJH: string; //表示有没有计划1有,2没有
+
+    exchangerate: string;
+    ErrorGTState: string; //打废缸体的标志
+    PCErrorGTFlag: string; //打废缸体接收标志
+    ErrorGT: string; //打废缸体的番号
+
+    ClearTPCS: integer; //清托盘多少次认为是失败
+    WriteTPCS: Integer; //写入托盘多少次认为是失败
+    ClearStr: string; //清除字符串
+    LOAD_Check_time: string; //通信设定测试
+  end;
+
+
+  //设备报警信息
+  MC_AlarmType = record
+    stralarm_id: string; //报警id
+    stralarm_NO: Double; //报警号
+    stralarm_Content: Double; //报警内容
+    stralarm_Type: Double; //报警类型NC/PMC
+
+    strBegin_Time: Double; //报警开始时间
+    strEnd_Time: Double; //报警结束时间
+    strBegin_Date: Double; //报警开始日期
+    strEnd_Date: Double; //报警结束日期
+  end;
+
+ //主设备
+
+  Main_MachineType = record
+    strgIpaddr: string; //IP地址
+    strgPort: Double; //通讯端口号
+
+    strgTime: Double; //访问连接时间
+    strgHandle: Double; //连接成功句柄
+    strret_focas: Double; //连接成功反馈信号
+    strControllor_maker: string; ////控制系统厂家
+    strControllor_type: string; //控制系统型号
+
+    strLinename: string; //所属生产线
+    strOP: string; //工序号
+    strEqui_NO: string; //设备管理编号
+    strAlarm: MC_AlarmType; //'控制系统型号
+
+    strYear: string; //
+    strYearAddr: string; //
+    strYearLength: string; //
+
+    strMonth: string; //
+    strMonthAddr: string; //
+    strMonthLength: Double; //
+
+    strDay: string; //
+    strDayAddr: string; //
+    strDayLength: Double; //
+
+    strF_current: string; //当前进给速度
+    strM_current: string; //当前运行M代码
+    strSpindle_S_current: string; //当前主轴转速度
+    strT_current: string; //当前程序刀号
+
+    strMC_cycletime_last: string; //上次循环时间
+    strMC_cycletime_current: string; //上次循环时间
+    strMC_WorkPiece_current: string; //当前选择工件类型
+
+    strMC_NCProgramNO_current: string; //当前加工程序号O
+    strMC_NCProgramNet_current: string; //当前运行程序段N
+
+    strMC_MGside_toolNO: string; //刀库侧刀号
+    strMC_Toolboxside_toolNO: string; //刀夹侧刀号
+    strMC_Spindleside_toolNO: string; //主轴侧刀号
+
+    strMC_ready: string; //MC准备完成
+    strMC_orign: string; //MC全原位
+    strMC_automatic: string; //MC自动
+    strMC_manual: string; //MC手动
+    strMC_toolboxchangok: string; //刀盒交换许可
+    strMC_nowork: string; //无工件
+    strMC_workcheck: string; //工件检测
+    strMC_workNG: string; //工件NG
+    strMC_Clamp_nowork: string; //过夹紧
+    strMC_XYZ_orign: string; //XYZ轴在原点
+    strMC_Table_orign: string; //工作台在原点
+    strMC_ATC_orign: string; //ATC轴在原点
+    strMC_MG_run: string; //刀库分度
+    strMC_CNC_hold: string; //CNC保持
+    strMC_CNC_run: string; //CNC运行
+    strMC_ready_ON: string; //运转准备ON
+    strMC_run: string; //运转中
+    strMC_finish: string; //加工完成
+    strMC_autodoor_close: string; //自动门关
+    strMC_EG: string; //紧急停止
+    strMC_safe_door: string; //安全门关
+    strMC_alarm: string; //MC报警
+    strMC_AD_alarm: string; //预报、警告
+    strMC_pare1: string; //预留1
+    strMC_pare2: string; //预留2
+    strMC_controlpan_open: string; //电柜门开
+    strMC_toollife_finish: string; //刀具寿命到达
+    strMC_toollife_AD: string; //刀具寿命预报
+    strMC_worknumber_finish: string; //生产计数到达
+    strMC_toolcheck_finish: string; //刀检完成
+    strMC_workcontact_ok: string; //气密检测OK
+    strMC_airpressure_ok: string; //气源压力OK
+  end;
+
+
+  //辅助设备
+  Sub_MachineType = record
+    strgIpaddr: string; //IP地址
+    strgPort: string; //通讯端口号
+    strgTime: Double; //访问连接时间
+    strgHandle: Double; //连接成功句柄
+    strret_focas: Double; //连接成功反馈信号
+    strControllor_maker: string; //控制系统厂家
+    strControllor_type: string; //控制系统型号
+
+    strLinename: string; //所属生产线
+    strOP: string; //工序号
+    strEqui_NO: string; //设备管理编号
+    strAlarm: MC_AlarmType; //控制系统型号
+    strYear: string;
+    strYearAddr: string;
+    strYearLength: string;
+
+    strMonth: string;
+    strMonthAddr: string;
+    strMonthLength: string;
+
+    strDay: string;
+    strDayAddr: string;
+    strDayLength: Double;
+
+    strMC_cycletime_last: string; //上次循环时间
+    strMC_cycletime_current: string; //'上次循环时间
+    strMC_WorkPiece_current: string; //当前选择工件类型
+
+    strMC_NCProgramNO_current: string; //当前加工程序号O
+    strMC_NCProgramNet_current: string; //当前运行程序段N
+
+
+    strMC_ready: string; //MC准备完成
+    strMC_orign: string; //'MC全原位
+    strMC_automatic: string; //MC自动
+    strMC_manual: string; //MC手动
+    strMC_nowork: string; //无工件
+    strMC_workcheck: string; //工件检测
+    strMC_workNG: string; //工件NG
+    strMC_Clamp_nowork: string; //'过夹紧
+    strMC_ready_ON: string; //运转准备ON
+    strMC_run: string; //'运转中
+    strMC_finish: string; //加工完成
+    strMC_autodoor_close: string; //自动门关
+    strMC_EG: string; //紧急停止
+    strMC_safe_door: string; //安全门关
+    strMC_alarm: string; //MC报警
+    strMC_AD_alarm: string; //预报、警告
+    strMC_pare1: string; //预留1
+    strMC_pare2: string; //预留2
+    strMC_controlpan_open: string; //电柜门开
+    strMC_worknumber_finish: string; //生产计数到达
+    strMC_toolcheck_finish: string; //刀检完成
+    strMC_workcontact_ok: string; //气密检测OK
+    strMC_airpressure_ok: string; //气源压力OK
+
+  end;
+
+  EGtype_groupTYPE = record
+    ID: string; //序号
+    EGtype_Daddr: string; //机型D地址
+    EGtypegroup_Daddr: string; //分组D地址
+    EGtype_Value: string; //机型设定值
+    EGtypegroup_Value: string; //分组设定值
+  end;
+
+  IR_setTYPE = record
+    ID: string; //序号
+    IR_IPaddr: string; //IP地址
+    IR_Daddr: string; //设定地址
+    IR_value: string; //设定值
+    IR_value_DEC: string; //设定值
+    IR_EGtype_value: string; //机型设定值
+    IR_RFIDno: string; //机型设定值
+    IR_Daddrtype: string;
+    IR_settime: string; //设定时间
+  end;
+
+  //linlf 定义一个结构体类型,封装充值写入电子币的所有信息
+  CMD_ID_InforTYPE = record //当前读取的卡ID信息
+    CMD: string; //指令
+    ID_INIT: string; //卡片ID  新购币时已经有信息,电子币厂商已经确定
+    ID_3F: string; //卡厂ID
+    Password_3F: string; //场地卡密
+    Password_USER: string; //用户密码
+    ID_value: string; //卡内数据
+    ID_type: string; //卡功能
+    ID_CheckNum: string; //校验和
+    ID_Settime: string; //设定时间
+  end;
+
+  INit_3FType = record
+    CMD: string; //指令
+    ID_INIT: string; //卡片ID
+    ID_3F: string; //卡厂ID
+    Password_3F: string; //场地卡密
+    Password_USER: string; //用户密码
+    ID_value: string; //卡内数据
+    ID_type: string; //卡功能
+    ID_CheckNum: string; //校验和
+    ID_Settime: string; //设定时间
+    Customer_Name: string; //客户名称，电话号码
+    Customer_NO: string; //客户代码，电话号码的后6位
+    cUserNo: string; //操作者
+    Name_USER: string; //
+  end;
+
+  INit_WrightType = record
+    Produecer_3F: string; //3F
+    BOSS: string; //老板卡
+    MANEGER: string; //采集卡
+    QUERY: string; //查帐卡
+    RECV_CASE: string; //收银卡
+    SETTING: string; //设定卡
+    OPERN: string; //开机卡
+    User: string; //用户卡即电子币
+    BossPassword: string; //场地密码  老板设定
+    BossPassword_3F: string; //场地密码 ,3F设定的初始值
+    BossPassword_old: string; //场地密码  老板设定的上一次的密码    这三个密码的设计逻辑
+    MaxValue: string; //最大上限币值
+    CustomerNO: string; //客户编号
+    MenberControl_long: string; //系统会员制管理
+    MenberControl_short: string; //系统会员制管理
+  end;
+
+
+
+  CMD_COUMUNICATIONType = record
+    CMD_INCValue: string; //充值指令  写操作
+    CMD_INCValue_RE: string; //充值操作返回指令 写操作返回
+    CMD_READ: string; //读指令
+    CMD_HAND: string;
+    CMD_USERPASSWORD: string;
+    CMD_3FPASSWORD: string;
+    CMD_3FLODADATE: string;
+    CMD_HAND_RE: string;
+    CMD_USERPASSWORD_RE: string;
+    CMD_3FPASSWORD_RE: string;
+    CMD_WRITETOFLASH_Sub_RE: string;
+    CMD_3FLODADATE_RE: string;
+
+  end;
+
+//SGBT项目新增变量
+  SGBTCONFIGURETYPE = record
+    appid: string;
+    shopid: string;
+    coinlimit: string;
+   // coincost:string;
+    secret_key: string;
+    hkscurl: string;
+    signurl: string;
+    activeurl: string;
+    bindurl: string;
+    offlinepayapplyurl: string;
+    offlinepayackurl: string;
+    onlinepayapplyurl: string;
+    onlinepayackurl: string;
+    coindatauploadurl: string;
+    enableInterface : string;
+    enableHigh : string;
+    registerCode :string;
+ end;
+//SGBT项目新增变量
+
+  SG3FCONFIGURETYPE = record
+    sg3fenable: string;
+    sg3fkey : string;
+    sg3furl : string;
+    sg3floginurl :string;
+ end;
+
+ SG3FERRORINFOTYPE =record
+     networkerror :string;
+     commerror :string;
+     error_register_code : string;
+ end;
+ 
+
+
+var
+  SystemPath: string; //系统路径名称
+  SystemMainPath: string; //系统主路径名称
+  ProgramPath: string; //软件程序路径
+  SystemWorkGroundFile: string; //系统背景文件名
+  PasswordFile: string; //密码文件
+
+  SystemWorkground: SystemWorkgroundType;
+
+  IsFirstProgram: Boolean; //系统首次进入标志
+
+  WorkTimeFreq: TLargeInteger; //当前设备时钟频率
+
+  ProgramIsClose: Boolean;
+  WorkStatus: integer; //系统工作状态
+
+  ProgramIsTestFile: string;
+  ProgramIsTest: Boolean;
+
+  IsKeyInput: Boolean;
+  HaveEditEventIn: Boolean;
+  HaveEditEventOut: Boolean;
+  HavePLCUnitDefine: Boolean;
+
+  ModifyParam: boolean; //是不是允许理发参数设置中的事件总项
+  PLCErrMsg: TStringList;
+  TorqueChange: array[0..1] of Integer;
+  PrecisionV: Integer;
+  ProType: string;
+  ProXH: string;
+  ProTzm: string;
+  CurYear: string; //取出当前的年，如果在配置文件中没有则配置出来
+
+  EndApplication: boolean;
+  GatherNoseStart: Cardinal;
+
+  G_User: TUser; //定义登陆用户的变量
+
+
+
+  //Logon:Boolean;
+  IsExit: Boolean;
+  Login: Boolean;
+
+
+
+  EGtype_group: array[0..40] of EGtype_groupTYPE; //机型分组对应变量
+ // PART_SET: Array[0..2] of IR_setTYPE; //零件设定变量
+
+  Receive_CMD_ID_Infor: CMD_ID_InforTYPE; //当前读取的ID数据（包括卡片ID、卡厂ID、场地卡密、用户密码）
+  Send_CMD_ID_Infor: CMD_ID_InforTYPE; //充值
+
+
+  CMD_CheckSum_OK: Boolean; //读取的帧信息，校验和正确
+
+  INit_3F: INit_3FType; //出厂3F配置
+  LOAD_USER: INit_3FType; //登陆者信息
+  Creat_USER: INit_3FType; //新建用户
+
+  INit_Wright: INit_WrightType; //权限控制
+  CMD_COUMUNICATION: CMD_COUMUNICATIONType; //通信指令
+  BarCodeValue: string; //读条码的值
+  BarCodeValue_CardHead: string; //读条码的值
+  BarCodeValue_FLOW: string; //读条码的值
+  BarCodeValue_CORE: string; //读条码的值
+  BarCodeValue_OnlyCheck: integer; //读条码的值
+  SaveData_OK_flag: BOOLEAN; //条码记录保存成功
+  strtemp1, strtemp2, strtemp3, strtemp4, strtemp5: string;
+  LOAD_CHECK_OK: Boolean;
+  LOAD_CHECK_Time_Over: Boolean;
+  Wright_3F: array of Right_ContentType; //权限类型，用于初始化时记录权限内容
+  Wright_Modify: Right_ContentType; //权限类型，用于初始化时记录权限内容
+
+
+  configureExist: BOOLEAN; //校验此系统是否给人家拷贝了
+
+  iHHSet: integer; //币的有效时间
+
+  BarCodeFirstFrame: array[0..5] of string; //条码首字节,与场地用户密码对应
+
+
+  SGBTCONFIGURE: SGBTCONFIGURETYPE;
+  SG3FCONFIGURE: SG3FCONFIGURETYPE;
+  SG3FERRORINFO: SG3FERRORINFOTYPE;
+
+  rootEnable : boolean; //进入最高权限
+
+
+
+implementation
+
+end.
+

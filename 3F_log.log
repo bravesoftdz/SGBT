@@ -1,0 +1,2 @@
+2014-04-28 21:19:26  账目初始化  delete  from [TMembeDetail] where  ( GetTime>='2014-04-01 21:19:15' and GetTime<='2014-04-28 21:19:15')
+2014-04-28 21:19:26  账目初始化  delete from  [3F_BARFLOW] where  ( datetime_scan>='2014-04-01 21:19:15' and datetime_scan<='2014-04-28 21:19:15')

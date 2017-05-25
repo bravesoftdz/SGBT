@@ -1,0 +1,728 @@
+unit ICDataModule;
+
+interface
+
+uses
+  SysUtils, Classes, DB, ADODB, Dialogs, ICFunctionUnit, ICCommunalVarUnit,
+  Windows, Messages, Variants, Graphics, Controls, Forms, StdCtrls, ExtCtrls, Spin, Mask, Buttons, ComCtrls;
+//  mySQLDbTables; //FileCtrl;//ShellCtrls;
+
+type
+  TDataModule_3F = class(TDataModule)
+    ADOConnection_Main: TADOConnection;
+    ADOConnection1: TADOConnection;
+    ADOQuery1: TADOQuery;
+    ADOConnection2: TADOConnection;
+    procedure DataModuleCreate(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+    procedure DeleteSCWC(xh: string); //删除当前的完成计划条目
+    procedure SaveCurJHSL(xh: string); //保存当前生产完成的数量，从计划中-1，完成及总完成处加1
+    function GetJHCount: string; //获得总的计划数
+    procedure SaveCurRecord(dxh, lsh: string); //记录当前发动机的生产流水号、及日期时间
+    procedure SaveErrorGT(dxh: string); //存入异常缸体
+    procedure SaveWriteDI(dxh, lsh, rq: string); //目前不用    //保存最后写入托盘后的记录
+    function GetErrorGT: string; //获得错误缸体号
+    procedure UpdateErrorGT; //更新错误的机体号
+    function QuerystrStationNO(IPStr: string): string; //查询IP及站号
+    function Query_ID_OK(LoadID_Infor: string): Boolean;
+    function Query_ID_INIT_OK(ID_INIT: string): Boolean;
+    function Querystr_Flow_Only(StrFLOW: string): string;
+    function Querystr_Core_Only(StrFLOW: string): string;
+    function Querystr_CardHeadID_Only(StrCardID: string): string; //场地设置匹配卡头ID
+    function Query3F_CardHeadID_Only(StrCardID: string): string; //3F出厂设置卡头ID
+    function Query3F_CardHeadID_Customer_Name(StrCardID: string): string;
+    function Query_User_INIT_OK(ID_INIT: string): Boolean; //场地初始化
+    function queryExistInitialRecord(ID_INIT: string): Boolean;
+
+    function Query_UserNo(StrUserNo: string): string;
+    function Query_MenberNo(StrMemberName: string): string;
+    procedure executesql(strsql: string);
+
+  end;
+
+var
+  DataModule_3F: TDataModule_3F;
+implementation
+
+{$R *.dfm}
+
+ //创建数据库连接，及初始化数据源链接池
+{
+procedure TDataModule_3F.DataModuleCreate(Sender: TObject);
+var
+  CNameBuffer: PChar;
+  fl_loaded: Boolean;
+  CLen: ^DWord;
+  ComputerName: string;
+//const
+  //link_AccessTableStr = 'Provider=%s;Integrated Security=%s;Persist Security Info=%s; Initial Catalog=%s; Data Source=%s';
+begin
+  ICFunction.InitSystemWorkPath;
+  ICFunction.InitSystemWorkground;
+
+  try
+    ADOConnection_Main.Connected := False;
+    ADOConnection_Main.LoginPrompt := False;
+
+    ADOConnection2.Connected := False;
+    ADOConnection2.LoginPrompt := False;
+
+
+    GetMem(CNameBuffer, 255);
+    New(CLen);
+    CLen^ := 255;
+    fl_loaded := GetComputerName(CNameBuffer, CLen^);
+    if fl_loaded then
+      ComputerName := StrPas(CNameBuffer) //获取计算机名即SQL Server数据库服务器名
+    else
+      ComputerName := 'Unkown';
+
+
+    if SystemWorkground.DatabaseConnectType = '1' then
+    begin
+
+     ADOConnection_Main.ConnectionString := 'Provider=SQLOLEDB.1;Integrated Security=SSPI;Persist Security Info = False ;Initial Catalog=JLML;Data Source=' + computername;
+       // ADOConnection_Main.ConnectionString := 'Provider=SQLOLEDB.1;Integrated Security=SSPI;Persist Security Info = False ;Initial Catalog=JLML;Data Source=XXJS-GD-LLF-PC\SQLEXPRESS';
+      //ADOConnection_Main.ConnectionString := 'Provider=SQLOLEDB.1;Persist Security Info=False;User ID=sa;Initial Catalog=JLML;password =sa;Data Source=XXJS-GD-LLF-PC\SQLEXPRESS';
+
+
+    end
+    else if SystemWorkground.DatabaseConnectType = '0' then
+    begin
+      computername := SystemWorkground.IPAddress; //使用IP地址连接
+      ADOConnection_Main.ConnectionString := 'Provider=SQLOLEDB.1;Password=2712425;Persist Security Info=False;User ID=SA;Initial Catalog=JLML;Data Source=' + computername;
+
+
+    end;
+
+
+
+    //无论哪种方法，以下都是必须的
+    ADOConnection_Main.Connected := True;
+    FreeMem(CNameBuffer, 255);
+    Dispose(CLen);
+
+
+  except
+  end;
+ //------------
+
+end;
+}
+
+
+//在Model加载的时候就建立连接
+
+procedure TDataModule_3F.DataModuleCreate(Sender: TObject);
+var
+  CNameBuffer: PChar;
+  fl_loaded: Boolean;
+  CLen: ^DWord;
+  ComputerName: string;
+
+begin
+  GetMem(CNameBuffer, 255);
+  New(CLen);
+  CLen^ := 255;
+  fl_loaded := GetComputerName(CNameBuffer, CLen^);
+  if fl_loaded then
+    ComputerName := StrPas(CNameBuffer) //获取计算机名即SQL Server数据库服务器名
+  else
+    ComputerName := 'Unkown';
+
+  with ADOConnection_Main do
+  begin
+    Connected := False;
+    LoginPrompt := False;
+    //SQLServer ConnectionString
+  //  ConnectionString := 'Provider=SQLOLEDB.1;Persist Security Info=False;User ID=sa;Initial Catalog=JLML;password =sa;Data Source=' + ComputerName + '\SQLEXPRESS';
+
+    //Mysql ConnectionString
+    ConnectionString := 'Driver={MySQL ODBC 5.3 ANSI Driver}; Server=127.0.0.1; Database=sgbtdb; User=root; Password=root; Option=3;';
+    try
+      ConnectionTimeout := 3; //连接超时等待时间
+      CommandTimeout := 30; //执行命令超时时间
+      Connected := True; //连接
+    except
+      ShowMessage('database not connected');
+      raise;
+      Exit;
+    end;
+  end;
+end;
+
+
+
+
+ //获得总的计划数
+
+function TDataModule_3F.GetJHCount: string;
+var
+  ADOQ: TADOQuery;
+  strSQL, strRet: string;
+begin
+  strRet := '0';
+  strSQL := 'select max(生产次序号) from [JNYH_生产]';
+  ADOQ := TADOQuery.Create(nil);
+
+  with ADOQ do begin
+    Connection := ADOConnection_Main;
+    SQL.Clear;
+    SQL.Add(strSQL);
+    Open;
+    if (not eof) then
+      strRet := ADOQ.Fields[0].AsString;
+    Close;
+  end;
+  FreeAndNil(ADOQ);
+
+  Result := strRet;
+end;
+
+//保存当前生产完成的数量，从计划中-1，完成及总完成处加1
+
+procedure TDataModule_3F.SaveCurJHSL(xh: string);
+var
+  ADOQ: TADOQuery;
+  strSQL: string;
+begin
+  strSQL := 'select [短型号],[计划数量],[本次完成数量],[总共完成数量] from '
+    + ' JNYH_工作计划 where [短型号]=''' + xh + '''';
+  ADOQ := TADOQuery.Create(nil);
+  with ADOQ do begin
+    Connection := ADOConnection_Main;
+    Active := false;
+    SQL.Clear;
+    SQL.Add(strSQL);
+    Active := true;
+
+    if (RecordCount > 0) then begin
+
+      Edit;
+      FieldByName('计划数量').AsInteger := FieldByName('计划数量').AsInteger - 1;
+      FieldByName('本次完成数量').AsInteger := FieldByName('本次完成数量').AsInteger + 1;
+      FieldByName('总共完成数量').AsInteger := FieldByName('总共完成数量').AsInteger + 1;
+      Post;
+    end
+    else begin
+      ;
+    end;
+    Active := False;
+  end;
+  FreeAndNil(ADOQ);
+end;
+
+procedure TDataModule_3F.DeleteSCWC(xh: string);
+var
+  ADOQ: TADOQuery;
+  strSQL: string;
+begin
+  strSQL := 'delete  from '
+    + ' JNYH_生产 where [状态]=''完成''';
+
+  ADOQ := TADOQuery.Create(nil);
+  with ADOQ do begin
+    Connection := ADOConnection_Main;
+    ADOQ.Active := false;
+    SQL.Clear;
+    SQL.Add(strSQL);
+    ADOQ.ExecSQL;
+  end;
+  FreeAndNil(ADOQ);
+end;
+//记录当前发动机的生产流水号、及日期时间
+
+procedure TDataModule_3F.SaveCurRecord(dxh, lsh: string);
+var
+  ADOQ: TADOQuery;
+  strSQL: string;
+begin
+  strSQL := 'select [短型号],[流水号],[日期] from '
+    + ' JNYH_流水线生产  ';
+
+  ADOQ := TADOQuery.Create(nil);
+  with ADOQ do begin
+    Connection := ADOConnection_Main;
+    Active := false;
+    SQL.Clear;
+    SQL.Add(strSQL);
+    Active := true;
+
+    Append;
+    FieldByName('短型号').AsString := dxh;
+    FieldByName('流水号').AsString := lsh;
+    FieldByName('日期').AsString := FormatDateTime('yyyy-MM-dd HH:mm:ss', now);
+    Post;
+    Active := False;
+  end;
+  FreeAndNil(ADOQ);
+end;
+
+
+//目前不用    //保存最后写入托盘后的记录
+
+procedure TDataModule_3F.SaveWriteDI(dxh, lsh, rq: string);
+var
+  ADOQ: TADOQuery;
+  strSQL: string;
+begin
+  strSQL := 'select [短型号],[流水号],[日期] from '
+    + ' JNYH_写卡结束 ';
+  ADOQ := TADOQuery.Create(nil);
+  with ADOQ do begin
+    Connection := ADOConnection_Main;
+    Active := false;
+    SQL.Clear;
+    SQL.Add(strSQL);
+    Active := true;
+
+    if (RecordCount > 0) then begin
+      Append;
+      FieldByName('短型号').AsString := dxh;
+      FieldByName('流水号').AsString := lsh;
+      FieldByName('日期').AsString := rq; //FormatDateTime('yyyy-MM-dd HH:mm:ss',now);
+      Post;
+    end;
+    Active := False;
+  end;
+  FreeAndNil(ADOQ);
+end;
+
+//存入异常缸体
+
+procedure TDataModule_3F.SaveErrorGT(dxh: string);
+var
+  ADOQ: TADOQuery;
+  strSQL: string;
+begin
+  strSQL := 'select [短型号],[完成状态],[日期] from '
+    + ' JNYH_异常缸体  ';
+
+  ADOQ := TADOQuery.Create(nil);
+  with ADOQ do begin
+    Connection := ADOConnection_Main;
+    Active := false;
+    SQL.Clear;
+    SQL.Add(strSQL);
+    Active := true;
+
+    Append;
+    FieldByName('短型号').AsString := dxh;
+    FieldByName('完成状态').AsString := '等待';
+    FieldByName('日期').AsString := FormatDateTime('yyyy-MM-dd HH:mm:ss', now);
+    Post;
+    Active := False;
+  end;
+  FreeAndNil(ADOQ);
+end;
+
+
+//获得错误缸体号
+
+function TDataModule_3F.GetErrorGT: string;
+var
+  ADOQ: TADOQuery;
+  strSQL, strTemp: string;
+begin
+  strSQL := 'select [短型号],[完成状态],[日期] from '
+    + ' JNYH_异常缸体 where 完成状态=''等待''  order by id asc';
+  strTemp := '';
+  ADOQ := TADOQuery.Create(nil);
+  with ADOQ do begin
+    Connection := ADOConnection_Main;
+    Active := false;
+    SQL.Clear;
+    SQL.Add(strSQL);
+    Active := true;
+
+    if (RecordCount > 0) then begin
+      //Edit;
+      //FieldByName('完成状态').AsString:='完成';
+      //Post;
+      strTemp := FieldByName('短型号').AsString;
+    end;
+    Active := False;
+  end;
+  FreeAndNil(ADOQ);
+  Result := strTemp;
+end;
+
+
+//更新错误的机体号
+
+procedure TDataModule_3F.UpdateErrorGT;
+var
+  ADOQ: TADOQuery;
+  strSQL, strTemp: string;
+begin
+  strSQL := 'select [短型号],[完成状态],[日期] from '
+    + ' JNYH_异常缸体 where 完成状态=''等待''  order by id asc';
+  strTemp := '';
+  ADOQ := TADOQuery.Create(nil);
+  with ADOQ do begin
+    Connection := ADOConnection_Main;
+    Active := false;
+    SQL.Clear;
+    SQL.Add(strSQL);
+    Active := true;
+
+    if (RecordCount > 0) then begin
+      Edit;
+      FieldByName('完成状态').AsString := '完成';
+      Post;
+      strTemp := FieldByName('短型号').AsString;
+    end;
+    Active := False;
+  end;
+  FreeAndNil(ADOQ);
+end;
+
+function TDataModule_3F.QuerystrStationNO(IPStr: string): string;
+var
+  ADOQTemp: TADOQuery;
+  strSQL: string;
+  reTmpStr: string;
+begin
+  ADOQTemp := TADOQuery.Create(nil);
+  strSQL := 'select distinct [Station_NO] from [3F_IP_ADD] where IP_Addr=''' + IPStr + '''';
+  with ADOQTemp do
+  begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    SQL.Clear;
+    SQL.Add(strSQL);
+    Active := True;
+    if (RecordCount > 0) then
+      reTmpStr := IntToStr(StrToInt(TrimRight(ADOQTemp.Fields[0].AsString)))
+    else
+      exit;
+  end;
+  FreeAndNil(ADOQTemp);
+  Result := reTmpStr;
+end;
+
+
+//登陆确认身份、合法性
+
+function TDataModule_3F.Query_ID_OK(LoadID_Infor: string): Boolean;
+var
+  ADOQ: TADOQuery;
+begin
+  ADOQ := TADOQuery.Create(Self);
+  ADOQ.Connection := DataModule_3F.ADOConnection_Main;
+
+  with ADOQ do begin
+    Close;
+    SQL.Clear;
+    SQL.Add('select * from USER_ID_INIT where ID_INIT=''' + LoadID_Infor + '''');
+    Open;
+    if (Eof) then
+      result := false
+    else
+      result := true;
+  end;
+  ADOQ.Close;
+  ADOQ.Free;
+end;
+
+//确认当前卡是否已经完成了场地初始化
+
+function TDataModule_3F.Query_ID_INIT_OK(ID_INIT: string): Boolean;
+var
+  ADOQ: TADOQuery;
+begin
+  ADOQ := TADOQuery.Create(Self);
+  ADOQ.Connection := DataModule_3F.ADOConnection_Main;
+
+  with ADOQ do begin
+    Close;
+    SQL.Clear;
+    SQL.Add('select * from [3F_ID_INIT] where ID_INIT=''' + ID_INIT + '''');
+    Open;
+    if (Eof) then
+      result := false
+    else
+      result := true;
+  end;
+  ADOQ.Close;
+  ADOQ.Free;
+end;
+
+ //确认当前卡是否已经完成了场地初始化
+
+function TDataModule_3F.Query_User_INIT_OK(ID_INIT: string): Boolean;
+var
+  ADOQ: TADOQuery;
+begin
+  ADOQ := TADOQuery.Create(Self);
+  ADOQ.Connection := DataModule_3F.ADOConnection_Main;
+
+  with ADOQ do begin
+    Close;
+    SQL.Clear;
+   //20130101修改
+    SQL.Add('select * from [USER_ID_INIT] where ID_INIT=''' + ID_INIT + '''');
+    Open;
+    if (Eof) then
+      result := false
+    else
+      result := true;
+  end;
+  ADOQ.Close;
+  ADOQ.Free;
+end;
+
+
+function TDataModule_3F.queryExistInitialRecord(ID_INIT: string): Boolean;
+var
+  ADOQ: TADOQuery;
+  strSQL :String;
+begin
+  ADOQ := TADOQuery.Create(Self);
+  ADOQ.Connection := DataModule_3F.ADOConnection_Main;
+
+  with ADOQ do begin
+    Close;
+    SQL.Clear;
+
+   //20130101修改
+    strSQL := 'select * from t_id_init where bandid=''' + ID_INIT + '''';
+    ICFunction.loginfo('Exist check  strSQL: ' + strSQL);
+    SQL.Add(strSQL);
+    Open;
+    if (Eof) then
+      result := false
+    else
+      result := true;
+  end;
+  ADOQ.Close;
+  ADOQ.Free;
+end;
+
+
+
+//根据读取的条码值流水，查询数据库中是否已经有相同记录，如果有则提示
+
+function TDataModule_3F.Querystr_Flow_Only(StrFLOW: string): string;
+var
+  ADOQTemp: TADOQuery;
+  strSQL: string;
+  reTmpStr: string;
+begin
+  ADOQTemp := TADOQuery.Create(nil);
+  strSQL := 'select [FLOWbar] from [3F_BARFLOW] where FLOWbar=''' + StrFLOW + '''';
+
+  with ADOQTemp do
+  begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    SQL.Clear;
+    SQL.Add(strSQL);
+    Active := True;
+    if (RecordCount > 0) then
+      reTmpStr := TrimRight(ADOQTemp.Fields[0].AsString)
+    else
+    begin
+      Result := 'no_record';
+                        //exit;
+    end;
+  end;
+  FreeAndNil(ADOQTemp);
+  Result := reTmpStr;
+end;
+//根据读取的条码值积分，查询数据库中是否已经有相同记录，如果有则提示
+
+function TDataModule_3F.Querystr_Core_Only(StrFLOW: string): string;
+var
+  ADOQTemp: TADOQuery;
+  strSQL: string;
+  reTmpStr: string;
+begin
+  ADOQTemp := TADOQuery.Create(nil);
+  strSQL := 'select [COREBar] from [3F_BARFLOW] where COREBar=''' + StrFLOW + '''';
+  with ADOQTemp do
+  begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    SQL.Clear;
+    SQL.Add(strSQL);
+    Active := True;
+    if (RecordCount > 0) then
+      reTmpStr := TrimRight(ADOQTemp.Fields[0].AsString)
+    else
+    begin
+      Result := 'no_record';
+                        //exit;
+    end;
+  end;
+  FreeAndNil(ADOQTemp);
+  Result := reTmpStr;
+end;
+
+
+
+//根据读取的条码值流水，查询数据库中是否已经有相同记录，如果有则提示
+
+function TDataModule_3F.Querystr_CardHeadID_Only(StrCardID: string): string;
+var
+  ADOQTemp: TADOQuery;
+  strSQL: string;
+  reTmpStr: string;
+begin
+  ADOQTemp := TADOQuery.Create(nil);
+  strSQL := 'select [Card_ID_MC] from [TChargMacSet] where Card_ID_MC=''' + StrCardID + '''';
+
+  with ADOQTemp do
+  begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    SQL.Clear;
+    SQL.Add(strSQL);
+    Active := True;
+    if (RecordCount > 0) then
+      reTmpStr := TrimRight(ADOQTemp.Fields[0].AsString)
+    else
+    begin
+      Result := 'no_record';
+                        //exit;
+    end;
+  end;
+  FreeAndNil(ADOQTemp);
+  Result := reTmpStr;
+end;
+
+//根据读取的条码值流水，查询数据库中是否已经有相同记录，如果有则提示
+
+function TDataModule_3F.Query3F_CardHeadID_Only(StrCardID: string): string;
+var
+  ADOQTemp: TADOQuery;
+  strSQL: string;
+  reTmpStr: string;
+begin
+  ADOQTemp := TADOQuery.Create(nil);
+  strSQL := 'select [CardHead_ID_IC] from [TCardHead_Init] where CardHead_ID_IC=''' + StrCardID + '''';
+
+  with ADOQTemp do
+  begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    SQL.Clear;
+    SQL.Add(strSQL);
+    Active := True;
+    if (RecordCount > 0) then
+      reTmpStr := TrimRight(ADOQTemp.Fields[0].AsString)
+    else
+    begin
+      Result := 'no_record';
+                        //exit;
+    end;
+  end;
+  FreeAndNil(ADOQTemp);
+  Result := reTmpStr;
+end;
+
+//根据读取的条码值流水，查询数据库中是否已经有相同记录，如果有则提示
+
+function TDataModule_3F.Query3F_CardHeadID_Customer_Name(StrCardID: string): string;
+var
+  ADOQTemp: TADOQuery;
+  strSQL: string;
+  reTmpStr: string;
+begin
+  ADOQTemp := TADOQuery.Create(nil);
+  strSQL := 'select [Customer_Name],[Customer_NO] from [TCardHead_Init] where CardHead_ID_IC=''' + StrCardID + '''';
+
+  with ADOQTemp do
+  begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    SQL.Clear;
+    SQL.Add(strSQL);
+    Active := True;
+    if (RecordCount > 0) then
+      reTmpStr := '客户' + TrimRight(ADOQTemp.Fields[0].AsString) + '的' + TrimRight(ADOQTemp.Fields[1].AsString) + '场地'
+    else
+    begin
+      Result := 'no_record';
+                        //exit;
+    end;
+  end;
+  FreeAndNil(ADOQTemp);
+  Result := reTmpStr;
+end;
+
+function TDataModule_3F.Query_MenberNo(StrMemberName: string): string;
+var
+  ADOQTemp: TADOQuery;
+  strSQL: string;
+  strWhere: string;
+
+begin
+  ADOQTemp := TADOQuery.Create(nil);
+  strWhere := 'select IDCardNo from [TMemberInfo] where MemberName=''' + StrMemberName + '''';
+
+  strSQL := '' + strWhere + '';
+  Result := '';
+  with ADOQTemp do
+  begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    SQL.Clear;
+    SQL.Add(strSQL);
+    Active := True;
+    Result := ADOQTemp.Fields[0].AsString;
+  end;
+  FreeAndNil(ADOQTemp);
+
+end;
+
+function TDataModule_3F.Query_UserNo(StrUserNo: string): string;
+var
+  ADOQTemp: TADOQuery;
+  strSQL: string;
+  strWhere: string;
+
+begin
+  ADOQTemp := TADOQuery.Create(nil);
+  strWhere := 'select UserID from[3F_SysUser] where UserNo=''' + StrUserNo + '''';
+
+  strSQL := '' + strWhere + '';
+  Result := '';
+  with ADOQTemp do
+  begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    SQL.Clear;
+    SQL.Add(strSQL);
+    Active := True;
+    Result := ADOQTemp.Fields[0].AsString;
+  end;
+  FreeAndNil(ADOQTemp);
+
+end;
+
+
+procedure TDataModule_3F.executesql(strsql: string);
+{
+Author: 553
+Func:用来执行DML语句
+param1:DML Sql语句
+Date: 20140305
+}
+begin
+  with ADOQuery1 do
+  begin
+    connection := ADOConnection1;
+    Close; //关闭ADOQuery1，以便于进行SQL语句更新
+    SQL.Clear; //清空SQL语句
+    SQL.Add(strsql); //添加新的SQL
+    //debug info
+    //showmessage(strsql);
+    Prepared;
+    ExecSQL; //execsql执行DML语句
+
+  end;
+
+end;
+
+
+
+
+
+end.
+

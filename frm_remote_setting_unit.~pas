@@ -1,0 +1,31 @@
+unit frm_remote_setting_unit;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, ExtCtrls;
+
+type
+  Tfrm_remote_setting = class(TForm)
+    Panel1: TPanel;
+    Label1: TLabel;
+    edt: TEdit;
+    procedure edtKeyPress(Sender: TObject; var Key: Char);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frm_remote_setting: Tfrm_remote_setting;
+
+implementation
+
+{$R *.dfm}
+
+
+
+
+
