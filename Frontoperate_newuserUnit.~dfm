@@ -1,6 +1,6 @@
 object frm_Frontoperate_newuser: Tfrm_Frontoperate_newuser
-  Left = 654
-  Top = 235
+  Left = 384
+  Top = 87
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = #20250#21592#31649#29702'-'#26032#24314#29992#25143
@@ -26,13 +26,12 @@ object frm_Frontoperate_newuser: Tfrm_Frontoperate_newuser
     Align = alBottom
     Caption = 'Panel1'
     TabOrder = 0
-    object DBGrid2: TDBGrid
+    object dbgrdMember: TDBGrid
       Left = 1
       Top = 1
       Width = 596
       Height = 156
       Align = alClient
-      DataSource = DataSource_Newmenber
       Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
       TabOrder = 0
       TitleFont.Charset = DEFAULT_CHARSET
@@ -1720,255 +1719,54 @@ object frm_Frontoperate_newuser: Tfrm_Frontoperate_newuser
       Align = alClient
       Caption = 'Panel1'
       TabOrder = 1
-      object GroupBox4: TGroupBox
+      object GroupBox5: TGroupBox
         Left = 1
         Top = 1
         Width = 484
-        Height = 81
-        Align = alTop
-        Caption = #26032#21345#26597#35810#21450#21345#31867#22411#26356#25913
-        TabOrder = 0
-        object Label1: TLabel
-          Left = 17
-          Top = 17
-          Width = 60
-          Height = 13
-          Caption = #24080#25143#31867#22411#65306
-        end
-        object Label2: TLabel
-          Left = 16
-          Top = 48
-          Width = 47
-          Height = 13
-          Caption = #21345'ID'#21495#65306
-        end
-        object Label15: TLabel
-          Left = 224
-          Top = 49
-          Width = 34
-          Height = 29
-          Caption = '*    '
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -24
-          Font.Name = 'MS Sans Serif'
-          Font.Style = []
-          ParentFont = False
-        end
-        object Label17: TLabel
-          Left = 224
-          Top = 18
-          Width = 34
-          Height = 29
-          Caption = '*    '
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -24
-          Font.Name = 'MS Sans Serif'
-          Font.Style = []
-          ParentFont = False
-        end
-        object Label23: TLabel
-          Left = 256
-          Top = 44
-          Width = 218
-          Height = 20
-          Caption = #35828#26126#65306#24102'*'#34920#31034#24517#39035#22635#20889'             '
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -16
-          Font.Name = 'MS Sans Serif'
-          Font.Style = []
-          ParentFont = False
-        end
-        object ComboBox_Menbertype: TComboBox
-          Left = 80
-          Top = 16
-          Width = 137
-          Height = 21
-          ItemHeight = 13
-          TabOrder = 0
-          Text = #20250#21592#21345
-        end
-        object Edit_IDNo: TEdit
-          Left = 80
-          Top = 48
-          Width = 137
-          Height = 21
-          Enabled = False
-          TabOrder = 1
-        end
-        object Bit_Query: TBitBtn
-          Left = 328
-          Top = 40
-          Width = 129
-          Height = 33
-          Caption = #26597#35810
-          TabOrder = 2
-          Visible = False
-          OnClick = Bit_QueryClick
-        end
-        object Edit1: TEdit
-          Left = 248
-          Top = 16
-          Width = 105
-          Height = 21
-          TabOrder = 3
-          Text = 'Edit1'
-          Visible = False
-        end
-        object Edit2: TEdit
-          Left = 368
-          Top = 16
-          Width = 105
-          Height = 21
-          TabOrder = 4
-          Text = 'Edit2'
-          Visible = False
-        end
-      end
-      object GroupBox5: TGroupBox
-        Left = 1
-        Top = 82
-        Width = 484
-        Height = 235
+        Height = 316
         Align = alClient
         Caption = #29992#25143#22522#26412#36164#26009#24405#20837
-        TabOrder = 1
-        object Label3: TLabel
-          Left = 17
-          Top = 33
-          Width = 60
-          Height = 13
-          Caption = #21360#21047#21345#21495#65306
-        end
-        object Label4: TLabel
-          Left = 17
-          Top = 65
-          Width = 60
-          Height = 13
-          Caption = #29992#25143#22995#21517#65306
-        end
-        object Label5: TLabel
-          Left = 17
-          Top = 105
-          Width = 60
-          Height = 13
-          Caption = #29992#25143#29983#26085#65306
-        end
-        object Label6: TLabel
-          Left = 17
-          Top = 137
-          Width = 60
-          Height = 13
-          Caption = #36523#20221#35777#21495#65306
-        end
+        TabOrder = 0
         object Label7: TLabel
-          Left = 250
-          Top = 137
+          Left = 257
+          Top = 82
           Width = 48
           Height = 13
           Caption = #21345#25276#37329#65306
         end
         object Label8: TLabel
-          Left = 17
-          Top = 165
+          Left = 253
+          Top = 144
           Width = 60
-          Height = 13
+          Height = 12
           Caption = #39044#30041#23494#30721#65306
         end
-        object Label10: TLabel
-          Left = 145
-          Top = 105
-          Width = 6
-          Height = 13
-          Caption = '_'
-        end
         object Label13: TLabel
-          Left = 248
-          Top = 104
+          Left = 21
+          Top = 144
           Width = 60
           Height = 13
           Caption = #25163#26426#21495#30721#65306
         end
-        object Label14: TLabel
-          Left = 456
-          Top = 168
-          Width = 16
-          Height = 29
-          Caption = '* '
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -24
-          Font.Name = 'MS Sans Serif'
-          Font.Style = []
-          ParentFont = False
-        end
-        object Label16: TLabel
-          Left = 224
-          Top = 65
-          Width = 34
-          Height = 29
-          Caption = '*    '
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -24
-          Font.Name = 'MS Sans Serif'
-          Font.Style = []
-          ParentFont = False
-        end
-        object Label18: TLabel
-          Left = 456
-          Top = 137
-          Width = 22
-          Height = 29
-          Caption = '*  '
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -24
-          Font.Name = 'MS Sans Serif'
-          Font.Style = []
-          ParentFont = False
-        end
-        object Label19: TLabel
-          Left = 224
-          Top = 165
-          Width = 34
-          Height = 29
-          Caption = '*    '
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -24
-          Font.Name = 'MS Sans Serif'
-          Font.Style = []
-          ParentFont = False
-        end
         object Label9: TLabel
-          Left = 248
+          Left = 16
           Top = 32
-          Width = 47
-          Height = 13
-          Caption = #21345'ID'#21495#65306
-        end
-        object Label12: TLabel
-          Left = 248
-          Top = 64
           Width = 60
           Height = 13
-          Caption = #24615#21035#31867#22411#65306
+          Caption = #20250#21592#21345#21495#65306
         end
         object Label11: TLabel
-          Left = 249
-          Top = 169
+          Left = 17
+          Top = 80
           Width = 60
           Height = 13
           Caption = #29992#25143#31561#32423#65306
         end
         object Label20: TLabel
           Left = 17
-          Top = 197
+          Top = 215
           Width = 60
-          Height = 13
+          Height = 12
           Caption = #25805#20316#25552#31034#65306
           Color = clBtnFace
           Font.Charset = DEFAULT_CHARSET
@@ -1979,155 +1777,46 @@ object frm_Frontoperate_newuser: Tfrm_Frontoperate_newuser
           ParentColor = False
           ParentFont = False
         end
-        object Label21: TLabel
-          Left = 456
-          Top = 105
-          Width = 16
-          Height = 29
-          Caption = '* '
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -24
-          Font.Name = 'MS Sans Serif'
-          Font.Style = []
-          ParentFont = False
-        end
-        object Label22: TLabel
-          Left = 224
-          Top = 134
-          Width = 16
-          Height = 29
-          Caption = '* '
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -24
-          Font.Name = 'MS Sans Serif'
-          Font.Style = []
-          ParentFont = False
-        end
-        object Edit_ID: TEdit
-          Left = 328
+        object lbl1: TLabel
+          Left = 253
           Top = 32
+          Width = 47
+          Height = 13
+          Caption = #20250#21592'ID'#65306
+        end
+        object edtMemberNO: TEdit
+          Left = 101
+          Top = 30
           Width = 129
           Height = 21
           Enabled = False
           TabOrder = 0
         end
-        object Edit_PrintNO: TEdit
-          Left = 80
-          Top = 32
-          Width = 137
+        object edtLeftMoney: TEdit
+          Left = 335
+          Top = 81
+          Width = 129
           Height = 21
-          Enabled = False
           TabOrder = 1
-          OnKeyPress = Edit_PrintNOKeyPress
+          Text = '50'
+          OnKeyPress = edtLeftMoneyKeyPress
         end
-        object Edit_Username: TEdit
-          Left = 80
-          Top = 64
-          Width = 137
-          Height = 21
+        object edtPassword: TEdit
+          Left = 336
+          Top = 143
+          Width = 129
+          Height = 20
+          MaxLength = 6
+          PasswordChar = '*'
           TabOrder = 2
         end
-        object Comb_Month: TComboBox
-          Left = 80
-          Top = 104
-          Width = 65
+        object cbbMemberType: TComboBox
+          Left = 104
+          Top = 79
+          Width = 129
           Height = 21
           ItemHeight = 13
           TabOrder = 3
-          Text = '01'
-          OnKeyPress = Comb_MonthKeyPress
-          Items.Strings = (
-            '01'
-            '02'
-            '03'
-            '04'
-            '05'
-            '06'
-            '07'
-            '08'
-            '09'
-            '10'
-            '11'
-            '12')
-        end
-        object Comb_Day: TComboBox
-          Left = 154
-          Top = 104
-          Width = 65
-          Height = 21
-          ItemHeight = 13
-          TabOrder = 4
-          Text = '01'
-          OnKeyPress = Comb_DayKeyPress
-          Items.Strings = (
-            '01'
-            '02'
-            '03'
-            '04'
-            '05'
-            '06'
-            '07'
-            '08'
-            '09'
-            '10'
-            '11'
-            '12'
-            '13'
-            '14'
-            '15'
-            '16'
-            '17'
-            '18'
-            '19'
-            '20'
-            '21'
-            '22'
-            '23'
-            '24'
-            '25'
-            '26'
-            '27'
-            '28'
-            '29'
-            '30'
-            '31')
-        end
-        object Edit_Certify: TEdit
-          Left = 80
-          Top = 136
-          Width = 137
-          Height = 21
-          MaxLength = 18
-          TabOrder = 5
-          OnKeyPress = Edit_CertifyKeyPress
-        end
-        object Edit_SaveMoney: TEdit
-          Left = 328
-          Top = 136
-          Width = 129
-          Height = 21
-          TabOrder = 6
-          Text = '50'
-          OnKeyPress = Edit_SaveMoneyKeyPress
-        end
-        object Edit_Prepassword: TEdit
-          Left = 80
-          Top = 164
-          Width = 137
-          Height = 21
-          MaxLength = 6
-          PasswordChar = '*'
-          TabOrder = 7
-        end
-        object Comb_menberlevel: TComboBox
-          Left = 328
-          Top = 168
-          Width = 129
-          Height = 21
-          ItemHeight = 13
-          TabOrder = 8
           Text = #26222#36890#20250#21592
           Items.Strings = (
             #26222#36890#20250#21592
@@ -2135,32 +1824,20 @@ object frm_Frontoperate_newuser: Tfrm_Frontoperate_newuser
             #40644#37329'VIP'
             #30333#37329'VIP')
         end
-        object Edit_Mobile: TEdit
-          Left = 328
-          Top = 104
+        object edtMobileNO: TEdit
+          Left = 96
+          Top = 144
           Width = 129
           Height = 21
           MaxLength = 11
-          TabOrder = 9
-          OnKeyPress = Edit_MobileKeyPress
-        end
-        object rgSexOrg: TRadioGroup
-          Left = 328
-          Top = 57
-          Width = 129
-          Height = 32
-          Columns = 2
-          ItemIndex = 0
-          Items.Strings = (
-            #30007
-            #22899)
-          TabOrder = 10
+          TabOrder = 4
+          OnKeyPress = edtMobileNOKeyPress
         end
         object Panel_Message: TPanel
-          Left = 80
-          Top = 192
+          Left = 88
+          Top = 202
           Width = 377
-          Height = 33
+          Height = 32
           BevelOuter = bvNone
           Caption = #35831#21047#20250#21592#21345
           Color = clWindow
@@ -2170,25 +1847,15 @@ object frm_Frontoperate_newuser: Tfrm_Frontoperate_newuser
           Font.Name = 'MS Sans Serif'
           Font.Style = []
           ParentFont = False
-          TabOrder = 11
+          TabOrder = 5
         end
-        object Edit3: TEdit
+        object edtID: TEdit
           Left = 336
-          Top = 8
-          Width = 113
+          Top = 32
+          Width = 129
           Height = 21
-          TabOrder = 12
-          Text = 'Edit3'
-          Visible = False
-        end
-        object Edit4: TEdit
-          Left = 176
-          Top = 8
-          Width = 145
-          Height = 21
-          TabOrder = 13
-          Text = 'Edit4'
-          Visible = False
+          TabOrder = 6
+          Text = 'edtID'
         end
       end
     end
@@ -2224,42 +1891,12 @@ object frm_Frontoperate_newuser: Tfrm_Frontoperate_newuser
     Left = 537
     Top = 57
   end
-  object ADOQuery_newmenber: TADOQuery
-    Parameters = <>
-    Left = 545
-    Top = 412
+  object dsMember: TDataSource
+    DataSet = ADOQueryMemberRecord
+    Left = 529
+    Top = 324
   end
-  object DataSource_Newmenber: TDataSource
-    DataSet = ADOQuery_newmenber
-    Left = 505
-    Top = 412
-  end
-  object DataSource1: TDataSource
-    DataSet = ADOQuery1
-    Left = 321
-    Top = 380
-  end
-  object ADOQuery1: TADOQuery
-    Parameters = <>
-    Left = 353
-    Top = 380
-  end
-  object DataSource2: TDataSource
-    DataSet = ADOQuery2
-    Left = 409
-    Top = 404
-  end
-  object ADOQuery2: TADOQuery
-    Parameters = <>
-    Left = 441
-    Top = 404
-  end
-  object DataSource3: TDataSource
-    DataSet = ADOQuery_renewmenberrecord
-    Left = 521
-    Top = 364
-  end
-  object ADOQuery_renewmenberrecord: TADOQuery
+  object ADOQueryMemberRecord: TADOQuery
     Parameters = <>
     Left = 561
     Top = 324

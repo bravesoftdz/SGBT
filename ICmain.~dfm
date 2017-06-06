@@ -1,6 +1,6 @@
 object Frm_IC_Main: TFrm_IC_Main
-  Left = 225
-  Top = 0
+  Left = 230
+  Top = 79
   Width = 1010
   Height = 600
   BorderIcons = [biSystemMenu, biMinimize]
