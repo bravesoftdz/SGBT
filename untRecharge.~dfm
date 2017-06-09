@@ -1,8 +1,8 @@
 object frmRecharge: TfrmRecharge
-  Left = 464
-  Top = 154
-  Width = 897
-  Height = 610
+  Left = 525
+  Top = 271
+  Width = 901
+  Height = 612
   BorderStyle = bsSizeToolWin
   Caption = #20805#20540#30028#38754
   Color = clBtnFace
@@ -37,7 +37,7 @@ object frmRecharge: TfrmRecharge
         Top = 41
         Width = 153
         Height = 49
-        Caption = #22312#32447#20805#20540
+        Caption = #30830#35748#30003#35831
         TabOrder = 0
         OnClick = btnOnlineRechargeClick
       end
@@ -46,7 +46,7 @@ object frmRecharge: TfrmRecharge
         Top = 120
         Width = 153
         Height = 42
-        Caption = #32447#19979#20805#20540
+        Caption = #30830#35748#36864#21345
         TabOrder = 1
         OnClick = btnOfflineRechargeClick
       end
@@ -56,7 +56,7 @@ object frmRecharge: TfrmRecharge
       Top = 8
       Width = 617
       Height = 229
-      Caption = #20805#20540#20449#24687
+      Caption = #20250#21592#20449#24687
       TabOrder = 1
       object Label1: TLabel
         Left = 9
@@ -65,7 +65,7 @@ object frmRecharge: TfrmRecharge
         Height = 33
         Alignment = taCenter
         AutoSize = False
-        Caption = #25163#29615'ID'
+        Caption = #25163#29615'ID:'
       end
       object Label2: TLabel
         Left = 320
@@ -78,12 +78,12 @@ object frmRecharge: TfrmRecharge
       end
       object Label3: TLabel
         Left = 319
-        Top = 123
+        Top = 130
         Width = 123
-        Height = 33
+        Height = 35
         Alignment = taCenter
         AutoSize = False
-        Caption = #20313#24065#25968
+        Caption = #20313#24065':'
       end
       object Label4: TLabel
         Left = 9
@@ -92,7 +92,7 @@ object frmRecharge: TfrmRecharge
         Height = 33
         Alignment = taCenter
         AutoSize = False
-        Caption = #20805#20540#24065#25968
+        Caption = #20805#20540#24065':'
       end
       object lblMessage: TLabel
         Left = 8
@@ -119,7 +119,7 @@ object frmRecharge: TfrmRecharge
         Height = 25
         Alignment = taCenter
         AutoSize = False
-        Caption = #21345#31867#22411
+        Caption = #31867#22411#65306
       end
       object edtBandID: TEdit
         Left = 148
@@ -139,9 +139,9 @@ object frmRecharge: TfrmRecharge
       end
       object edtLeftCoin: TEdit
         Left = 445
-        Top = 128
+        Top = 131
         Width = 148
-        Height = 21
+        Height = 23
         ReadOnly = True
         TabOrder = 2
       end
@@ -174,7 +174,7 @@ object frmRecharge: TfrmRecharge
       Top = 240
       Width = 857
       Height = 329
-      Caption = #20805#20540#35760#24405
+      Caption = #20250#21592#35760#24405
       TabOrder = 2
       object dgRecharge: TDBGrid
         Left = 0

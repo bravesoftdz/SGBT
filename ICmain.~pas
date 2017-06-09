@@ -68,6 +68,8 @@ type
     pnlOperator: TPanel;
     pnl6: TPanel;
     pnl5: TPanel;
+    btn6: TToolButton;
+    btn7: TToolButton;
     procedure BitBtn_TestICClick(Sender: TObject);
     procedure BitBtn_FrontoperateClick(Sender: TObject);
     procedure BitBtn_AculateClick(Sender: TObject);
@@ -166,6 +168,7 @@ type
     procedure btn5Click(Sender: TObject);
     procedure tlb1CustomDraw(Sender: TToolBar; const ARect: TRect;
       var DefaultDraw: Boolean);
+    procedure btn7Click(Sender: TObject);
 
 
   private
@@ -200,7 +203,7 @@ uses ICtest_Main, FrontoperateUnit, AculateUnit, BehindoperateUnit,
   AboutUnit, Frontoperate_newCustomerUnit,
   IC_SetParameter_DataBaseInitUnit, IC_SetParameter_BiLiUnit, Logon,
   IC_SetParameter_MaxDateUnit, IC_SetParameter_MenberControlUnit,
-  check_detail, contact, untRecharge, untInitialRecord, untSumAccount;
+  check_detail, contact, untRecharge, untInitialRecord, untSumAccount,untNewMember;
 
 {$R *.dfm}
 
@@ -820,6 +823,11 @@ begin
  // bitmap.LoadFromFile('F:\3F\40_images\Toolbar_BG.bmp');
  // tlb1.Canvas.StretchDraw(ARect,bitmap);
   bitmap.Free;
+end;
+
+procedure TFrm_IC_Main.btn7Click(Sender: TObject);
+begin
+  frmNewMember.ShowModal;
 end;
 
 end.

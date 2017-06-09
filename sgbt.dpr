@@ -21,7 +21,8 @@ uses
   StandardDES in 'StandardDES.pas',
   untSumAccount in 'untSumAccount.pas' {frmAccountSum},
   untApplicationHardWareInfo in 'untApplicationHardWareInfo.pas',
-  untRegister in 'untRegister.pas' {frmRegister};
+  untRegister in 'untRegister.pas' {frmRegister},
+  untNewMember in 'untNewMember.pas' {frmNewMember};
 
 {$R *.res}
 
@@ -32,6 +33,7 @@ begin
   Application.CreateForm(TDataModule_3F, DataModule_3F);
   Application.CreateForm(TFrm_IC_Main, Frm_IC_Main);
   Application.CreateForm(TfrmRegister, frmRegister);
+  Application.CreateForm(TfrmNewMember, frmNewMember);
   //Application.CreateForm(Tfrm_frontoperate, frm_frontoperate);
   //Application.CreateForm(Tfrm_Behindoperate, frm_Behindoperate);
  // Application.CreateForm(Tfrm_SetParameter, frm_SetParameter);
