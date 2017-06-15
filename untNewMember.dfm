@@ -1,6 +1,6 @@
 object frmNewMember: TfrmNewMember
-  Left = 394
-  Top = 267
+  Left = 389
+  Top = 89
   Width = 883
   Height = 617
   BorderStyle = bsSizeToolWin
@@ -32,23 +32,23 @@ object frmNewMember: TfrmNewMember
       Height = 229
       Caption = #25805#20316
       TabOrder = 0
-      object btnOnlineRecharge: TButton
+      object btnSubmit: TButton
         Left = 40
         Top = 41
         Width = 153
         Height = 49
         Caption = #30830#35748#30003#35831
         TabOrder = 0
-        OnClick = btnOnlineRechargeClick
+        OnClick = btnSubmitClick
       end
-      object btnOfflineRecharge: TButton
+      object btnCancel: TButton
         Left = 40
         Top = 120
         Width = 153
         Height = 42
         Caption = #30830#35748#36864#21345
         TabOrder = 1
-        OnClick = btnOfflineRechargeClick
+        OnClick = btnCancelClick
       end
     end
     object GroupBox1: TGroupBox
@@ -137,7 +137,7 @@ object frmNewMember: TfrmNewMember
         ReadOnly = True
         TabOrder = 1
       end
-      object edtLeftCoin: TEdit
+      object edtMobileNO: TEdit
         Left = 445
         Top = 128
         Width = 148
@@ -145,7 +145,7 @@ object frmNewMember: TfrmNewMember
         ReadOnly = True
         TabOrder = 2
       end
-      object edtRechargeCoin: TEdit
+      object edtMemberNO: TEdit
         Left = 148
         Top = 128
         Width = 157
@@ -247,13 +247,13 @@ object frmNewMember: TfrmNewMember
       end
     end
   end
-  object ADOQRecharge: TADOQuery
+  object ADOQ: TADOQuery
     Parameters = <>
     Left = 280
     Top = 534
   end
   object dsRecharge: TDataSource
-    DataSet = ADOQRecharge
+    DataSet = ADOQ
     Left = 240
     Top = 536
   end

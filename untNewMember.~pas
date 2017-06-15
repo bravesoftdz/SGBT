@@ -16,16 +16,16 @@ type
     Label2: TLabel;
     edtShopID: TEdit;
     Label3: TLabel;
-    edtLeftCoin: TEdit;
+    edtMobileNO: TEdit;
     Label4: TLabel;
-    edtRechargeCoin: TEdit;
-    btnOnlineRecharge: TButton;
-    btnOfflineRecharge: TButton;
+    edtMemberNO: TEdit;
+    btnSubmit: TButton;
+    btnCancel: TButton;
     GroupBox3: TGroupBox;
     dgRecharge: TDBGrid;
     dsRecharge: TDataSource;
     commRecharge: TComm;
-    ADOQRecharge: TADOQuery;
+    ADOQ: TADOQuery;
     lblMessage: TLabel;
     Label5: TLabel;
     edtAPPID: TEdit;
@@ -34,9 +34,9 @@ type
     procedure commRechargeReceiveData(Sender: TObject; Buffer: Pointer;
       BufferLength: Word);
     procedure FormShow(Sender: TObject);
-    procedure btnOfflineRechargeClick(Sender: TObject);
+    procedure btnCancelClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure btnOnlineRechargeClick(Sender: TObject);
+    procedure btnSubmitClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -44,39 +44,18 @@ type
     { Public declarations }
 
         //数据库相关
-    function initRechargeRecord(): string;
-    procedure saveRechargeRecord(); //保存充值记录
+    function initDBRecord(): string;
+    procedure saveDBRecord(); //保存充值记录
         //卡头处理函数
     procedure checkCMDInfo();
     procedure initIncrOperation(strRechargeCoin: string); //充值操作，写数据个卡
     function caluSendCMD(strCMD: string; strIncrValue: string): string;
     procedure generateIncrValueCMD(S: string);
     procedure prcSendDataToCard();
-    procedure showCardInformation();
-    procedure returnFromIncrCMD();
+    procedure displayCardInformation();
+    procedure returnFromOperationCMD();
     procedure returnFromReadCMD();
     function checkCoinLimit(strWriteValue: string): boolean;
-
-    //线下充值请求接口
-    //function offlineRechargeApplyInterface() :TlkJSONbase;
-    function generateOfflineRechargeApplyURL(): string;
-    function getOfflineRechargeApplySignature(appId: string; bandId: string; coin: string; money: string; restCoin: string; shopId: string; timeStamp: string): string;
-
-    //线下充值确认接口
-  //  function offlineRechargeAckInterface() :TlkJSONbase;
-    function generateOfflineRechargeAckURL(haokuTrxId: string; trxId: string): string;
-    function getOfflineRechargeAckSignature(appId: string; bandId: string; haokuTrxId: string; shopId: string; timeStamp: string; trxId: string): string;
-
-
-
-    //线上充值请求接口
-
-    function generateOnlineRechargeApplyURL(): string;
-    function getOnlineRechargeApplySignature(appId: string; bandId: string; restCoin: string; shopId: string; timeStamp: string): string;
-
-    //线上充值确认接口
-    function generateOnlineRechargeAckURL(haokuTrxId: string; trxId: string): string;
-    function getOnlineRechargeAckSignature(appId: string; bandId: string; haokuTrxId: string; shopId: string; timeStamp: string; trxId: string): string;
 
   end;
 
@@ -100,243 +79,20 @@ uses ICDataModule, ICCommunalVarUnit, ICmain, ICEventTypeUnit, ICFunctionUnit, d
 {$R *.dfm}
 
 
-//-----------------------线上充值-----------------------------------------------------------------
-
-
- //线上充值申请接口URL
-
-function TfrmNewMember.generateOnlineRechargeApplyURL(): string;
-var
-  strURL, appId, bandId, restCoin, shopId, timestamp, strSignature, strActiveURL, strhkscURL: string;
-begin
-  appId := SGBTCONFIGURE.appid;
-  bandId := edtBandID.Text;
-  restCoin := edtLeftCoin.Text;
-  shopId := SGBTCONFIGURE.shopid;
-  timestamp := getTimestamp();
-  strSignature := getOnlineRechargeApplySignature(appId, bandId, restCoin, shopId, timestamp);
-  strActiveURL := SGBTCONFIGURE.onlinepayapplyurl;
-  strhkscURL := SGBTCONFIGURE.hkscURL;
-
-  strURL := strhkscURL + strActiveURL
-    + '?appId=' + appId
-    + '&bandId=' + bandId
-    + '&restCoin=' + restCoin
-    + '&shopId=' + shopId
-    + '&timestamp=' + timestamp
-    + '&sign=' + strSignature;
-
-  result := strURL;
-end;
-
-
-
-//线上充值申请签名算法
-
-function TfrmNewMember.getOnlineRechargeApplySignature(appId: string; bandId: string; restCoin: string; shopId: string; timeStamp: string): string;
-var
-  strTempC, strTempD: string;
-  myMD5: TIdHashMessageDigest5;
-begin
-  myMD5 := TIdHashMessageDigest5.Create;
-  strTempC := 'appId' + appId
-    + 'bandId' + bandId
-    + 'restCoin' + restCoin
-    + 'shopId' + shopId
-    + 'timestamp' + timeStamp; //按字符顺序排序
-
-  strTempD := strTempC + SGBTCONFIGURE.secret_key; //加上secret_key
-  result := LowerCase(myMD5.AsHex(myMD5.HashValue(strTempD))); //计算字符串的MD5,并返回小写
-  myMD5.Free;
-
-end;
-
-
-
-
-
- //线上充值确认接口URL
-
-function TfrmNewMember.generateOnlineRechargeAckURL(haokuTrxId: string; trxId: string): string;
-var
-  strURL, appId, bandId, shopId, timestamp, strSignature, strActiveURL, strhkscURL: string;
-begin
-  appId := SGBTCONFIGURE.appid;
-  bandId := edtBandID.Text;
-  //haokuTrxId := edtLeftCoin.Text; // 需要从响应中返回
-  shopId := SGBTCONFIGURE.shopid;
-  timestamp := getTimestamp();
-  strSignature := getOnlineRechargeAckSignature(appId, bandId, haokuTrxId, shopId, timestamp, trxId); //字符顺序
-  strActiveURL := SGBTCONFIGURE.onlinepayackurl;
-  strhkscURL := SGBTCONFIGURE.hkscURL;
-
-  strURL := strhkscURL + strActiveURL
-    + '?appId=' + appId
-    + '&bandId=' + bandId
-    + '&haokuTrxId=' + haokuTrxId
-    + '&shopId=' + shopId
-    + '&trxId=' + trxId
-    + '&timestamp=' + timestamp
-    + '&sign=' + strSignature;
-  result := strURL;
-end;
-
-
-
-//线上充值确认签名算法
-
-function TfrmNewMember.getOnlineRechargeAckSignature(appId: string; bandId: string; haokuTrxId: string; shopId: string; timeStamp: string; trxId: string): string;
-var
-  strTempC, strTempD: string;
-  myMD5: TIdHashMessageDigest5;
-begin
-  myMD5 := TIdHashMessageDigest5.Create;
-  strTempC := 'appId' + appId
-    + 'bandId' + bandId
-    + 'haokuTrxId' + haokuTrxId
-    + 'shopId' + shopId
-    + 'timestamp' + timeStamp
-    + 'trxId' + trxId; //按字符顺序排序
-
-  strTempD := strTempC + SGBTCONFIGURE.secret_key; //加上secret_key
-  result := LowerCase(myMD5.AsHex(myMD5.HashValue(strTempD))); //计算字符串的MD5,并返回小写
-  myMD5.Free;
-
-end;
-
-
-
-//-----------------------线下充值-----------------------------------------------------------------
-
-
-
- //拼接线下充值申请接口URL
-
-function TfrmNewMember.generateOfflineRechargeApplyURL(): string;
-var
-  strURL, strAppID, strShopID, strBandID, strCoin, strRestCoin, strMoney, strTimeStamp, strSignature, strActiveURL, strhkscURL: string;
-begin
-  strAppID := SGBTCONFIGURE.appid;
-  strShopID := SGBTCONFIGURE.shopid;
-  strBandID := edtBandID.Text;
-  strCoin := edtRechargeCoin.Text;
-  strRestCoin := edtLeftCoin.Text;
-  strMoney := strCoin;
-  strTimeStamp := getTimestamp();
-  strSignature := getOfflineRechargeApplySignature(strAppID, strBandID, strCoin, strMoney, strRestCoin, strShopID, strTimeStamp);
-  strActiveURL := SGBTCONFIGURE.offlinepayapplyurl;
-  strhkscURL := SGBTCONFIGURE.hkscURL;
-
-  strURL := strhkscURL + strActiveURL + '?appId=' + strAppID
-    + '&bandId=' + strBandID
-    + '&coin=' + strCoin
-    + '&money=' + strMoney
-    + '&restCoin=' + strRestCoin
-    + '&shopId=' + strShopID
-    + '&timestamp=' + strTimeStamp
-    + '&sign=' + strSignature;
-
-  result := strURL;
-end;
-
-
-
-//线下充值申请签名算法
-
-function TfrmNewMember.getOfflineRechargeApplySignature(appId: string; bandId: string; coin: string; money: string; restCoin: string; shopId: string; timeStamp: string): string;
-var
-  strTempC, strTempD: string;
-  myMD5: TIdHashMessageDigest5;
-begin
-  myMD5 := TIdHashMessageDigest5.Create;
-  strTempC := 'appId' + appId
-    + 'bandId' + bandId
-    + 'coin' + coin
-    + 'money' + money
-    + 'restCoin' + restCoin
-    + 'shopId' + shopId
-    + 'timestamp' + timeStamp; //按字符顺序排序
-
-  strTempD := strTempC + SGBTCONFIGURE.secret_key; //加上secret_key
-  result := LowerCase(myMD5.AsHex(myMD5.HashValue(strTempD))); //计算字符串的MD5,并返回小写
-  myMD5.Free;
-
-end;
-
-
-
-
- //拼接线下充值确认接口URL
-
-function TfrmNewMember.generateOfflineRechargeAckURL(haokuTrxId: string; trxId: string): string;
-var
-  strURL, appId, bandId, shopId, timestamp, strSignature, strActiveURL, strhkscURL: string;
-begin
-  appId := SGBTCONFIGURE.appid;
-  bandId := edtBandID.Text;
-  //  haokuTrxId  := edtLeftCoin.Text; // 需要从响应中返回
-  shopId := SGBTCONFIGURE.shopid;
-  timestamp := getTimestamp();
-  //  trxId      :=  edtRechargeCoin.Text; // 需要从响应中返回
-
-  strSignature := getOfflineRechargeAckSignature(appId, bandId, haokuTrxId, shopId, timestamp, trxId); //字符顺序
-  strActiveURL := SGBTCONFIGURE.offlinepayackurl;
-  strhkscURL := SGBTCONFIGURE.hkscURL;
-
-  strURL := strhkscURL + strActiveURL
-    + '?appId=' + appId
-    + '&bandId=' + bandId
-    + '&haokuTrxId=' + haokuTrxId
-    + '&shopId=' + shopId
-    + '&trxId=' + trxId
-    + '&timestamp=' + timestamp
-    + '&sign=' + strSignature;
-  result := strURL;
-end;
-
-
-
-//线下充值确认签名算法
-
-function TfrmNewMember.getOfflineRechargeAckSignature(appId: string; bandId: string; haokuTrxId: string; shopId: string; timeStamp: string; trxId: string): string;
-var
-  strTempC, strTempD: string;
-  myMD5: TIdHashMessageDigest5;
-begin
-  myMD5 := TIdHashMessageDigest5.Create;
-  strTempC := 'appId' + appId
-    + 'bandId' + bandId
-    + 'haokuTrxId' + haokuTrxId
-    + 'shopId' + shopId
-    + 'timestamp' + timeStamp
-    + 'trxId' + trxId; //按字符顺序排序
-
-  strTempD := strTempC + SGBTCONFIGURE.secret_key; //加上secret_key
-  result := LowerCase(myMD5.AsHex(myMD5.HashValue(strTempD))); //计算字符串的MD5,并返回小写
-  myMD5.Free;
-
-end;
-
-//-----------------------线下充值-----------------------------------------------------------------
-
-
-
 procedure TfrmNewMember.FormShow(Sender: TObject);
 begin
 
 
-  //初始化
-  initRechargeRecord();
+  //初始化数据库数据
+  initDBRecord();
 
-  //初始化变量
-  orderLst := TStringList.Create;
-  recDataLst := tStringList.Create;
-
+  //初始化公共变量
   edtAPPID.Text := SGBTCONFIGURE.appid;
   edtShopID.Text := SGBTCONFIGURE.shopid;
 
-  //打开串口
-//  commRecharge.StartComm();
+  //初始化串口
+  orderLst := TStringList.Create;
+  recDataLst := tStringList.Create;
   try
     commRecharge.StartComm();
   except on E: Exception do //拦截所有异常
@@ -347,15 +103,17 @@ begin
   end;
 end;
 
-function TfrmNewMember.initRechargeRecord(): string;
+function TfrmNewMember.initDBRecord(): string;
 var
   strSQL: string;
 begin
-  with ADOQRecharge do begin
+  with ADOQ do begin
     Connection := DataModule_3F.ADOConnection_Main;
     Active := false;
     SQL.Clear;
-    strSQL := 'select trxid,appid,bandid,coin,leftcoin,totalcoin,shopid,operatorno,payid,operatetime from t_recharge_record order by operatetime desc limit 10';
+    strSQL := 'select MEMBER_NO,CARD_ID,MOBILE_NO,APPID,SHOPID,CREATED_BY,CREATED_AT ' +
+             ' from t_recharge_record ' +
+             ' order by CREATED_AT desc limit 10';
     ICFunction.loginfo('strSQL: ' + strSQL);
     SQL.Add(strSQL);
     Active := True;
@@ -406,14 +164,14 @@ begin
   ICCommunalVarUnit.CMD_CheckSum_OK := true;
   ICCommunalVarUnit.Receive_CMD_ID_Infor.CMD := copy(recDataLst.Strings[0], 1, 2); //帧头43
  
-  ICFunction.loginfo('data return from recharge : ' + tmpStr);
+  ICFunction.loginfo('data return from Terminal : ' + tmpStr);
   if ICCommunalVarUnit.Receive_CMD_ID_Infor.CMD = CMD_COUMUNICATION.CMD_READ then //收到卡头写入电子币充值成功的返回 53
   begin
-    returnFromReadCMD();
+    returnFromReadCMD();//读返回
   end
   else if Receive_CMD_ID_Infor.CMD = ICCommunalVarUnit.CMD_COUMUNICATION.CMD_INCValue_RE then //读指令
   begin
-    returnFromIncrCMD();
+    returnFromOperationCMD();  //操作返回
   end;
 
 end;
@@ -421,13 +179,13 @@ end;
 
 //卡头返回充值成功指令
 
-procedure TfrmNewMember.returnFromIncrCMD();
+procedure TfrmNewMember.returnFromOperationCMD();
 begin
-
+   //修改状态
   if (Receive_CMD_ID_Infor.ID_type = copy(INit_Wright.User, 8, 2)) then
   begin
-    saveRechargeRecord(); //保存充值记录
-    initRechargeRecord();
+    saveDBRecord(); //保存充值记录
+    initDBRecord();
   end;
 end;
 
@@ -443,42 +201,29 @@ begin
   Receive_CMD_ID_Infor.ID_value := copy(recDataLst.Strings[0], 29, 8); //卡内数据
   Receive_CMD_ID_Infor.ID_type := copy(recDataLst.Strings[0], 37, 2); //卡功能
 
-    //本场地卡检查 -----开始  从电子币上读取的场地密码与从配置文件里读取的不一样
-  if (Receive_CMD_ID_Infor.Password_3F <> SGBTCONFIGURE.appid) then //    INit_Wright.BossPassword := MyIni.ReadString('PLC工作区域', 'PC托盘特征码', '新密码');
+  if DataModule_3F.queryExistInitialRecord(Receive_CMD_ID_Infor.ID_INIT) = false then //用户卡已经初始化 有记录
   begin
-    lblMessage.Caption := '非本场地此卡，请更换！';
-    exit;
-  end
-  else
-  begin //场地初始化检查 -----开始
-    if DataModule_3F.queryExistInitialRecord(Receive_CMD_ID_Infor.ID_INIT) = false then //用户卡已经初始化 有记录
-    begin
       lblMessage.Caption := '请先初始化！';
       exit;
-    end
-    else
-    begin
-      showCardInformation();
-    end;
+  end
+  else
+  begin
+      displayCardInformation();
   end;
+
 
 end;
 
 
 
 
-//用户卡信息展示
 
-procedure TfrmNewMember.showCardInformation();
+procedure TfrmNewMember.displayCardInformation();
 begin
-  //  edtAPPID.Text  := Receive_CMD_ID_Infor.Password_3F;   //appid
-  //  edtShopID.Text := Receive_CMD_ID_Infor.Password_USER; //shopid
-  edtBandID.Text := Receive_CMD_ID_Infor.ID_INIT; //用户币ID
-  edtLeftCoin.Text := ICFunction.transferHEXByteToDECValue(Receive_CMD_ID_Infor.ID_value);
-  edtTypeName.Text := ICFunction.transferTypeIDToTypeName(Receive_CMD_ID_Infor.ID_type);
-
-end; //end prc_user_card_operation
-
+  edtBandID.Text := Receive_CMD_ID_Infor.ID_INIT; 
+  //read from Database by CardID and display in View todo...
+  
+end;
 
 
 
@@ -491,7 +236,7 @@ end; //end prc_user_card_operation
 //保存初始化数据,并设置全局变量
 //写充值记录
 
-procedure TfrmNewMember.saveRechargeRecord();
+procedure TfrmNewMember.saveDBRecord();
 var
   strTrxid, strAppID, strBandid, strShopid, strPayid, strOperateTime, strOperatorNO, strPayState, strNote, strExpireTime, strsql: string;
   intCoin, intLeftCoin, intTotalCoin: Integer;
@@ -609,7 +354,7 @@ begin
 end;
 
 
-procedure TfrmNewMember.btnOfflineRechargeClick(Sender: TObject);
+procedure TfrmNewMember.btnCancelClick(Sender: TObject);
 var
   strRechargeCoin, strLeftCoin: string;
   strURL, strResponseStr: string;
@@ -754,116 +499,20 @@ begin
 
 end;
 
-//在线充值操作
+//会员开户操作
 
-procedure TfrmNewMember.btnOnlineRechargeClick(Sender: TObject);
+procedure TfrmNewMember.btnSubmitClick(Sender: TObject);
 
 var
-  strRechargeCoin, strLeftCoin, haokuTrxId: string;
-  strURL, strResponseStr: string;
-  intWriteValue: Integer;
-  jsonApplyResult, jsonAckResult: TlkJSONbase;
-  ResponseStream: TStringStream; //返回信息
-  activeIdHTTP: TIdHTTP;
-
+  cardid,cardtype,mobileno :string;
 begin
-   //追加卡类型判断,如果不是用户卡或者开机卡不能充值? 开机卡也不需要发送接口吧？
-
-
- //初始化事务ID
-  GLOBALsg3ftrxID := trim(edtAPPID.Text) + trim(edtShopID.Text) + trim(edtBandID.Text) + FormatDateTime('HHmmss', now);
-  GLOBALstrPayID := '01';
-
-  strLeftCoin := trim(edtLeftCoin.Text);
-
-  //卡类型判断
-  if ((ICFunction.transferTypeNameToTypeID(edtTypeName.text) <> copy(INit_Wright.User, 8, 2))) then //用户卡
-  begin
-    lblMessage.Caption := edtTypeName.text + '不能用于充值';
-    exit;
-  end;
-
-
-
-  //线上充值申请
-  strURL := generateOnlineRechargeApplyURL();
-  ICFunction.loginfo('Recharge: Online Recharge Apply URL : ' + strURL);
-  activeIdHTTP := TIdHTTP.Create(nil);
-  ResponseStream := TStringStream.Create('');
-  try
-    activeIdHTTP.HandleRedirects := true;
-    activeIdHTTP.Get(strURL, ResponseStream);
-  except
-    on e: Exception do
-    begin
-      showmessage(SG3FERRORINFO.networkerror + e.message);
-      exit;
-    end;
-  end;
-    //获取网页返回的信息   网页中的存在中文时，需要进行UTF8解码
-  strResponseStr := UTF8Decode(ResponseStream.DataString);
-  ICFunction.loginfo('Recharge: Online Recharge ACK Response: ' + strResponseStr);
-  jsonApplyResult := TlkJSON.ParseText(UTF8Encode(strResponseStr)) as TlkJSONobject; //UTF8编码
-  if jsonApplyResult = nil then
-  begin
-    Showmessage(SG3FERRORINFO.networkerror);
-    exit;
-  end;
-  if vartostr(jsonApplyResult.Field['code'].Value) <> '0' then
-  begin
-    Showmessage('error code :' + vartostr(jsonApplyResult.Field['code'].Value) + ',' + vartostr(jsonApplyResult.Field['message'].Value) );
-    exit;
-  end;
-
-
-  //这里的值有没有包括leftCoin
-  strRechargeCoin := trim(vartostr(jsonApplyResult.Field['coin'].Value));
-  edtRechargeCoin.Text := strRechargeCoin; //入库使用的输入
-  haokuTrxId := trim(vartostr(jsonApplyResult.Field['haokuTrxId'].Value));
-  intWriteValue := strToInt(strRechargeCoin) + strToInt(strLeftCoin);
-  //风控限额
-  if checkCoinLimit(intToStr(intWriteValue)) then
-  begin
-    MessageBox(handle, '充值总额超过限额!', '错误', MB_ICONERROR + MB_OK);
-    exit;
-  end;
-  //圈存,入库
-  initIncrOperation(IntToStr(intWriteValue));
-
-  //线上充值确认
-  strURL := generateOnlineRechargeAckURL(vartostr(jsonApplyResult.Field['haokuTrxId'].Value), GLOBALsg3ftrxID);
-  ICFunction.loginfo('Recharge: Online Recharge Request ACK URL: ' + strURL);
-
-  activeIdHTTP := TIdHTTP.Create(nil);
-  ResponseStream := TStringStream.Create('');
-  try
-    activeIdHTTP.HandleRedirects := true;
-    activeIdHTTP.Get(strURL, ResponseStream);
-  except
-    on e: Exception do
-    begin
-      showmessage(SG3FERRORINFO.networkerror + e.message);
-      exit;
-    end;
-  end;
-    //获取网页返回的信息   网页中的存在中文时，需要进行UTF8解码
-  strResponseStr := UTF8Decode(ResponseStream.DataString);
-
-  ICFunction.loginfo('Recharge: Online Recharge ack response :' + strResponseStr);
-
-  jsonApplyResult := TlkJSON.ParseText(UTF8Encode(strResponseStr)) as TlkJSONobject; //UTF8编码
-  if jsonApplyResult = nil then
-  begin
-    Showmessage(SG3FERRORINFO.networkerror);
-    exit;
-  end;
-  if vartostr(jsonApplyResult.Field['code'].Value) <> '0' then
-  begin
-    Showmessage('error code :' + vartostr(jsonApplyResult.Field['code'].Value) + ',' + vartostr(jsonApplyResult.Field['message'].Value) + ',请联系技术人员');
-    exit;
-  end;
-
-  lblMessage.Caption := '线上充值操作、保存充值记录成功';
+  cardid  :=Trim(edtBandID);
+  cardtype :=Trim(edtTypeName);
+  mobileno :=Trim(edtMobileNO);
+  initialMemberInfo(cardid,cardtype,mobileno);
+  initailAccountInfo(cardid,cardtype,mobileno);
+  initDBRecord();
+  lblMessage.Caption := '会员开户成功';
 
 end;
 
