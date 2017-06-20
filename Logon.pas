@@ -1519,7 +1519,7 @@ var
   High_right_Pass: string;
 begin
 
-  High_right_Pass := 'linsf620@';
+  High_right_Pass := '1';
   //if (SGBTCONFIGURE.enableHigh = '00')
     //and (edtPassword.Text = High_right_Pass) then //是否允许最高权限进入
   if   (edtPassword.Text = High_right_Pass) then

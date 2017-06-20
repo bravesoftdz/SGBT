@@ -147,7 +147,7 @@ begin
       CommandTimeout := 30; //执行命令超时时间
       Connected := True; //连接
     except
-      ShowMessage('not connected');
+      ShowMessage('database not connected');
       raise;
       Exit;
     end;
@@ -208,7 +208,7 @@ begin
       Post;
     end
     else begin
-      ShowMessage('数据库中没有 ' + xh + ' 记录请维护');
+      ;
     end;
     Active := False;
   end;

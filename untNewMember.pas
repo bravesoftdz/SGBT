@@ -30,13 +30,14 @@ type
     Label5: TLabel;
     edtAPPID: TEdit;
     Label6: TLabel;
-    edtTypeName: TEdit;
+    cbMemberType: TComboBox;
     procedure commRechargeReceiveData(Sender: TObject; Buffer: Pointer;
       BufferLength: Word);
     procedure FormShow(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure btnSubmitClick(Sender: TObject);
+
 
   private
     { Private declarations }
@@ -46,16 +47,27 @@ type
         //数据库相关
     function initDBRecord(): string;
     procedure saveDBRecord(); //保存充值记录
+    procedure saveMemberInfo(cardid:string; cardtype:string;mobileno:string);
+    procedure saveAccountInfo(cardid:string; cardtype:string;mobileno:string);
+    function  getCoinByCoinType(cointype :string):string;
+  
+    
         //卡头处理函数
     procedure checkCMDInfo();
-    procedure initIncrOperation(strRechargeCoin: string); //充值操作，写数据个卡
+    procedure operateCoin(operacoin: string); //卡处理
     function caluSendCMD(strCMD: string; strIncrValue: string): string;
     procedure generateIncrValueCMD(S: string);
     procedure prcSendDataToCard();
     procedure displayCardInformation();
     procedure returnFromOperationCMD();
     procedure returnFromReadCMD();
-    function checkCoinLimit(strWriteValue: string): boolean;
+    function  checkCoinLimit(strWriteValue: string): boolean;
+    function  checkUniqueCoin(coinid: string): boolean;
+    procedure initComboxCardtype();
+
+    function  getCoinCodeByCoinType(cardtype:string):string;
+    function  getCoinLimit(cardtype :string):string;
+    function  getExpireTimeByCoinType(cardtype :string):string;
 
   end;
 
@@ -72,6 +84,7 @@ var
   //全局变量用来共享SG3F平台事务ID;
   GLOBALsg3ftrxID: string; //
   GLOBALstrPayID: string; //支付方式　在线01/现金02
+  operaSuccess : boolean;
 
 
 implementation
@@ -80,15 +93,17 @@ uses ICDataModule, ICCommunalVarUnit, ICmain, ICEventTypeUnit, ICFunctionUnit, d
 
 
 procedure TfrmNewMember.FormShow(Sender: TObject);
-begin
-
-
+begin  
+  //初始化界面
+  initComboxCardtype();
+  
   //初始化数据库数据
   initDBRecord();
 
   //初始化公共变量
   edtAPPID.Text := SGBTCONFIGURE.appid;
   edtShopID.Text := SGBTCONFIGURE.shopid;
+
 
   //初始化串口
   orderLst := TStringList.Create;
@@ -111,9 +126,11 @@ begin
     Connection := DataModule_3F.ADOConnection_Main;
     Active := false;
     SQL.Clear;
-    strSQL := 'select MEMBER_NO,CARD_ID,MOBILE_NO,APPID,SHOPID,CREATED_BY,CREATED_AT ' +
-             ' from t_recharge_record ' +
-             ' order by CREATED_AT desc limit 10';
+    strSQL := 'select A.CARD_ID,A.MOBILE_NO,A.APPID,A.SHOPID ' +
+            ' , B.COIN_TYPE,B.TOTAL_COIN,B.EXPIRETIME,B.OPERATE_TIME,B.OPERATORNO ' +
+             ' from T_MEMBER_INFO A,T_MEMBER_COIN B ' +
+             ' WHERE A.COIN_CODE = B.COIN_CODE ' +
+             ' order by OPERATE_TIME desc limit 10';
     ICFunction.loginfo('strSQL: ' + strSQL);
     SQL.Add(strSQL);
     Active := True;
@@ -133,7 +150,6 @@ var
 begin
    //接收----------------
   recStr := '';
-
   SetLength(tmpStr, BufferLength);
   move(buffer^, pchar(tmpStr)^, BufferLength);
   for i := 1 to BufferLength do
@@ -146,7 +162,7 @@ begin
   end;
   recDataLst.Clear;
   recDataLst.Add(recStr);
-  ICFunction.loginfo('recharge return from card recStr: ' + recStr);
+
   begin
     checkCMDInfo(); //首先根据接收到的数据进行判断，确认此卡是否属于为正确的卡
   end;
@@ -164,7 +180,7 @@ begin
   ICCommunalVarUnit.CMD_CheckSum_OK := true;
   ICCommunalVarUnit.Receive_CMD_ID_Infor.CMD := copy(recDataLst.Strings[0], 1, 2); //帧头43
  
-  ICFunction.loginfo('data return from Terminal : ' + tmpStr);
+  ICFunction.loginfo('Read data return from Terminal : ' + tmpStr);
   if ICCommunalVarUnit.Receive_CMD_ID_Infor.CMD = CMD_COUMUNICATION.CMD_READ then //收到卡头写入电子币充值成功的返回 53
   begin
     returnFromReadCMD();//读返回
@@ -180,13 +196,17 @@ end;
 //卡头返回充值成功指令
 
 procedure TfrmNewMember.returnFromOperationCMD();
-begin
-   //修改状态
-  if (Receive_CMD_ID_Infor.ID_type = copy(INit_Wright.User, 8, 2)) then
-  begin
-    saveDBRecord(); //保存充值记录
-    initDBRecord();
-  end;
+var cardid,cardtype,mobileno:string;
+begin 
+   //操作成功      
+  ICFunction.loginfo('return From OperationCMD Operate Coin Successfully ');
+  cardid  :=Trim(edtBandID.Text);
+  cardtype :=Trim(cbMemberType.Text);
+  mobileno :=Trim(edtMobileNO.Text);
+  saveMemberInfo(cardid,cardtype,mobileno);
+  saveAccountInfo(cardid,cardtype,mobileno);
+  initDBRecord();
+
 end;
 
 
@@ -212,25 +232,17 @@ begin
   end;
 
 
-end;
-
-
-
+end;   
 
 
 procedure TfrmNewMember.displayCardInformation();
 begin
-  edtBandID.Text := Receive_CMD_ID_Infor.ID_INIT; 
+  edtBandID.Text := Receive_CMD_ID_Infor.ID_INIT;
+  edtMemberNO.Text := Receive_CMD_ID_Infor.ID_INIT;
+  //edtMobileNO.Text := 
   //read from Database by CardID and display in View todo...
   
 end;
-
-
-
-
-
-
-
 
 
 //保存初始化数据,并设置全局变量
@@ -246,8 +258,8 @@ begin
   strAppID := trim(edtAppID.Text);
   strBandid := trim(edtBandID.Text);
   strShopid := trim(edtShopID.Text);
-  intCoin := strToInt(trim(edtRechargeCoin.Text)); //这里最好不要用edit里的值，会在其它地位reset掉
-  intLeftCoin := strToInt(trim(edtLeftCoin.Text));
+  intCoin := strToInt(trim(edtMemberNO.Text)); //这里最好不要用edit里的值，会在其它地位reset掉
+  intLeftCoin := strToInt(trim(edtMobileNO.Text));
   intTotalCoin := intLeftCoin + intCoin;
   strTrxid := GLOBALsg3ftrxID;
 
@@ -264,7 +276,7 @@ begin
   strNote := '充值';
   strExpireTime := FormatDateTime('yyyy-MM-dd HH:mm:ss', now);
 
-  with ADOQRecharge do begin
+  with ADOQ do begin
     Connection := DataModule_3F.ADOConnection_Main;
     Active := false;
     SQL.Clear;
@@ -293,13 +305,13 @@ begin
 end;
 
 
-procedure TfrmNewMember.initIncrOperation(strRechargeCoin: string);
+procedure TfrmNewMember.operateCoin(operacoin: string);
 var
-  strValue: string;
+  coinvalue: string;
 begin
-  strValue := caluSendCMD(CMD_COUMUNICATION.CMD_INCValue, strRechargeCoin); //计算充值指令
-  generateIncrValueCMD(strValue); //把充值指令写入ID卡
-  ICFunction.loginfo('recharge data send to card: ' + strValue);
+  coinvalue := caluSendCMD(CMD_COUMUNICATION.CMD_INCValue, operacoin); //计算充值指令
+  generateIncrValueCMD(coinvalue); //把充值指令写入ID卡
+  ICFunction.loginfo('recharge data send to card: ' + coinvalue);
 end;
 //充值函数
 //计算充值指令
@@ -364,114 +376,7 @@ var
   activeIdHTTP: TIdHTTP;
 
 begin
-  //初始化支付方式
-  GLOBALstrPayID := '02';
-  //初始化事务ID
-  GLOBALsg3ftrxID := trim(edtAPPID.Text) + trim(edtShopID.Text) + trim(edtBandID.Text) + FormatDateTime('HHmmss', now);
 
-  strRechargeCoin := trim(edtRechargeCoin.Text);
-  strLeftCoin := trim(edtLeftCoin.Text);
-  intWriteValue := strToInt(strRechargeCoin) + strToInt(strLeftCoin);
-
-  //充值输入正则表达式校验及风控限额
-  //卡类型判断
-  if ((ICFunction.transferTypeNameToTypeID(edtTypeName.text) <> copy(INit_Wright.User, 8, 2))) then //用户卡
-  begin
-    lblMessage.Caption := edtTypeName.text + '不能用于充值';
-    exit;
-  end;
-  if IsNumberic(strRechargeCoin) = false then
-  begin
-    MessageBox(handle, '请输入正确的金额', '错误', MB_ICONERROR + MB_OK);
-    exit;
-  end;
-  if checkCoinLimit(intToStr(intWriteValue)) then
-  begin
-    MessageBox(handle, '充值总额超过限额!', '错误', MB_ICONERROR + MB_OK);
-    exit;
-  end;
-
-  //{关闭HK接口
-//{  //线下充值申请
-  if SGBTCONFIGURE.enableInterface = '0' then
-  begin
-    strURL := generateOfflineRechargeApplyURL();
-    ICFunction.loginfo('Offline Recharge Apply URL: ' + strURL);
-
-    activeIdHTTP := TIdHTTP.Create(nil);
-    ResponseStream := TStringStream.Create('');
-    try
-      activeIdHTTP.HandleRedirects := true;
-      activeIdHTTP.Get(strURL, ResponseStream);
-    except
-      on e: Exception do
-      begin
-        showmessage(SG3FERRORINFO.networkerror + e.message);
-        exit;
-      end;
-    end;
-    //获取网页返回的信息   网页中的存在中文时，需要进行UTF8解码
-    strResponseStr := UTF8Decode(ResponseStream.DataString);
-
-
-    ICFunction.loginfo('Offline Recharge Response: ' + strResponseStr);
-
-    jsonApplyResult := TlkJSON.ParseText(UTF8Encode(strResponseStr)) as TlkJSONobject; //UTF8编码
-    if jsonApplyResult = nil then
-    begin
-      Showmessage(SG3FERRORINFO.networkerror);
-      exit;
-    end;
-    if vartostr(jsonApplyResult.Field['code'].Value) <> '0' then
-    begin
-      Showmessage('error code :' + vartostr(jsonApplyResult.Field['code'].Value) + ',' + vartostr(jsonApplyResult.Field['message'].Value) );
-      exit;
-    end;
-
-  end;
-//}
-  //线下圈存/入库
-  initIncrOperation(IntToStr(intWriteValue)); //这里如何得到平台事务ID 引入了一个全局变量 strGlobalSGtrxID
-
-
-  //{  //{关闭HK接口
-  //线下充值确认,这里通过jsonApplyResult可能会读不到值
-  if SGBTCONFIGURE.enableInterface = '0' then
-  begin
-    ICFunction.loginfo('GLOBALsg3ftrxID' + GLOBALsg3ftrxID);
-    strURL := generateOfflineRechargeAckURL(vartostr(jsonApplyResult.Field['haokuTrxId'].Value), GLOBALsg3ftrxID);
-    ICFunction.loginfo('Offline Recharge Ack URL: ' + strURL);
-
-    activeIdHTTP := TIdHTTP.Create(nil);
-    ResponseStream := TStringStream.Create('');
-    try
-      activeIdHTTP.HandleRedirects := true;
-      activeIdHTTP.Get(strURL, ResponseStream);
-    except
-      on e: Exception do
-      begin
-        showmessage(SG3FERRORINFO.networkerror + e.message);
-        exit;
-      end;
-    end;
-    //获取网页返回的信息   网页中的存在中文时，需要进行UTF8解码
-    strResponseStr := UTF8Decode(ResponseStream.DataString);
-
-    ICFunction.loginfo('Offline Recharge Ack Response: ' + strResponseStr);
-
-    jsonApplyResult := TlkJSON.ParseText(UTF8Encode(strResponseStr)) as TlkJSONobject; //UTF8编码
-    if jsonApplyResult = nil then
-    begin
-      Showmessage(SG3FERRORINFO.networkerror);
-      exit;
-    end;
-    if vartostr(jsonApplyResult.Field['code'].Value) <> '0' then
-    begin
-      Showmessage('error code:' + vartostr(jsonApplyResult.Field['code'].Value) + ',' + vartostr(jsonApplyResult.Field['message'].Value) + ',请联系技术人员');
-      exit;
-    end;
-  end;
-  // }
   lblMessage.Caption := '线下充值操作、保存充值记录成功';
 
 end;
@@ -487,6 +392,29 @@ begin
 
 end;
 
+function TfrmNewMember.checkUniqueCoin(coinid: string): boolean;
+var
+  ADOQ: TADOQuery;
+  strSQL :String;
+begin
+  ADOQ := TADOQuery.Create(Self);
+  ADOQ.Connection := DataModule_3F.ADOConnection_Main;
+
+  with ADOQ do begin
+    Close;
+    SQL.Clear;
+    strSQL := 'select 1 from t_member_info where CARD_ID=''' + coinid + '''';
+    ICFunction.loginfo('Exist check  strSQL: ' + strSQL);
+    SQL.Add(strSQL);
+    Open;
+    if (Eof) then
+      result := false
+    else
+      result := true;
+  end;
+  ADOQ.Close;
+  ADOQ.Free;
+end;
 
 
 procedure TfrmNewMember.FormClose(Sender: TObject;
@@ -501,20 +429,141 @@ end;
 
 //会员开户操作
 
-procedure TfrmNewMember.btnSubmitClick(Sender: TObject);
-
+procedure TfrmNewMember.btnSubmitClick(Sender: TObject); 
 var
-  cardid,cardtype,mobileno :string;
+  operationcoin:string;
+
 begin
-  cardid  :=Trim(edtBandID);
-  cardtype :=Trim(edtTypeName);
-  mobileno :=Trim(edtMobileNO);
-  initialMemberInfo(cardid,cardtype,mobileno);
-  initailAccountInfo(cardid,cardtype,mobileno);
-  initDBRecord();
+  //Coin层操作
+  if checkUniqueCoin(Trim(edtBandID.Text)) = true then
+  begin
+         lblMessage.Caption := '会员已存在';
+         exit;
+  end;
+  operationcoin := getCoinByCoinType(Trim(cbMemberType.Text));
+  operateCoin(operationcoin);
+  
   lblMessage.Caption := '会员开户成功';
 
 end;
+
+
+
+procedure TfrmNewMember.saveAccountInfo(cardid:string; cardtype:string;mobileno:string);
+var
+  strOperateTime, strOperatorNO, strPayState, strNote, strExpireTime, strsql: string;
+  intCoin, intLeftCoin, intTotalCoin: Integer;
+
+begin
+
+  ShortDateFormat := 'yyyy-MM-dd'; //指定格式即可
+  DateSeparator := '-';
+  strOperateTime := FormatDateTime('yyyy-MM-dd HH:mm:ss', now);
+  strOperatorNO := SGBTCONFIGURE.shopid;
+  
+  with ADOQ do begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    Active := false;
+    SQL.Clear;
+    strSQL := 'select * from  T_MEMBER_COIN order by OPERATE_TIME desc limit 10 '; //为什么要查全部？
+    ICFunction.loginfo('strSQL :' + strSQL);
+    SQL.Add(strSQL);
+    Active := True;
+    Append;
+    FieldByName('COIN_CODE').AsString := cardid;
+    FieldByName('COIN_TYPE').AsString := getCoinCodeByCoinType(cbMemberType.Text);
+    FieldByName('PAY_TYPE').AsString := '01';
+    FieldByName('TOTAL_COIN').AsString := getCoinByCoinType(cbMemberType.Text);;
+    FieldByName('COIN').AsString := getCoinByCoinType(cbMemberType.Text);;;
+    FieldByName('COIN_LIMIT').AsString := getCoinLimit(cbMemberType.Text);
+    FieldByName('STATE').AsString := 'S0C';
+    FieldByName('EXPIRETIME').AsString := getExpireTimeByCoinType(cbMemberType.Text);
+    FieldByName('OPERATE_TIME').AsString := strOperateTime; //
+    FieldByName('OPERATORNO').AsString := strOperatorNO;
+    post;
+  end;
+
+
+end;
+
+function  TfrmNewMember.getCoinCodeByCoinType(cardtype:string):string;
+begin
+    if cardtype = '年卡' then
+      result := '01'
+    else if cardtype = '季卡' then
+      result:='02'
+    else if cardtype = '月卡' then
+      result:='03'
+   else if cardtype = '普通卡' then
+      result:='04' ;
+end;
+
+function  TfrmNewMember.getCoinByCoinType(cointype :string):string;
+begin
+
+      result := '20';
+      //从数据库取
+end;
+
+function  TfrmNewMember.getCoinLimit(cardtype :string):string;
+begin
+    result := '1000';
+end;
+
+
+function  TfrmNewMember.getExpireTimeByCoinType(cardtype :string):string;
+begin
+    if cardtype = '年卡' then
+      result :=FormatDateTime('yyyy-MM-dd HH:mm:ss', AddMonths(now,12))
+    else if cardtype = '季卡' then
+      result:=FormatDateTime('yyyy-MM-dd HH:mm:ss', AddMonths(now,3))
+    else if cardtype = '月卡' then
+      result:=FormatDateTime('yyyy-MM-dd HH:mm:ss', AddMonths(now,1))
+    else if cardtype = '普通卡' then
+      result:=FormatDateTime('yyyy-MM-dd HH:mm:ss', AddMonths(now,36)) ;
+end;
+
+
+
+procedure TfrmNewMember.saveMemberInfo(cardid:string; cardtype:string;mobileno:string);
+var
+  strAppID, strBandid, strShopid, strPayid, strOperateTime, strOperatorNO, strPayState, strNote, strExpireTime, strsql: string;
+  intCoin, intLeftCoin, intTotalCoin: Integer;
+begin
+   strAppID := trim(edtAppID.Text);
+   strShopid := trim(edtShopID.Text);
+     with ADOQ do begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    Active := false;
+    SQL.Clear;
+    strSQL := 'select * from t_member_info order by OPERATE_TIME desc limit 10 '; //为什么要查全部？
+    ICFunction.loginfo('strSQL :' + strSQL);
+    SQL.Add(strSQL);
+    Active := True;
+    Append;
+    FieldByName('CARD_ID').AsString := cardid;
+    FieldByName('MOBILE_NO').AsString := mobileno;
+    FieldByName('COIN_CODE').AsString := cardid;
+    FieldByName('APPID').AsString := strAppID;
+    FieldByName('SHOPID').AsString := strShopid;
+    FieldByName('PASSWORD').AsString := cardid;
+    FieldByName('OPERATE_TIME').AsString := strOperateTime;
+    FieldByName('OPERATORNO').AsString := strOperatorNO;
+    post;
+  end;
+     
+end;
+
+procedure TfrmNewMember.initComboxCardtype;
+begin
+  cbMemberType.Items.clear();
+  cbMemberType.Items.Add('月卡');
+  cbMemberType.Items.Add('季卡');
+  cbMemberType.Items.Add('年卡');
+  cbMemberType.Items.Add('普通卡');
+  
+end;
+
 
 
 

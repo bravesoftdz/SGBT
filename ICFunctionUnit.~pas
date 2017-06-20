@@ -1378,7 +1378,7 @@ begin
 
  //发布版需要注释掉日志函数
   //	{
-  FileName := 'D:\sgbt.log';
+  FileName := 'C:\sgbt.log';
   if fileExists(FileName) then
   begin
     AssignFile(F, FileName);

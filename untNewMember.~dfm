@@ -1,6 +1,6 @@
 object frmNewMember: TfrmNewMember
-  Left = 389
-  Top = 89
+  Left = 759
+  Top = 88
   Width = 883
   Height = 617
   BorderStyle = bsSizeToolWin
@@ -142,7 +142,6 @@ object frmNewMember: TfrmNewMember
         Top = 128
         Width = 148
         Height = 21
-        ReadOnly = True
         TabOrder = 2
       end
       object edtMemberNO: TEdit
@@ -160,13 +159,6 @@ object frmNewMember: TfrmNewMember
         Height = 21
         ReadOnly = True
         TabOrder = 4
-      end
-      object edtTypeName: TEdit
-        Left = 444
-        Top = 73
-        Width = 158
-        Height = 21
-        TabOrder = 5
       end
     end
     object GroupBox3: TGroupBox
@@ -191,9 +183,14 @@ object frmNewMember: TfrmNewMember
         Columns = <
           item
             Expanded = False
-            FieldName = 'trxid'
-            Title.Caption = #27969#27700#21495
-            Width = 200
+            FieldName = 'card_id'
+            Title.Caption = #20250#21592#21345'ID'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'mobile_no'
+            Title.Caption = #25163#26426#21495#30721
             Visible = True
           end
           item
@@ -210,42 +207,45 @@ object frmNewMember: TfrmNewMember
           end
           item
             Expanded = False
-            FieldName = 'bandid'
-            Title.Caption = #25163#29615'ID'
+            FieldName = 'coin_type'
+            Title.Caption = #31867#22411
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'coin'
-            Title.Caption = #20805#24065
+            FieldName = 'total_coin'
+            Title.Caption = #24635#39069
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'leftcoin'
-            Title.Caption = #20313#24065
+            FieldName = 'expiretime'
+            Title.Caption = #21040#26399#26102#38388
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'totalcoin'
-            Title.Caption = #24635#24065
+            FieldName = 'operate_time'
+            Title.Caption = #25805#20316#26102#38388
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'payid'
-            Title.Caption = #20805#20540#26041#24335
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'operatetime'
-            Title.Caption = #20805#20540#26102#38388
+            FieldName = 'operatorno'
+            Title.Caption = #25805#20316#21592
             Visible = True
           end>
       end
     end
+  end
+  object cbMemberType: TComboBox
+    Left = 440
+    Top = 77
+    Width = 153
+    Height = 21
+    ItemHeight = 13
+    TabOrder = 1
+    Text = #26376#21345
   end
   object ADOQ: TADOQuery
     Parameters = <>
