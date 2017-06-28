@@ -46,9 +46,8 @@ type
 
         //数据库相关
     function initDBRecord(): string;
-    procedure saveDBRecord(); //保存充值记录
     procedure saveMemberInfo(cardid:string; cardtype:string;mobileno:string);
-    procedure saveAccountInfo(cardid:string; cardtype:string;mobileno:string);
+
     function  getCoinByCoinType(cointype :string):string;
   
     
@@ -126,11 +125,10 @@ begin
     Connection := DataModule_3F.ADOConnection_Main;
     Active := false;
     SQL.Clear;
-    strSQL := 'select A.CARD_ID,A.MOBILE_NO,A.APPID,A.SHOPID ' +
-            ' , B.COIN_TYPE,B.TOTAL_COIN,B.EXPIRETIME,B.OPERATE_TIME,B.OPERATORNO ' +
-             ' from T_MEMBER_INFO A,T_MEMBER_COIN B ' +
-             ' WHERE A.COIN_CODE = B.COIN_CODE ' +
-             ' order by OPERATE_TIME desc limit 10';
+    strSQL := 'select CARD_ID,MOBILE_NO,COIN_TYPE,TOTAL_COIN,STATE,EXPIRETIME,APPID,SHOPID ' +
+            ' ,OPERATE_TIME, OPERATORNO ' +
+             ' from T_MEMBER_INFO ' +
+             '  order by OPERATE_TIME desc limit 10';
     ICFunction.loginfo('strSQL: ' + strSQL);
     SQL.Add(strSQL);
     Active := True;
@@ -204,7 +202,7 @@ begin
   cardtype :=Trim(cbMemberType.Text);
   mobileno :=Trim(edtMobileNO.Text);
   saveMemberInfo(cardid,cardtype,mobileno);
-  saveAccountInfo(cardid,cardtype,mobileno);
+
   initDBRecord();
 
 end;
@@ -244,65 +242,6 @@ begin
   
 end;
 
-
-//保存初始化数据,并设置全局变量
-//写充值记录
-
-procedure TfrmNewMember.saveDBRecord();
-var
-  strTrxid, strAppID, strBandid, strShopid, strPayid, strOperateTime, strOperatorNO, strPayState, strNote, strExpireTime, strsql: string;
-  intCoin, intLeftCoin, intTotalCoin: Integer;
-
-begin
-
-  strAppID := trim(edtAppID.Text);
-  strBandid := trim(edtBandID.Text);
-  strShopid := trim(edtShopID.Text);
-  intCoin := strToInt(trim(edtMemberNO.Text)); //这里最好不要用edit里的值，会在其它地位reset掉
-  intLeftCoin := strToInt(trim(edtMobileNO.Text));
-  intTotalCoin := intLeftCoin + intCoin;
-  strTrxid := GLOBALsg3ftrxID;
-
-  strPayid := GLOBALstrPayID; //01表示在线,02表示现金
-
-    //指定日期格式 重要
-  ShortDateFormat := 'yyyy-MM-dd'; //指定格式即可
-  DateSeparator := '-';
-    //指定日期格式 否则会报is not an valid date and time;
-
-  strOperateTime := FormatDateTime('yyyy-MM-dd HH:mm:ss', now);
-  strOperatorNO := '001';
-  strPayState := '0'; //0表示成功
-  strNote := '充值';
-  strExpireTime := FormatDateTime('yyyy-MM-dd HH:mm:ss', now);
-
-  with ADOQ do begin
-    Connection := DataModule_3F.ADOConnection_Main;
-    Active := false;
-    SQL.Clear;
-    strSQL := 'select * from t_recharge_record order by operatetime desc'; //为什么要查全部？
-    ICFunction.loginfo('strSQL :' + strSQL);
-    SQL.Add(strSQL);
-    Active := True;
-    Append;
-    FieldByName('trxid').AsString := strTrxid;
-    FieldByName('appid').AsString := strAppID;
-    FieldByName('bandid').AsString := strBandid;
-    FieldByName('shopid').AsString := strShopid;
-    FieldByName('coin').AsInteger := intCoin;
-    FieldByName('leftcoin').AsInteger := intLeftCoin;
-    FieldByName('totalcoin').AsInteger := intTotalCoin;
-    FieldByName('payid').AsString := strPayid;
-    FieldByName('operatetime').AsString := strOperateTime; //用户名
-    FieldByName('operatorno').AsString := strOperatorNO; //充值操作
-    FieldByName('paystate').AsString := strPayState; //
-    FieldByName('note').AsString := strNote;
-  //  FieldByName('expiretime').AsString := strExpireTime; //失效时间
-    post;
-  end;
-  GLOBALsg3ftrxID := strTrxid;
-
-end;
 
 
 procedure TfrmNewMember.operateCoin(operacoin: string);
@@ -368,16 +307,32 @@ end;
 
 procedure TfrmNewMember.btnCancelClick(Sender: TObject);
 var
-  strRechargeCoin, strLeftCoin: string;
-  strURL, strResponseStr: string;
-  intWriteValue: Integer;
-  jsonApplyResult, jsonAckResult: TlkJSONbase;
-  ResponseStream: TStringStream; //返回信息
-  activeIdHTTP: TIdHTTP;
-
+  ADOQ: TADOQuery;
+  strSQL, strTemp: string;
 begin
+  strSQL := 'select state,operate_time,OPERATORNO from  '
+    + ' t_member_info where card_id = ''' + edtBandID.Text + '''';
+  strTemp := '';
+  ADOQ := TADOQuery.Create(nil);
+  with ADOQ do begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    Active := false;
+    SQL.Clear;
+    SQL.Add(strSQL);
+    Active := true;
 
-  lblMessage.Caption := '线下充值操作、保存充值记录成功';
+    if (RecordCount > 0) then begin
+      Edit;
+      FieldByName('STATE').AsString := '销户';  
+      FieldByName('OPERATE_TIME').AsString := FormatDateTime('yyyy-MM-dd HH:mm:ss',Now);
+      FieldByName('OPERATORNO').AsString  := SGBTCONFIGURE.shopid;      
+      Post;
+    end;
+    Active := False;
+  end;
+  FreeAndNil(ADOQ);
+  initDBRecord();
+  lblMessage.Caption := '会员卡销户完成';
 
 end;
 
@@ -448,44 +403,6 @@ begin
 end;
 
 
-
-procedure TfrmNewMember.saveAccountInfo(cardid:string; cardtype:string;mobileno:string);
-var
-  strOperateTime, strOperatorNO, strPayState, strNote, strExpireTime, strsql: string;
-  intCoin, intLeftCoin, intTotalCoin: Integer;
-
-begin
-
-  ShortDateFormat := 'yyyy-MM-dd'; //指定格式即可
-  DateSeparator := '-';
-  strOperateTime := FormatDateTime('yyyy-MM-dd HH:mm:ss', now);
-  strOperatorNO := SGBTCONFIGURE.shopid;
-  
-  with ADOQ do begin
-    Connection := DataModule_3F.ADOConnection_Main;
-    Active := false;
-    SQL.Clear;
-    strSQL := 'select * from  T_MEMBER_COIN order by OPERATE_TIME desc limit 10 '; //为什么要查全部？
-    ICFunction.loginfo('strSQL :' + strSQL);
-    SQL.Add(strSQL);
-    Active := True;
-    Append;
-    FieldByName('COIN_CODE').AsString := cardid;
-    FieldByName('COIN_TYPE').AsString := getCoinCodeByCoinType(cbMemberType.Text);
-    FieldByName('PAY_TYPE').AsString := '01';
-    FieldByName('TOTAL_COIN').AsString := getCoinByCoinType(cbMemberType.Text);;
-    FieldByName('COIN').AsString := getCoinByCoinType(cbMemberType.Text);;;
-    FieldByName('COIN_LIMIT').AsString := getCoinLimit(cbMemberType.Text);
-    FieldByName('STATE').AsString := 'S0C';
-    FieldByName('EXPIRETIME').AsString := getExpireTimeByCoinType(cbMemberType.Text);
-    FieldByName('OPERATE_TIME').AsString := strOperateTime; //
-    FieldByName('OPERATORNO').AsString := strOperatorNO;
-    post;
-  end;
-
-
-end;
-
 function  TfrmNewMember.getCoinCodeByCoinType(cardtype:string):string;
 begin
     if cardtype = '年卡' then
@@ -499,10 +416,25 @@ begin
 end;
 
 function  TfrmNewMember.getCoinByCoinType(cointype :string):string;
-begin
+var
+  ADOQTemp: TADOQuery;
+  strSQL: string;
+  strWhere: string;
 
-      result := '20';
-      //从数据库取
+begin
+  ADOQTemp := TADOQuery.Create(nil);
+
+  strSQL := 'select COIN_VALUE from T_MEMBER_CARD_CONFIGURATION where COIN_TYPE=''' + cointype + '''';
+  ICFunction.loginfo('strSQL: ' + strSQL );
+  with ADOQTemp do
+  begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    SQL.Clear;
+    SQL.Add(strSQL);
+    Active := True;
+    Result := ADOQTemp.Fields[0].AsString;
+  end;
+  FreeAndNil(ADOQTemp);
 end;
 
 function  TfrmNewMember.getCoinLimit(cardtype :string):string;
@@ -524,7 +456,7 @@ begin
 end;
 
 
-
+//会员信息
 procedure TfrmNewMember.saveMemberInfo(cardid:string; cardtype:string;mobileno:string);
 var
   strAppID, strBandid, strShopid, strPayid, strOperateTime, strOperatorNO, strPayState, strNote, strExpireTime, strsql: string;
@@ -532,21 +464,30 @@ var
 begin
    strAppID := trim(edtAppID.Text);
    strShopid := trim(edtShopID.Text);
+   strOperatorNO := SGBTCONFIGURE.shopid;
      with ADOQ do begin
     Connection := DataModule_3F.ADOConnection_Main;
     Active := false;
     SQL.Clear;
+    ShortDateFormat := 'yyyy-MM-dd'; //指定格式即可
+    DateSeparator := '-';
+    strOperateTime:=FormatDateTime('yyyy-MM-dd HH:mm:ss', now);
     strSQL := 'select * from t_member_info order by OPERATE_TIME desc limit 10 '; //为什么要查全部？
     ICFunction.loginfo('strSQL :' + strSQL);
     SQL.Add(strSQL);
     Active := True;
     Append;
     FieldByName('CARD_ID').AsString := cardid;
-    FieldByName('MOBILE_NO').AsString := mobileno;
-    FieldByName('COIN_CODE').AsString := cardid;
-    FieldByName('APPID').AsString := strAppID;
-    FieldByName('SHOPID').AsString := strShopid;
     FieldByName('PASSWORD').AsString := cardid;
+    FieldByName('MOBILE_NO').AsString := mobileno;
+    FieldByName('COIN_TYPE').AsString := cbMemberType.Text;
+    FieldByName('PAY_TYPE').AsString := '01';
+    FieldByName('TOTAL_COIN').AsString := getCoinByCoinType(cbMemberType.Text);
+    FieldByName('COIN_LIMIT').AsString := getCoinLimit(cbMemberType.Text);
+    FieldByName('STATE').AsString := '正常';
+    FieldByName('EXPIRETIME').AsString := getExpireTimeByCoinType(cbMemberType.Text);
+    FieldByName('APPID').AsString := strAppID;
+    FieldByName('SHOPID').AsString := strShopid; 
     FieldByName('OPERATE_TIME').AsString := strOperateTime;
     FieldByName('OPERATORNO').AsString := strOperatorNO;
     post;
@@ -557,9 +498,9 @@ end;
 procedure TfrmNewMember.initComboxCardtype;
 begin
   cbMemberType.Items.clear();
-  cbMemberType.Items.Add('月卡');
-  cbMemberType.Items.Add('季卡');
   cbMemberType.Items.Add('年卡');
+  cbMemberType.Items.Add('季卡');
+  cbMemberType.Items.Add('月卡');
   cbMemberType.Items.Add('普通卡');
   
 end;

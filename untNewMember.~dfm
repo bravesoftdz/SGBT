@@ -1,6 +1,6 @@
 object frmNewMember: TfrmNewMember
-  Left = 759
-  Top = 88
+  Left = 538
+  Top = 64
   Width = 883
   Height = 617
   BorderStyle = bsSizeToolWin
@@ -37,7 +37,7 @@ object frmNewMember: TfrmNewMember
         Top = 41
         Width = 153
         Height = 49
-        Caption = #30830#35748#30003#35831
+        Caption = #24320#36890#20250#21592
         TabOrder = 0
         OnClick = btnSubmitClick
       end
@@ -46,7 +46,7 @@ object frmNewMember: TfrmNewMember
         Top = 120
         Width = 153
         Height = 42
-        Caption = #30830#35748#36864#21345
+        Caption = #20250#21592#36864#21345
         TabOrder = 1
         OnClick = btnCancelClick
       end
@@ -150,7 +150,6 @@ object frmNewMember: TfrmNewMember
         Width = 157
         Height = 21
         TabOrder = 3
-        Text = '10'
       end
       object edtAPPID: TEdit
         Left = 148
@@ -195,14 +194,8 @@ object frmNewMember: TfrmNewMember
           end
           item
             Expanded = False
-            FieldName = 'appid'
-            Title.Caption = #20844#20247#21495
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'shopid'
-            Title.Caption = #21543#21488#21495
+            FieldName = 'state'
+            Title.Caption = #29366#24577
             Visible = True
           end
           item
@@ -233,6 +226,18 @@ object frmNewMember: TfrmNewMember
             Expanded = False
             FieldName = 'operatorno'
             Title.Caption = #25805#20316#21592
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'appid'
+            Title.Caption = #20844#20247#21495
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'shopid'
+            Title.Caption = #21543#21488#21495
             Visible = True
           end>
       end

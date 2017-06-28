@@ -203,7 +203,8 @@ uses ICtest_Main, FrontoperateUnit, AculateUnit, BehindoperateUnit,
   AboutUnit, Frontoperate_newCustomerUnit,
   IC_SetParameter_DataBaseInitUnit, IC_SetParameter_BiLiUnit, Logon,
   IC_SetParameter_MaxDateUnit, IC_SetParameter_MenberControlUnit,
-  check_detail, contact, untRecharge, untInitialRecord, untSumAccount,untNewMember;
+  check_detail, contact, untRecharge, untInitialRecord, untSumAccount,
+  untNewMember,untMemberConfig;
 
 {$R *.dfm}
 
@@ -447,23 +448,23 @@ procedure TFrm_IC_Main.FormShow(Sender: TObject);
 begin
 
   //在这里控制菜单显示情况
-  N1.Enabled := false;
-  N2.Enabled := false;
-  N3.Enabled := false;
-  M_INIT_BOSS.Enabled := false;
-  N12.Enabled := false;
-  M_INIT_3f.Enabled := false;
-  M_Cunstom_Manage.Enabled := false; //用户管理
-  N40.Enabled := false;
+  N1.Enabled := true;
+  N2.Enabled := true;
+  N3.Enabled := true;
+  M_INIT_BOSS.Enabled := true;
+  N12.Enabled := true;
+  M_INIT_3f.Enabled := true;
+  M_Cunstom_Manage.Enabled := true; //用户管理
+  N40.Enabled := true;
 
-  N1.Visible := false;
-  N2.Visible := false;
-  N3.Visible := false;
-  M_INIT_BOSS.Visible := false;
-  N12.Visible := false;
-  M_INIT_3f.Visible := false;
-  M_Cunstom_Manage.Visible := false; //用户管理
-  N40.Visible := false;
+  N1.Visible := true;
+  N2.Visible := true;
+  N3.Visible := true;
+  M_INIT_BOSS.Visible := true;
+  N12.Visible := true;
+  M_INIT_3f.Visible := true;
+  M_Cunstom_Manage.Visible := true; //用户管理
+  N40.Visible := true;
 
   pnlOperator.Caption := SGBTCONFIGURE.shopid;
 
@@ -566,7 +567,9 @@ end;
 
 procedure TFrm_IC_Main.N13Click(Sender: TObject);
 begin
-  frm_SetParameter_MenberControl_INIT.ShowModal;
+//  frm_SetParameter_MenberControl_INIT.ShowModal;
+    frmMemberConfig.ShowModal;
+
 end;
 
 procedure TFrm_IC_Main.N14Click(Sender: TObject);
@@ -809,7 +812,9 @@ end;
 
 procedure TFrm_IC_Main.btn5Click(Sender: TObject);
 begin
-    frmAccountSum.ShowModal;
+   frmAccountSum.ShowModal;
+    
+
 end;
 
 
@@ -828,6 +833,7 @@ end;
 procedure TFrm_IC_Main.btn7Click(Sender: TObject);
 begin
   frmNewMember.ShowModal;
+
 end;
 
 end.

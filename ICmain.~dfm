@@ -1,6 +1,6 @@
 object Frm_IC_Main: TFrm_IC_Main
-  Left = 338
-  Top = 286
+  Left = 214
+  Top = 15
   Width = 1010
   Height = 600
   BorderIcons = [biSystemMenu, biMinimize]
@@ -12616,7 +12616,7 @@ object Frm_IC_Main: TFrm_IC_Main
           FFFFFFFFFFFFE1DEDBE4E2DEE4E2DEE4E2DEE4E2DEE4E2DEE4E2DEE4E2DEE4E2
           DEE7E6E3ECEAE8E7E5E2E7E5E2ECEAE8E7E6E3E4E2DEE4E2DEE4E2DEE4E2DEE4
           E2DEE4E2DEE4E2DEE4E2DEE1DEDBFFFFFFFFFFFFFFFFFFFFFFFF}
-        Caption = #20250#21592#21046#35774#23450
+        Caption = #20250#21592#37197#32622
         OnClick = N13Click
       end
       object _SetParameter_BossINIT: TMenuItem
