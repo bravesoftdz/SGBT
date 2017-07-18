@@ -1,5 +1,5 @@
 object frmRecharge: TfrmRecharge
-  Left = 525
+  Left = 489
   Top = 271
   Width = 901
   Height = 612

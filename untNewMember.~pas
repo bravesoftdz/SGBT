@@ -219,15 +219,15 @@ begin
   Receive_CMD_ID_Infor.ID_value := copy(recDataLst.Strings[0], 29, 8); //卡内数据
   Receive_CMD_ID_Infor.ID_type := copy(recDataLst.Strings[0], 37, 2); //卡功能
 
-  if DataModule_3F.queryExistInitialRecord(Receive_CMD_ID_Infor.ID_INIT) = false then //用户卡已经初始化 有记录
-  begin
-      lblMessage.Caption := '请先初始化！';
-      exit;
-  end
-  else
-  begin
+//  if DataModule_3F.queryExistInitialRecord(Receive_CMD_ID_Infor.ID_INIT) = false then //用户卡已经初始化 有记录
+//  begin
+//      lblMessage.Caption := '请先初始化！';
+//      exit;
+//  end
+//  else
+//  begin
       displayCardInformation();
-  end;
+ //end;
 
 
 end;   
@@ -496,12 +496,25 @@ begin
 end;
 
 procedure TfrmNewMember.initComboxCardtype;
-begin
-  cbMemberType.Items.clear();
-  cbMemberType.Items.Add('年卡');
-  cbMemberType.Items.Add('季卡');
-  cbMemberType.Items.Add('月卡');
-  cbMemberType.Items.Add('普通卡');
+var
+  ADOQTemp: TADOQuery;
+  strSQL: string;
+begin   
+  ADOQTemp:=TADOQuery.Create(nil);
+  strSQL:= 'select coin_type from t_member_card_configuration';
+  with ADOQTemp do begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    SQL.Clear;
+    SQL.Add(strSQL);
+    Active:=True;
+    cbMemberType.Items.Clear;
+    while not Eof do begin
+      cbMemberType.Items.Add(FieldByName('coin_type').AsString);
+      Next;
+      end;
+    end;
+  FreeAndNil(ADOQTemp);
+
   
 end;
 

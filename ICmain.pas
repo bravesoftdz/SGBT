@@ -204,7 +204,7 @@ uses ICtest_Main, FrontoperateUnit, AculateUnit, BehindoperateUnit,
   IC_SetParameter_DataBaseInitUnit, IC_SetParameter_BiLiUnit, Logon,
   IC_SetParameter_MaxDateUnit, IC_SetParameter_MenberControlUnit,
   check_detail, contact, untRecharge, untInitialRecord, untSumAccount,
-  untNewMember,untMemberConfig;
+  untNewMember,untMemberConfig,untMemberRecharge;
 
 {$R *.dfm}
 
@@ -807,7 +807,8 @@ end;
 
 procedure TFrm_IC_Main.btn3Click(Sender: TObject);
 begin
-    frmRecharge.ShowModal;
+//    frmRecharge.ShowModal;
+      frmMemberRecharge.ShowModal;
 end;
 
 procedure TFrm_IC_Main.btn5Click(Sender: TObject);

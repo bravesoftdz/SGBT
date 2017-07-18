@@ -807,7 +807,8 @@ end;
 
 procedure TFrm_IC_Main.btn3Click(Sender: TObject);
 begin
-    frmRecharge.ShowModal;
+//    frmRecharge.ShowModal;
+      frmMemberRecharge.ShowModal;
 end;
 
 procedure TFrm_IC_Main.btn5Click(Sender: TObject);

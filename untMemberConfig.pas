@@ -23,9 +23,9 @@ type
     Label5: TLabel;
     edtAPPID: TEdit;
     Label6: TLabel;
-    cbMemberType: TComboBox;
     lbl1: TLabel;
     edtCoinValue: TEdit;
+    edtTimes: TEdit;
    
     procedure FormShow(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
@@ -42,7 +42,7 @@ type
     function initDBRecord(): string;
     procedure saveMemberConfiguration( cardtype:string);
     procedure updateMemberConfiguration(cardtype:string);
-    procedure initComboxCardtype(); 
+    
     function  getCoinCodeByCoinType(cardtype:string):string;
     function  getCoinByCoinType(cardtype :string):string;
     function  checkUniqueCoin(cardtype :string):Boolean;
@@ -61,8 +61,8 @@ procedure TfrmMemberConfig.FormShow(Sender: TObject);
 begin  
 
   //初始化界面
-  initComboxCardtype();
-  ICFunction.loginfo('initComboxCardtype: ');
+
+
   //初始化数据库数据
   initDBRecord();
   ICFunction.loginfo('initDBRecord: ');
@@ -146,10 +146,10 @@ procedure TfrmMemberConfig.btnSubmitClick(Sender: TObject);
 var
   operationcoin:string;
 begin
-  if checkUniqueCoin(cbMemberType.Text) then
-      updateMemberConfiguration(cbMemberType.Text)
+  if checkUniqueCoin(edtTimes.Text) then
+      updateMemberConfiguration(edtTimes.Text)
   else
-      saveMemberConfiguration(cbMemberType.Text);
+      saveMemberConfiguration(edtTimes.Text);
   lblMessage.Caption := '会员配置成功';
 
 end;
@@ -213,7 +213,7 @@ begin
     SQL.Add(strSQL);
     Active := True;
     Append;
-    FieldByName('COIN_TYPE').AsString := cbMemberType.Text;
+    FieldByName('COIN_TYPE').AsString := edtTimes.Text;
     FieldByName('COIN_VALUE').AsString := edtCoinValue.Text;
     FieldByName('COIN_TIME').AsString := strOperateTime;
     FieldByName('APPID').AsString := strAppID;
@@ -257,15 +257,7 @@ begin
 
 
 
-procedure TfrmMemberConfig.initComboxCardtype;
-begin
-  cbMemberType.Items.clear();
-  cbMemberType.Items.Add('年卡');
-  cbMemberType.Items.Add('季卡');
-  cbMemberType.Items.Add('月卡');
-  cbMemberType.Items.Add('普通卡');
-  
-end;
+
 
 
 

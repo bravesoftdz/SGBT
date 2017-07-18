@@ -1,5 +1,5 @@
 object frmRecharge: TfrmRecharge
-  Left = 525
+  Left = 489
   Top = 271
   Width = 901
   Height = 612
@@ -37,7 +37,7 @@ object frmRecharge: TfrmRecharge
         Top = 41
         Width = 153
         Height = 49
-        Caption = #30830#35748#30003#35831
+        Caption = #22312#32447#20805#20540
         TabOrder = 0
         OnClick = btnOnlineRechargeClick
       end
@@ -46,7 +46,7 @@ object frmRecharge: TfrmRecharge
         Top = 120
         Width = 153
         Height = 42
-        Caption = #30830#35748#36864#21345
+        Caption = #31163#32447#20805#20540
         TabOrder = 1
         OnClick = btnOfflineRechargeClick
       end
@@ -141,7 +141,7 @@ object frmRecharge: TfrmRecharge
         Left = 445
         Top = 131
         Width = 148
-        Height = 23
+        Height = 21
         ReadOnly = True
         TabOrder = 2
       end

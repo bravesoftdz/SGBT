@@ -1,6 +1,6 @@
 object frmMemberConfig: TfrmMemberConfig
-  Left = 444
-  Top = 103
+  Left = 399
+  Top = 132
   Width = 896
   Height = 602
   BorderStyle = bsSizeToolWin
@@ -87,12 +87,12 @@ object frmMemberConfig: TfrmMemberConfig
       end
       object Label6: TLabel
         Left = 12
-        Top = 97
+        Top = 96
         Width = 121
         Height = 25
         Alignment = taCenter
         AutoSize = False
-        Caption = #31867#22411':'
+        Caption = #27425#25968':'
       end
       object lbl1: TLabel
         Left = 320
@@ -101,7 +101,7 @@ object frmMemberConfig: TfrmMemberConfig
         Height = 33
         Alignment = taCenter
         AutoSize = False
-        Caption = #38754#20540
+        Caption = #37329#39069
       end
       object edtShopID: TEdit
         Left = 447
@@ -125,6 +125,13 @@ object frmMemberConfig: TfrmMemberConfig
         Width = 154
         Height = 21
         TabOrder = 2
+      end
+      object edtTimes: TEdit
+        Left = 149
+        Top = 95
+        Width = 153
+        Height = 21
+        TabOrder = 3
       end
     end
     object GroupBox3: TGroupBox
@@ -156,13 +163,13 @@ object frmMemberConfig: TfrmMemberConfig
           item
             Expanded = False
             FieldName = 'coin_type'
-            Title.Caption = #31867#22411
+            Title.Caption = #27425#25968
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'coin_value'
-            Title.Caption = #24635#39069
+            Title.Caption = #37329#39069
             Visible = True
           end
           item
@@ -191,15 +198,6 @@ object frmMemberConfig: TfrmMemberConfig
           end>
       end
     end
-  end
-  object cbMemberType: TComboBox
-    Left = 144
-    Top = 101
-    Width = 153
-    Height = 21
-    ItemHeight = 13
-    TabOrder = 1
-    Text = #26376#21345
   end
   object ADOQ: TADOQuery
     Parameters = <>
