@@ -120,7 +120,7 @@ type
     procedure InitCombo_Menber;
     procedure QueryBy_NOMenberControl;
     procedure QueryBy_MenberControl;
-    procedure init_refund_history ;
+    procedure init_refund_history;
   public
     { Public declarations }
   end;
@@ -140,16 +140,17 @@ begin
 end;
 
 //初始化退币记录
+
 procedure Tfrm_IC_Report_SaleDetial.init_refund_history;
 var
-  strSQL,strwhere,strrefundstartdate,strrefundenddate: string;
+  strSQL, strwhere, strrefundstartdate, strrefundenddate: string;
 begin
   strrefundstartdate := FormatDateTime('yyyy-mm-dd', dtp_refund_start_date.Date);
   strrefundenddate := FormatDateTime('yyyy-MM-dd', dtp_refund_end_date.Date) + ' ' + FormatDateTime('hh:mm:ss', dtp_refund_end_time.Time);
 
   strSQL := 'select * from tmembedetail where ';
   strwhere := strWhere + ' ( tuibi_time>=''' + strrefundstartdate + ''' and tuibi_time<=''' + strrefundenddate + ''')';
-  strSQL := strSQL + strwhere +' order by tuibi_time desc ';
+  strSQL := strSQL + strwhere + ' order by tuibi_time desc ';
 
   Edit1.Text := strSQL;
   with ADOQuery_Refund do
@@ -315,6 +316,7 @@ begin
 end;
 
 //初始化机台编号
+
 procedure Tfrm_IC_Report_SaleDetial.InitCarMC_ID(Str1: string);
 var
   ADOQTemp: TADOQuery;
@@ -404,7 +406,7 @@ procedure Tfrm_IC_Report_SaleDetial.FormShow(Sender: TObject);
 begin
   DateTimePicker_Start_Menberinfo.Date := StrToDate(copy(FormatDateTime('yyyy-MM-dd HH:mm:ss', now), 1, 10));
   DateTimePicker_End_Menberinfo.Date := StrToDate(copy(FormatDateTime('yyyy-MM-dd HH:mm:ss', now), 1, 10));
-  TimePicker_Start_Menberinfo.Time := StrToTime('00:00:00');;
+  TimePicker_Start_Menberinfo.Time := StrToTime('00:00:00'); ;
   TimePicker_End_Menberinfo.Time := StrToTime(copy(FormatDateTime('yyyy-MM-dd HH:mm:ss', now), 12, 8));
 
   DateTimePicker_Start.Date := StrToDate(copy(FormatDateTime('yyyy-MM-dd HH:mm:ss', now), 1, 10));
@@ -416,9 +418,9 @@ begin
 
 
   //初始化refund date/time
-  dtp_refund_start_date.Date :=  StrToDate(copy(FormatDateTime('yyyy-MM-dd HH:mm:ss', now), 1, 10));
+  dtp_refund_start_date.Date := StrToDate(copy(FormatDateTime('yyyy-MM-dd HH:mm:ss', now), 1, 10));
   dtp_refund_start_time.Time := StrToTime('00:00:00');
-  dtp_refund_end_date.Date :=  StrToDate(copy(FormatDateTime('yyyy-MM-dd HH:mm:ss', now), 1, 10));
+  dtp_refund_end_date.Date := StrToDate(copy(FormatDateTime('yyyy-MM-dd HH:mm:ss', now), 1, 10));
   dtp_refund_end_time.Time := StrToTime(copy(FormatDateTime('yyyy-MM-dd HH:mm:ss', now), 12, 8));
 
 
@@ -436,7 +438,7 @@ begin
   end
   else
   }
-  
+
   begin
     DBGridEh1.Visible := false;
     DBGridEh3.Visible := true;
@@ -478,6 +480,7 @@ begin
 end;
 
 //会员控制查询
+
 procedure Tfrm_IC_Report_SaleDetial.QueryBy_MenberControl;
 var
   strSQL: string;
@@ -629,7 +632,7 @@ var
 begin
   LastRecord := '1'; //最新记录标志位
 
- strWhere := ' select * from [TMembeDetail] where  ';
+  strWhere := ' select * from [TMembeDetail] where  ';
   //strWhere := ' select * from [t_refunddetail] where  ';
 
   //条件一

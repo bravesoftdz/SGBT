@@ -1,11 +1,11 @@
 object frm_Fileinput_machinerecord: Tfrm_Fileinput_machinerecord
-  Left = 315
-  Top = 168
+  Left = 550
+  Top = 160
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = #22522#30784#20449#24687'-'#26426#21488#30331#35760
-  ClientHeight = 400
-  ClientWidth = 645
+  ClientHeight = 486
+  ClientWidth = 800
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -20,9 +20,9 @@ object frm_Fileinput_machinerecord: Tfrm_Fileinput_machinerecord
   object pgcMachinerecord: TPageControl
     Left = 0
     Top = 0
-    Width = 645
-    Height = 400
-    ActivePage = Tab_Gamenameinput
+    Width = 800
+    Height = 486
+    ActivePage = tbsConfig
     Align = alClient
     MultiLine = True
     Style = tsFlatButtons
@@ -35,83 +35,82 @@ object frm_Fileinput_machinerecord: Tfrm_Fileinput_machinerecord
       object Panel8: TPanel
         Left = 0
         Top = 0
-        Width = 527
-        Height = 369
+        Width = 682
+        Height = 455
         Align = alClient
         Caption = 'Panel1'
         TabOrder = 0
-        object DBGrid6: TDBGrid
-          Left = 1
-          Top = 1
-          Width = 525
-          Height = 367
-          Align = alClient
-          DataSource = DataSource_Gameset
-          Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
+        object grmachine: TGroupBox
+          Left = 0
+          Top = 0
+          Width = 561
+          Height = 393
+          Caption = #28155#21152#26426#21488
           TabOrder = 0
-          TitleFont.Charset = DEFAULT_CHARSET
-          TitleFont.Color = clWindowText
-          TitleFont.Height = -11
-          TitleFont.Name = 'MS Sans Serif'
-          TitleFont.Style = []
-          OnDblClick = DBGrid6DblClick
-          Columns = <
-            item
-              Alignment = taCenter
-              Expanded = False
-              FieldName = 'ID'
-              Title.Alignment = taCenter
-              Title.Caption = #24207#21495
-              Width = 50
-              Visible = True
-            end
-            item
-              Alignment = taCenter
-              Expanded = False
-              FieldName = 'GameNo'
-              Title.Alignment = taCenter
-              Title.Caption = #26426#21488#32534#21495
-              Width = 120
-              Visible = True
-            end
-            item
-              Alignment = taCenter
-              Expanded = False
-              FieldName = 'GameName'
-              Title.Alignment = taCenter
-              Title.Caption = #26426#21488#21517#31216
-              Width = 150
-              Visible = True
-            end
-            item
-              Alignment = taCenter
-              Expanded = False
-              FieldName = 'cUserNo'
-              Title.Alignment = taCenter
-              Title.Caption = #25805#20316#21592
-              Width = 100
-              Visible = True
-            end
-            item
-              Expanded = False
-              FieldName = 'GetTime'
-              Title.Caption = #30331#35760#26102#38388
-              Width = 200
-              Visible = True
-            end
-            item
-              Expanded = False
-              Title.Caption = #22791#27880
-              Width = 200
-              Visible = True
-            end>
+          object lbl1: TLabel
+            Left = 8
+            Top = 24
+            Width = 97
+            Height = 25
+            AutoSize = False
+            Caption = #26426#21488#21517#31216':'
+          end
+          object DBGrid6: TDBGrid
+            Left = 2
+            Top = 64
+            Width = 559
+            Height = 321
+            DataSource = dsMachineRecord
+            Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
+            TabOrder = 0
+            TitleFont.Charset = DEFAULT_CHARSET
+            TitleFont.Color = clWindowText
+            TitleFont.Height = -11
+            TitleFont.Name = 'MS Sans Serif'
+            TitleFont.Style = []
+            Columns = <
+              item
+                Alignment = taCenter
+                Expanded = False
+                FieldName = 'ID'
+                Title.Alignment = taCenter
+                Title.Caption = #26426#21488#32534#21495
+                Width = 50
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'MACHINE_NAME'
+                Title.Caption = #26426#21488#21517#31216
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'OPERATE_TIME'
+                Title.Caption = #25805#20316#26102#38388
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'OPERATOR_NO'
+                Title.Caption = #25805#20316#21592
+                Visible = True
+              end>
+          end
+          object edtMachineName: TEdit
+            Left = 126
+            Top = 20
+            Width = 163
+            Height = 21
+            TabOrder = 1
+          end
         end
       end
       object Panel5: TPanel
-        Left = 527
+        Left = 682
         Top = 0
         Width = 110
-        Height = 369
+        Height = 455
         Align = alRight
         BorderStyle = bsSingle
         TabOrder = 1
@@ -1615,13 +1614,13 @@ object frm_Fileinput_machinerecord: Tfrm_Fileinput_machinerecord
             FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
             FFFFFFFFF8FCFBFDFEFEFFFFFFFFFFFFFFFFFFFFFFFF}
         end
-        object BitBtn9: TBitBtn
+        object btnConfirm: TBitBtn
           Left = 16
           Top = 248
           Width = 81
           Height = 41
           TabOrder = 0
-          OnClick = BitBtn9Click
+          OnClick = btnConfirmClick
           Glyph.Data = {
             360C0000424D360C000000000000360000002800000020000000200000000100
             180000000000000C0000C40E0000C40E00000000000000000000000000000000
@@ -1722,120 +1721,13 @@ object frm_Fileinput_machinerecord: Tfrm_Fileinput_machinerecord
             0000000000000000000000000000000000000000000000000000000000000000
             0000000000000000000000000000000000000000000000000000}
         end
-        object Bit_Update_Gamename: TBitBtn
-          Left = 16
-          Top = 195
-          Width = 81
-          Height = 41
-          TabOrder = 1
-          Visible = False
-          Glyph.Data = {
-            360C0000424D360C000000000000360000002800000020000000200000000100
-            180000000000000C0000C40E0000C40E00000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            2F2F2FA2A2A29999999696969595959393939191919090908E8E8E8C8C8C8B8B
-            8B8888888686868585858383838282828080807E7E7E7D7D7D7B7B7B7A7A7A78
-            7878767676767676797979070707000000000000000000000000000000000000
-            BDBDBDFDFDFDEDEDEDEEEEEEEEEEEEEEEEEEEDEDEDEDEDEDEDEDEDEDEDEDEDED
-            EDEDEDEDEDEDEDEDEDEDEEEEEEECECECECECECECECECECECECECECECECECECEC
-            ECECEDEDEDEEEEEEF0F0F04F4F4F000000000000000000000000000000000000
-            B2B2B2ECECECE2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
-            E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
-            E2E2E2E2E2E3E3E3F0F0F04A4A4A000000000000000000000000000000000000
-            B3B3B3EEEEEEE5E5E5E3E3E3DADADAE0E0E0E5E5E5E5E5E5E5E5E5E5E5E5E5E5
-            E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5
-            E5E5E5E5E5E5E5E5F2F2F24C4C4C000000000000000000000000000000000000
-            B5B5B5F0F0F0E9E9E9DDDDDD8E8E8EAEAEAEDADADAE6E6E6E8E8E8E7E7E7E7E7
-            E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7
-            E7E7E7E7E7E7E7E7F4F4F44E4E4E000000000000000000000000000000000000
-            B4B4B4F2F2F2EAEAEADBDBDB2A292943403B84827FC7C7C7E2E2E2E8E8E8E8E8
-            E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8
-            E8E8E8E8E8E8E8E8F6F6F6505050000000000000000000000000000000000000
-            B5B5B5F3F3F3E8E8E8F1F0F0C7C8C76E9CDE6876855C574FA3A2A1D8D8D8E7E7
-            E7E9E9E9E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8
-            E8E8E8E8E8E9E9E9F7F7F7525252000000000000000000000000000000000000
-            B7B7B7F4F4F4E9E9E9E9E9E9F1EFECB8CDEA4E86DE5885C0585856847B75D2D2
-            D2E9E9E9EAEAEAE9E9E9E9E9E9E9E9E9E9E9E9E9E9E9E9E9E9E9E9E9E9E9E9E9
-            E9E9E9E9E9E9E9E9F8F8F8555555000000000000000000000000000000000000
-            B6B6B6F6F6F6EBEBEBECECECEEEDECE1E4E6D2E0F45788D9407AD5276C8D8776
-            6DD5D5D5EBEBEBEDEDEDECECECECECECECECECECECECECECECECECECECECECEC
-            ECECECECECECECECFCFCFC575757000000000000000000000000000000000000
-            B6B6B6F7F7F7ECECECEDEDEDEEEEEEF2F1EFDEE4ECE6EDF6009BEE008FF1236C
-            9089776DD6D6D6ECECECEEEEEEEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDED
-            EDEDEDEDEDEDEDEDFEFEFE595959000000000000000000000000000000000000
-            B8B8B8F9F9F9F2F2F2F2F2F2F2F2F2F3F3F2FAEFED58D7FD0FCCFC009BF2008F
-            F0246D918C7970D9D9D9EEEEEEEFEFEFEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-            EEEEEEEEEEEEEEEEFFFFFF5C5C5C000000000000000000000000000000000000
-            B8B8B8FAFAFAF3F3F3F2F2F2F2F2F2F2F2F2FAF4F2C0E6F360DDFF15CDFC009D
-            F3008FF0246D918B7970DBDBDBF2F2F2F2F2F2EFEFEFEFEFEFEFEFEFEFEFEFEF
-            EFEFEFEFEFEFEFEFFFFFFF5E5E5E000000000000000000000000000000000000
-            B9B9B9FCFCFCF5F5F5F5F5F5F5F5F5F5F5F5F5F5F5FFF8F4C3E8F564DDFF16CE
-            FC009DF3008DEE246E928D7B71DDDDDDF5F5F5F6F6F6F2F2F2F1F1F1F2F2F2F2
-            F2F2F2F2F2F2F2F2FFFFFF626262000000000000000000000000000000000000
-            B9B9B9FDFDFDF6F6F6F6F6F6F6F6F6F6F6F6F6F6F6F6F6F6FFF9F5C3E9F668DF
-            FF16CEFD009EF4008DEF236E918D7B72DDDDDDF5F5F5F7F7F7F4F4F4F1F1F1F2
-            F2F2F2F2F2F2F2F2FFFFFF636363000000000000000000000000000000000000
-            BABABAFEFEFEF7F7F7F6F6F6F6F6F6F6F6F6F6F6F6F6F6F6F6F6F6FFFAF6C4E9
-            F66CDFFF17CFFD00A0F5008DEF246E918E7C72DEDEDEF6F6F6F8F8F8F5F5F5F2
-            F2F2F2F2F2F2F2F2FFFFFF666666000000000000000000000000000000000000
-            BBBBBBFFFFFFF8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8FFFB
-            F8C5EBF870E0FF18D2FD00A1F6008EEF246E928F7C73E0E0E0F7F7F7FAFAFAF7
-            F7F7F4F4F4F4F4F4FFFFFF676767000000000000000000000000000000000000
-            BCBCBCFFFFFFF9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9
-            F9FFFCF9C5EBF874E1FF19D3FD00A3F6008EF0246F928F7D74E1E1E1F9F9F9FB
-            FBFBF7F7F7F4F4F4FFFFFF676767000000000000000000000000000000000000
-            BCBCBCFFFFFFFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFB
-            FBFBFBFBFFFEFBC6ECFA7EE3FF19D0FD00A4F7008EEF246F92917E75E4E4E4FA
-            FAFAFCFCFCF7F7F7FFFFFF696969000000000000000000000000000000000000
-            BDBDBDFFFFFFFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFB
-            FBFBFBFBFBFBFBFFFEFBCAEEFA84E5FF19D0FD00A6F9008EEF276E9096857CE5
-            E5E5FBFBFBFBFBFBFFFFFF696969000000000000000000000000000000000000
-            BEBEBEFFFFFFFAFAFAFAFAFAFAFAFAFAFAFAFAFAFAFAFAFAFAFAFAFAFAFAFAFA
-            FAFAFAFAFAFAFAFAFAFAFFFEFAC9EDFA8AE6FF1BD1FD00A8FA008EEF2D698493
-            837BE0E0E0F4F4F4FFFFFF6C6C6C000000000000000000000000000000000000
-            BFBFBFFFFFFFFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFB
-            FBFBFBFBFBFBFBFBFBFBFBFBFBFFFEFBBFEBFA87E5FF12D0FE00A9FB008FF22A
-            67828C7C74D8D8D8EEEEEE6E6E6E000000000000000000000000000000000000
-            C0C0C0FFFFFFFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFC
-            FCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFFFFFCB6E8F88EE8FF13D0FF00AAFB00
-            90F229648187776FD7D7D7707070000000000000000000000000000000000000
-            C0C0C0FFFFFFFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFC
-            FCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCF9F9F9FFF5F1B0E1F195ECFF14D1FF00
-            ACFC0091F327647F8B7B73575757000000000000000000000000000000000000
-            C2C2C2FFFFFFFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFC
-            FCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCF6F6F6F4F4F4CDC1BD91C2D39AECFF14
-            D3FF00ACFC0090F223617E040000000000000000000000000000000000000000
-            C2C2C2FFFFFFFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFC
-            FCFCFCFCFCFCFCFCFCFCFCFCFCFAFAFAF3F3F3E2E2E2E2E2E2FFFFFFB8EAFA9C
-            EBFF15D3FF00ADFD0094FC242B2E000000000000000000000000000000000000
-            C3C3C3FFFFFFFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFC
-            FCFCFCFCFCFCFCFCFCFCFCFCFCF8F8F8F3F3F3E2E2E2E4E4E4FEFEFEFFFFFEAB
-            DCEDAEF9FF09D5FFA3C2CF9C94911F1F1F000000000000000000000000000000
-            C5C5C5FFFFFFFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFC
-            FCFCFCFCFCFCFCFCFCFCFCFCFCF8F8F8F3F3F3E3E3E3E8E8E8FFFFFFEDEDEDE1
-            D4D0175F76EDEBEBFFF8F5C7C7C793939326241C000000000000000000000000
-            C5C5C5FFFFFFFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFC
-            FCFCFCFCFCFCFCFCFCFCFCFCFCF8F8F8F3F3F3E6E6E6EEEEEEEEEEEEDEDEDE19
-            1919000000706E6DCCCCCCFBFBFBD4CFC27489D4000532000000000000000000
-            C6C6C6FFFFFFFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFC
-            FCFCFCFCFCFCFCFCFCFCFCFCFCFAFAFAF4F4F4ECECECE7E7E7E7E7E71E1E1E00
-            00000000000000006F6F6FD9D5CEC0D4F56793FF5888FF00000D000000000000
-            CACACAFFFFFFFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFD
-            FDFDFDFDFDFDFDFDFDFDFDFDFDFCFCFCF9F9F9F1F1F1F7F7F72E2E2E00000000
-            0000000000000000000000494D65A9D7FF9AC8FF95C2FF00022A000000000000
-            A3A3A3FAFAFAEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEF
-            EFEFEFEFEFEFEFEFEFEFEFEFEFF0F0F0F1F1F1F4F4F427272700000000000000
-            00000000000000000000000000000D1549758BC9253B87000000}
-        end
-        object BitBtn11: TBitBtn
+        object btnCancel: TBitBtn
           Left = 16
           Top = 304
           Width = 81
           Height = 41
-          TabOrder = 2
-          OnClick = BitBtn11Click
+          TabOrder = 1
+          OnClick = btnCancelClick
           Glyph.Data = {
             360C0000424D360C000000000000360000002800000020000000200000000100
             180000000000000C0000C40E0000C40E00000000000000000000000000000000
@@ -1944,76 +1836,124 @@ object frm_Fileinput_machinerecord: Tfrm_Fileinput_machinerecord
       object Panel3: TPanel
         Left = 0
         Top = 0
-        Width = 527
-        Height = 369
+        Width = 682
+        Height = 455
         Align = alClient
         Caption = 'Panel1'
         TabOrder = 0
-        object DBGrid12: TDBGrid
+        object grpCardPosition: TGroupBox
           Left = 1
           Top = 1
-          Width = 525
-          Height = 367
+          Width = 680
+          Height = 453
           Align = alClient
-          DataSource = DataSource_TChargMacSet
-          Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
+          Caption = #28155#21152#21345#20301
           TabOrder = 0
-          TitleFont.Charset = DEFAULT_CHARSET
-          TitleFont.Color = clWindowText
-          TitleFont.Height = -11
-          TitleFont.Name = 'MS Sans Serif'
-          TitleFont.Style = []
-          Columns = <
-            item
-              Alignment = taCenter
-              Expanded = False
-              FieldName = 'MID'
-              Title.Alignment = taCenter
-              Title.Caption = #24207#21495
-              Width = 50
-              Visible = True
-            end
-            item
-              Alignment = taCenter
-              Expanded = False
-              FieldName = 'MacNo'
-              Title.Alignment = taCenter
-              Title.Caption = #26426#21488#20301#32534#21495
-              Width = 120
-              Visible = True
-            end
-            item
-              Alignment = taCenter
-              Expanded = False
-              FieldName = 'GameName'
-              Title.Alignment = taCenter
-              Title.Caption = #26426#21488#21517#31216
-              Width = 150
-              Visible = True
-            end
-            item
-              Alignment = taCenter
-              Expanded = False
-              FieldName = 'cUserNo'
-              Title.Alignment = taCenter
-              Title.Caption = #25805#20316#21592
-              Width = 100
-              Visible = True
-            end
-            item
-              Expanded = False
-              FieldName = 'GetTime'
-              Title.Caption = #30331#35760#26102#38388
-              Width = 200
-              Visible = True
-            end>
+          object Label1: TLabel
+            Left = 8
+            Top = 24
+            Width = 97
+            Height = 25
+            AutoSize = False
+            Caption = #26426#21488#21517#31216':'
+          end
+          object lbl2: TLabel
+            Left = 280
+            Top = 26
+            Width = 97
+            Height = 25
+            AutoSize = False
+            Caption = #21345#20301#20010#25968':'
+          end
+          object DBGrid12: TDBGrid
+            Left = 2
+            Top = 72
+            Width = 679
+            Height = 385
+            DataSource = dsPosition
+            Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
+            TabOrder = 0
+            TitleFont.Charset = DEFAULT_CHARSET
+            TitleFont.Color = clWindowText
+            TitleFont.Height = -11
+            TitleFont.Name = 'MS Sans Serif'
+            TitleFont.Style = []
+            Columns = <
+              item
+                Alignment = taCenter
+                Expanded = False
+                FieldName = 'ID'
+                Title.Alignment = taCenter
+                Title.Caption = #24207#21495
+                Width = 50
+                Visible = True
+              end
+              item
+                Alignment = taCenter
+                Expanded = False
+                FieldName = 'MACHINE_NO'
+                Title.Alignment = taCenter
+                Title.Caption = #26426#21488#32534#21495
+                Width = 120
+                Visible = True
+              end
+              item
+                Alignment = taCenter
+                Expanded = False
+                FieldName = 'MACHINE_NAME'
+                Title.Alignment = taCenter
+                Title.Caption = #26426#21488#21517#31216
+                Width = 150
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'CARD_POSITION_NO'
+                Title.Caption = #21345#20301#32534#21495
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'OPERATE_TIME'
+                Title.Caption = #25805#20316#26102#38388
+                Width = 200
+                Visible = True
+              end
+              item
+                Alignment = taCenter
+                Expanded = False
+                FieldName = 'OPERATOR_NO'
+                Title.Alignment = taCenter
+                Title.Caption = #25805#20316#21592
+                Width = 100
+                Visible = True
+              end>
+          end
+          object cbMachineName: TComboBox
+            Left = 120
+            Top = 24
+            Width = 145
+            Height = 21
+            ItemHeight = 13
+            TabOrder = 1
+            Text = #35831#36873#25321#26426#21488
+          end
+          object cbCardPositionNum: TComboBox
+            Left = 392
+            Top = 26
+            Width = 145
+            Height = 21
+            ItemHeight = 13
+            TabOrder = 2
+            Text = '1'
+          end
         end
       end
       object Panel2: TPanel
-        Left = 527
+        Left = 682
         Top = 0
         Width = 110
-        Height = 369
+        Height = 455
         Align = alRight
         BorderStyle = bsSingle
         TabOrder = 1
@@ -3517,13 +3457,13 @@ object frm_Fileinput_machinerecord: Tfrm_Fileinput_machinerecord
             FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
             FFFFFFFFF8FCFBFDFEFEFFFFFFFFFFFFFFFFFFFFFFFF}
         end
-        object BitBtn1: TBitBtn
+        object btnCardPositionConfirm: TBitBtn
           Left = 16
           Top = 248
           Width = 81
           Height = 41
           TabOrder = 0
-          OnClick = BitBtn1Click
+          OnClick = btnCardPositionConfirmClick
           Glyph.Data = {
             360C0000424D360C000000000000360000002800000020000000200000000100
             180000000000000C0000C40E0000C40E00000000000000000000000000000000
@@ -3624,120 +3564,13 @@ object frm_Fileinput_machinerecord: Tfrm_Fileinput_machinerecord
             0000000000000000000000000000000000000000000000000000000000000000
             0000000000000000000000000000000000000000000000000000}
         end
-        object BitBtn2: TBitBtn
-          Left = 16
-          Top = 187
-          Width = 81
-          Height = 41
-          TabOrder = 1
-          Visible = False
-          Glyph.Data = {
-            360C0000424D360C000000000000360000002800000020000000200000000100
-            180000000000000C0000C40E0000C40E00000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            2F2F2FA2A2A29999999696969595959393939191919090908E8E8E8C8C8C8B8B
-            8B8888888686868585858383838282828080807E7E7E7D7D7D7B7B7B7A7A7A78
-            7878767676767676797979070707000000000000000000000000000000000000
-            BDBDBDFDFDFDEDEDEDEEEEEEEEEEEEEEEEEEEDEDEDEDEDEDEDEDEDEDEDEDEDED
-            EDEDEDEDEDEDEDEDEDEDEEEEEEECECECECECECECECECECECECECECECECECECEC
-            ECECEDEDEDEEEEEEF0F0F04F4F4F000000000000000000000000000000000000
-            B2B2B2ECECECE2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
-            E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2E2
-            E2E2E2E2E2E3E3E3F0F0F04A4A4A000000000000000000000000000000000000
-            B3B3B3EEEEEEE5E5E5E3E3E3DADADAE0E0E0E5E5E5E5E5E5E5E5E5E5E5E5E5E5
-            E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5E5
-            E5E5E5E5E5E5E5E5F2F2F24C4C4C000000000000000000000000000000000000
-            B5B5B5F0F0F0E9E9E9DDDDDD8E8E8EAEAEAEDADADAE6E6E6E8E8E8E7E7E7E7E7
-            E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7E7
-            E7E7E7E7E7E7E7E7F4F4F44E4E4E000000000000000000000000000000000000
-            B4B4B4F2F2F2EAEAEADBDBDB2A292943403B84827FC7C7C7E2E2E2E8E8E8E8E8
-            E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8
-            E8E8E8E8E8E8E8E8F6F6F6505050000000000000000000000000000000000000
-            B5B5B5F3F3F3E8E8E8F1F0F0C7C8C76E9CDE6876855C574FA3A2A1D8D8D8E7E7
-            E7E9E9E9E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8E8
-            E8E8E8E8E8E9E9E9F7F7F7525252000000000000000000000000000000000000
-            B7B7B7F4F4F4E9E9E9E9E9E9F1EFECB8CDEA4E86DE5885C0585856847B75D2D2
-            D2E9E9E9EAEAEAE9E9E9E9E9E9E9E9E9E9E9E9E9E9E9E9E9E9E9E9E9E9E9E9E9
-            E9E9E9E9E9E9E9E9F8F8F8555555000000000000000000000000000000000000
-            B6B6B6F6F6F6EBEBEBECECECEEEDECE1E4E6D2E0F45788D9407AD5276C8D8776
-            6DD5D5D5EBEBEBEDEDEDECECECECECECECECECECECECECECECECECECECECECEC
-            ECECECECECECECECFCFCFC575757000000000000000000000000000000000000
-            B6B6B6F7F7F7ECECECEDEDEDEEEEEEF2F1EFDEE4ECE6EDF6009BEE008FF1236C
-            9089776DD6D6D6ECECECEEEEEEEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDED
-            EDEDEDEDEDEDEDEDFEFEFE595959000000000000000000000000000000000000
-            B8B8B8F9F9F9F2F2F2F2F2F2F2F2F2F3F3F2FAEFED58D7FD0FCCFC009BF2008F
-            F0246D918C7970D9D9D9EEEEEEEFEFEFEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-            EEEEEEEEEEEEEEEEFFFFFF5C5C5C000000000000000000000000000000000000
-            B8B8B8FAFAFAF3F3F3F2F2F2F2F2F2F2F2F2FAF4F2C0E6F360DDFF15CDFC009D
-            F3008FF0246D918B7970DBDBDBF2F2F2F2F2F2EFEFEFEFEFEFEFEFEFEFEFEFEF
-            EFEFEFEFEFEFEFEFFFFFFF5E5E5E000000000000000000000000000000000000
-            B9B9B9FCFCFCF5F5F5F5F5F5F5F5F5F5F5F5F5F5F5FFF8F4C3E8F564DDFF16CE
-            FC009DF3008DEE246E928D7B71DDDDDDF5F5F5F6F6F6F2F2F2F1F1F1F2F2F2F2
-            F2F2F2F2F2F2F2F2FFFFFF626262000000000000000000000000000000000000
-            B9B9B9FDFDFDF6F6F6F6F6F6F6F6F6F6F6F6F6F6F6F6F6F6FFF9F5C3E9F668DF
-            FF16CEFD009EF4008DEF236E918D7B72DDDDDDF5F5F5F7F7F7F4F4F4F1F1F1F2
-            F2F2F2F2F2F2F2F2FFFFFF636363000000000000000000000000000000000000
-            BABABAFEFEFEF7F7F7F6F6F6F6F6F6F6F6F6F6F6F6F6F6F6F6F6F6FFFAF6C4E9
-            F66CDFFF17CFFD00A0F5008DEF246E918E7C72DEDEDEF6F6F6F8F8F8F5F5F5F2
-            F2F2F2F2F2F2F2F2FFFFFF666666000000000000000000000000000000000000
-            BBBBBBFFFFFFF8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8FFFB
-            F8C5EBF870E0FF18D2FD00A1F6008EEF246E928F7C73E0E0E0F7F7F7FAFAFAF7
-            F7F7F4F4F4F4F4F4FFFFFF676767000000000000000000000000000000000000
-            BCBCBCFFFFFFF9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9
-            F9FFFCF9C5EBF874E1FF19D3FD00A3F6008EF0246F928F7D74E1E1E1F9F9F9FB
-            FBFBF7F7F7F4F4F4FFFFFF676767000000000000000000000000000000000000
-            BCBCBCFFFFFFFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFB
-            FBFBFBFBFFFEFBC6ECFA7EE3FF19D0FD00A4F7008EEF246F92917E75E4E4E4FA
-            FAFAFCFCFCF7F7F7FFFFFF696969000000000000000000000000000000000000
-            BDBDBDFFFFFFFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFB
-            FBFBFBFBFBFBFBFFFEFBCAEEFA84E5FF19D0FD00A6F9008EEF276E9096857CE5
-            E5E5FBFBFBFBFBFBFFFFFF696969000000000000000000000000000000000000
-            BEBEBEFFFFFFFAFAFAFAFAFAFAFAFAFAFAFAFAFAFAFAFAFAFAFAFAFAFAFAFAFA
-            FAFAFAFAFAFAFAFAFAFAFFFEFAC9EDFA8AE6FF1BD1FD00A8FA008EEF2D698493
-            837BE0E0E0F4F4F4FFFFFF6C6C6C000000000000000000000000000000000000
-            BFBFBFFFFFFFFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFB
-            FBFBFBFBFBFBFBFBFBFBFBFBFBFFFEFBBFEBFA87E5FF12D0FE00A9FB008FF22A
-            67828C7C74D8D8D8EEEEEE6E6E6E000000000000000000000000000000000000
-            C0C0C0FFFFFFFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFC
-            FCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFFFFFCB6E8F88EE8FF13D0FF00AAFB00
-            90F229648187776FD7D7D7707070000000000000000000000000000000000000
-            C0C0C0FFFFFFFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFC
-            FCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCF9F9F9FFF5F1B0E1F195ECFF14D1FF00
-            ACFC0091F327647F8B7B73575757000000000000000000000000000000000000
-            C2C2C2FFFFFFFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFC
-            FCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCF6F6F6F4F4F4CDC1BD91C2D39AECFF14
-            D3FF00ACFC0090F223617E040000000000000000000000000000000000000000
-            C2C2C2FFFFFFFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFC
-            FCFCFCFCFCFCFCFCFCFCFCFCFCFAFAFAF3F3F3E2E2E2E2E2E2FFFFFFB8EAFA9C
-            EBFF15D3FF00ADFD0094FC242B2E000000000000000000000000000000000000
-            C3C3C3FFFFFFFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFC
-            FCFCFCFCFCFCFCFCFCFCFCFCFCF8F8F8F3F3F3E2E2E2E4E4E4FEFEFEFFFFFEAB
-            DCEDAEF9FF09D5FFA3C2CF9C94911F1F1F000000000000000000000000000000
-            C5C5C5FFFFFFFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFC
-            FCFCFCFCFCFCFCFCFCFCFCFCFCF8F8F8F3F3F3E3E3E3E8E8E8FFFFFFEDEDEDE1
-            D4D0175F76EDEBEBFFF8F5C7C7C793939326241C000000000000000000000000
-            C5C5C5FFFFFFFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFC
-            FCFCFCFCFCFCFCFCFCFCFCFCFCF8F8F8F3F3F3E6E6E6EEEEEEEEEEEEDEDEDE19
-            1919000000706E6DCCCCCCFBFBFBD4CFC27489D4000532000000000000000000
-            C6C6C6FFFFFFFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFC
-            FCFCFCFCFCFCFCFCFCFCFCFCFCFAFAFAF4F4F4ECECECE7E7E7E7E7E71E1E1E00
-            00000000000000006F6F6FD9D5CEC0D4F56793FF5888FF00000D000000000000
-            CACACAFFFFFFFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFD
-            FDFDFDFDFDFDFDFDFDFDFDFDFDFCFCFCF9F9F9F1F1F1F7F7F72E2E2E00000000
-            0000000000000000000000494D65A9D7FF9AC8FF95C2FF00022A000000000000
-            A3A3A3FAFAFAEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEF
-            EFEFEFEFEFEFEFEFEFEFEFEFEFF0F0F0F1F1F1F4F4F427272700000000000000
-            00000000000000000000000000000D1549758BC9253B87000000}
-        end
-        object BitBtn3: TBitBtn
+        object btnCardPositionCancel: TBitBtn
           Left = 16
           Top = 304
           Width = 81
           Height = 41
-          TabOrder = 2
-          OnClick = BitBtn3Click
+          TabOrder = 1
+          OnClick = btnCardPositionCancelClick
           Glyph.Data = {
             360C0000424D360C000000000000360000002800000020000000200000000100
             180000000000000C0000C40E0000C40E00000000000000000000000000000000
@@ -3841,85 +3674,15 @@ object frm_Fileinput_machinerecord: Tfrm_Fileinput_machinerecord
       end
     end
   end
-  object DataSource_TChargMacSet: TDataSource
-    DataSet = ADOQuery_TChargMacSet
-    Left = 25
-    Top = 156
+  object dsPosition: TDataSource
+    DataSet = ADOQPosition
+    Left = 497
+    Top = 4
   end
-  object ADOQuery_TChargMacSet: TADOQuery
+  object ADOQPosition: TADOQuery
     Parameters = <>
-    Left = 57
-    Top = 156
-  end
-  object DataSource_Gameset: TDataSource
-    DataSet = ADOQuery_Gameset
-    Left = 97
-    Top = 156
-  end
-  object ADOQuery_Gameset: TADOQuery
-    Parameters = <>
-    Left = 121
-    Top = 156
-  end
-  object DataSource_SaleCardMC: TDataSource
-    DataSet = ADOQuery_SaleCardMC
-    Left = 161
-    Top = 156
-  end
-  object ADOQuery_SaleCardMC: TADOQuery
-    Parameters = <>
-    Left = 185
-    Top = 156
-  end
-  object DataSource_YouselfInc: TDataSource
-    DataSet = ADOQuery_YouselfInc
-    Left = 281
-    Top = 156
-  end
-  object ADOQuery_YouselfInc: TADOQuery
-    Parameters = <>
-    Left = 305
-    Top = 156
-  end
-  object DataSource_SaleCoinMC: TDataSource
-    DataSet = ADOQuery_SaleCoinMC
-    Left = 353
-    Top = 156
-  end
-  object ADOQuery_SaleCoinMC: TADOQuery
-    Parameters = <>
-    Left = 385
-    Top = 156
-  end
-  object ADOQuery_CountcoinMC: TADOQuery
-    Parameters = <>
-    Left = 465
-    Top = 156
-  end
-  object DataSource_CountcoinMC: TDataSource
-    DataSet = ADOQuery_CountcoinMC
-    Left = 441
-    Top = 156
-  end
-  object DataSource_TicketMC: TDataSource
-    DataSet = ADOQuery_TicketMC
-    Left = 513
-    Top = 156
-  end
-  object ADOQuery_TicketMC: TADOQuery
-    Parameters = <>
-    Left = 537
-    Top = 156
-  end
-  object DataSource_CountTicketMC: TDataSource
-    DataSet = ADOQuery_CountTicketMC
-    Left = 601
-    Top = 156
-  end
-  object ADOQuery_CountTicketMC: TADOQuery
-    Parameters = <>
-    Left = 625
-    Top = 156
+    Left = 449
+    Top = 4
   end
   object DataSource_LostvalueMC: TDataSource
     DataSet = ADOQuery_LostvalueMC
@@ -3931,88 +3694,14 @@ object frm_Fileinput_machinerecord: Tfrm_Fileinput_machinerecord
     Left = 713
     Top = 156
   end
-  object DataSource_Com3: TDataSource
-    DataSet = ADOQuery_Com3
-    Left = 33
-    Top = 324
-  end
-  object ADOQuery_Com3: TADOQuery
+  object ADOQMachineRecord: TADOQuery
     Parameters = <>
-    Left = 57
-    Top = 324
+    Left = 396
+    Top = 3
   end
-  object DataSource_Com4: TDataSource
-    DataSet = ADOQuery_Com4
-    Left = 113
-    Top = 324
-  end
-  object ADOQuery_Com4: TADOQuery
-    Parameters = <>
-    Left = 137
-    Top = 324
-  end
-  object DataSource_Com5: TDataSource
-    DataSet = ADOQuery_Com5
-    Left = 185
-    Top = 324
-  end
-  object ADOQuery_Com5: TADOQuery
-    Parameters = <>
-    Left = 209
-    Top = 324
-  end
-  object DataSource_Com6: TDataSource
-    DataSet = ADOQuery_Com6
-    Left = 257
-    Top = 324
-  end
-  object ADOQuery_Com6: TADOQuery
-    Parameters = <>
-    Left = 281
-    Top = 324
-  end
-  object DataSource_Com7: TDataSource
-    DataSet = ADOQuery_Com7
-    Left = 329
-    Top = 324
-  end
-  object ADOQuery_Com7: TADOQuery
-    Parameters = <>
-    Left = 353
-    Top = 324
-  end
-  object DataSource_Com8: TDataSource
-    DataSet = ADOQuery_Com8
-    Left = 401
-    Top = 324
-  end
-  object ADOQuery_Com8: TADOQuery
-    Parameters = <>
-    Left = 425
-    Top = 324
-  end
-  object DataSource_Com9: TDataSource
-    DataSet = ADOQuery_Com9
-    Left = 465
-    Top = 324
-  end
-  object ADOQuery_Com9: TADOQuery
-    Parameters = <>
-    Left = 489
-    Top = 324
-  end
-  object DataSource_Com10: TDataSource
-    DataSet = ADOQuery_Com10
-    Left = 537
-    Top = 324
-  end
-  object ADOQuery_Com10: TADOQuery
-    Parameters = <>
-    Left = 561
-    Top = 324
-  end
-  object SaveDialog1: TSaveDialog
-    Left = 556
-    Top = 48
+  object dsMachineRecord: TDataSource
+    DataSet = ADOQMachineRecord
+    Left = 356
+    Top = 3
   end
 end

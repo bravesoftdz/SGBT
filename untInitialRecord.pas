@@ -223,8 +223,7 @@ var
   strResponseStr, strURL, strResultCode: string;
   jsonApplyResult, jsonAckResult: TlkJSONbase;
 begin
-  //if (Receive_CMD_ID_Infor.ID_type = copy(INit_Wright.User, 8, 2)) or (Receive_CMD_ID_Infor.ID_type = copy(INit_Wright.OPERN, 8, 2)) then //这里没必要判断
-      //记录初始化
+
   begin
     saveInitialRecord(); //保存充值记录
     initCoinRecord();

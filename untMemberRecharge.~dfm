@@ -1,6 +1,6 @@
 object frmMemberRecharge: TfrmMemberRecharge
-  Left = 657
-  Top = 73
+  Left = 686
+  Top = 156
   Width = 907
   Height = 644
   BorderStyle = bsSizeToolWin
@@ -155,18 +155,19 @@ object frmMemberRecharge: TfrmMemberRecharge
             Expanded = False
             FieldName = 'oper_coin'
             Title.Caption = #25805#20316#37329#39069
+            Width = 65
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'total_coin'
-            Title.Caption = #24635#39069
+            Title.Caption = #24635#27425#25968
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'oper_type'
-            Title.Caption = #31867#22411
+            Title.Caption = #27425#25968
             Visible = True
           end
           item

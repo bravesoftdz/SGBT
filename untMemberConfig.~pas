@@ -26,6 +26,7 @@ type
     lbl1: TLabel;
     edtCoinValue: TEdit;
     edtTimes: TEdit;
+    lbl2: TLabel;
    
     procedure FormShow(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
@@ -239,8 +240,7 @@ begin
     Active := false;
     SQL.Clear;
     SQL.Add(strSQL);
-    Active := true;
-
+    Active := true;     
     if (RecordCount > 0) then begin
       Edit;
       FieldByName('coin_value').AsString := edtCoinValue.text;

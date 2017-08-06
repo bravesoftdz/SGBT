@@ -1,6 +1,6 @@
 object frmRecharge: TfrmRecharge
-  Left = 489
-  Top = 271
+  Left = 349
+  Top = 156
   Width = 901
   Height = 612
   BorderStyle = bsSizeToolWin

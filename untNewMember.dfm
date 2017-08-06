@@ -119,7 +119,7 @@ object frmNewMember: TfrmNewMember
         Height = 25
         Alignment = taCenter
         AutoSize = False
-        Caption = #31867#22411':'
+        Caption = #27425#25968':'
       end
       object edtBandID: TEdit
         Left = 148
@@ -201,19 +201,13 @@ object frmNewMember: TfrmNewMember
           item
             Expanded = False
             FieldName = 'coin_type'
-            Title.Caption = #31867#22411
+            Title.Caption = #27425#25968
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'total_coin'
             Title.Caption = #24635#39069
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'expiretime'
-            Title.Caption = #21040#26399#26102#38388
             Visible = True
           end
           item
@@ -238,6 +232,12 @@ object frmNewMember: TfrmNewMember
             Expanded = False
             FieldName = 'shopid'
             Title.Caption = #21543#21488#21495
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'expiretime'
+            Title.Caption = #21040#26399#26102#38388
             Visible = True
           end>
       end

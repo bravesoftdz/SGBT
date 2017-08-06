@@ -1,6 +1,6 @@
 object Frm_Logon: TFrm_Logon
-  Left = 569
-  Top = 274
+  Left = 406
+  Top = 196
   Width = 533
   Height = 305
   BorderIcons = [biSystemMenu, biMinimize]

@@ -1,6 +1,6 @@
 unit Fileinput_machinerecordUnit;
 
-interface
+interface            
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
@@ -13,84 +13,53 @@ type
     Panel3: TPanel;
     Tab_Gamenameinput: TTabSheet;
     Panel8: TPanel;
-    DBGrid6: TDBGrid;
-    DataSource_TChargMacSet: TDataSource;
-    ADOQuery_TChargMacSet: TADOQuery;
-    DataSource_Gameset: TDataSource;
-    ADOQuery_Gameset: TADOQuery;
-    DataSource_SaleCardMC: TDataSource;
-    ADOQuery_SaleCardMC: TADOQuery;
-    DataSource_YouselfInc: TDataSource;
-    ADOQuery_YouselfInc: TADOQuery;
-    DataSource_SaleCoinMC: TDataSource;
-    ADOQuery_SaleCoinMC: TADOQuery;
-    ADOQuery_CountcoinMC: TADOQuery;
-    DataSource_CountcoinMC: TDataSource;
-    DataSource_TicketMC: TDataSource;
-    ADOQuery_TicketMC: TADOQuery;
-    DataSource_CountTicketMC: TDataSource;
-    ADOQuery_CountTicketMC: TADOQuery;
+    dsPosition: TDataSource;
+    ADOQPosition: TADOQuery;
     DataSource_LostvalueMC: TDataSource;
     ADOQuery_LostvalueMC: TADOQuery;
-    DataSource_Com3: TDataSource;
-    ADOQuery_Com3: TADOQuery;
-    DataSource_Com4: TDataSource;
-    ADOQuery_Com4: TADOQuery;
-    DataSource_Com5: TDataSource;
-    ADOQuery_Com5: TADOQuery;
-    DataSource_Com6: TDataSource;
-    ADOQuery_Com6: TADOQuery;
-    DataSource_Com7: TDataSource;
-    ADOQuery_Com7: TADOQuery;
-    DataSource_Com8: TDataSource;
-    ADOQuery_Com8: TADOQuery;
-    DataSource_Com9: TDataSource;
-    ADOQuery_Com9: TADOQuery;
-    DataSource_Com10: TDataSource;
-    ADOQuery_Com10: TADOQuery;
-    SaveDialog1: TSaveDialog;
     DBGrid12: TDBGrid;
     Panel2: TPanel;
-    BitBtn1: TBitBtn;
-    BitBtn2: TBitBtn;
-    BitBtn3: TBitBtn;
+    btnCardPositionConfirm: TBitBtn;
+    btnCardPositionCancel: TBitBtn;
     Image1: TImage;
     Panel5: TPanel;
-    BitBtn9: TBitBtn;
-    Bit_Update_Gamename: TBitBtn;
-    BitBtn11: TBitBtn;
+    btnConfirm: TBitBtn;
+    btnCancel: TBitBtn;
     Image2: TImage;
-    procedure BitBtn9Click(Sender: TObject);
-    procedure BitBtn4Click(Sender: TObject);
-    procedure BitBtn12Click(Sender: TObject);
-    procedure BitBtn16Click(Sender: TObject);
-    procedure BitBtn20Click(Sender: TObject);
-    procedure BitBtn24Click(Sender: TObject);
-    procedure BitBtn28Click(Sender: TObject);
-    procedure BitBtn32Click(Sender: TObject);
-    procedure BitBtn36Click(Sender: TObject);
-    procedure BitBtn40Click(Sender: TObject);
-    procedure BitBtn1Click(Sender: TObject);
-    procedure BitBtn13Click(Sender: TObject);
-    procedure BitBtn17Click(Sender: TObject);
-    procedure BitBtn21Click(Sender: TObject);
-    procedure BitBtn25Click(Sender: TObject);
-    procedure BitBtn29Click(Sender: TObject);
-    procedure BitBtn33Click(Sender: TObject);
-    procedure BitBtn37Click(Sender: TObject);
-    procedure BitBtn15Click(Sender: TObject);
-    procedure DBGrid6DblClick(Sender: TObject);
-    procedure BitBtn11Click(Sender: TObject);
+    DBGrid6: TDBGrid;
+    grmachine: TGroupBox;
+    lbl1: TLabel;
+    edtMachineName: TEdit;
+    ADOQMachineRecord: TADOQuery;
+    dsMachineRecord: TDataSource;
+    grpCardPosition: TGroupBox;
+    Label1: TLabel;
+    cbMachineName: TComboBox;
+    lbl2: TLabel;
+    cbCardPositionNum: TComboBox;
+
+    procedure btnCardPositionConfirmClick(Sender: TObject);
+    procedure btnCardPositionCancelClick(Sender: TObject);
+    procedure btnConfirmClick(Sender: TObject);
+    procedure btnCancelClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure pgcMachinerecordChange(Sender: TObject);
-    procedure displayallgameslot();
-    procedure BitBtn3Click(Sender: TObject);
+
+    procedure saveMachineRecord();
+    procedure savePositionRecord();
+    procedure InitDataBase;
+    procedure initcbMachineName;
+    procedure initcbCardPositionNum;
+    function getMachineNoByName(machinename:String):String;
+    function getMachineNameByNO(machineno:String) :String;
+    function checkUniqueMachine(machinename: string): boolean;
+    function checkUniqueCardPosition(machinename: string): boolean;
 
 
   private
     { Private declarations }
-    procedure Querylevel_name(S1: string);
-    procedure InitDataBase;
+//    procedure Querylevel_name(S1: string);
+
   public
     { Public declarations }
   end;
@@ -100,443 +69,359 @@ var
 
 implementation
 
-uses ICDataModule, ICCommunalVarUnit, ICmain, ICEventTypeUnit, Fileinput_machinerecord_gamenameUnit, Fileinput_gamenameinputUnit,
+uses ICFunctionUnit,ICDataModule, ICCommunalVarUnit, ICmain, ICEventTypeUnit, Fileinput_machinerecord_gamenameUnit, Fileinput_gamenameinputUnit,
   Fileinput_menbermatialupdateUnit;
 {$R *.dfm}
 
-procedure Tfrm_Fileinput_machinerecord.BitBtn9Click(Sender: TObject);
+procedure Tfrm_Fileinput_machinerecord.btnConfirmClick(Sender: TObject);
 begin
-  frm_Fileinput_machinerecord_gamename.show;
+  if (edtMachineName.Text = '') then
+  begin
+      ShowMessage('请输入正确的机台名称');
+      exit
+  end;
+  if checkUniqueMachine(Trim(edtMachineName.Text)) = true then
+  begin
+         ShowMessage('机台已存在,请输入另一个名称');
+         exit;
+  end;
+    saveMachineRecord();
+    InitDataBase;
 end;
+
+
+function Tfrm_Fileinput_machinerecord.checkUniqueMachine(machinename: string): boolean;
+var
+  ADOQ: TADOQuery;
+  strSQL :String;
+begin
+  ADOQ := TADOQuery.Create(Self);
+  ADOQ.Connection := DataModule_3F.ADOConnection_Main;
+
+  with ADOQ do begin
+    Close;
+    SQL.Clear;
+    strSQL := 'select 1 from tmachineset where MACHINE_NAME =''' + machinename  + '''';
+    ICFunction.loginfo('Exist check  strSQL: ' + strSQL);
+    SQL.Add(strSQL);
+    Open;
+    if (Eof) then
+      result := false
+    else
+      result := true;
+  end;
+  ADOQ.Close;
+  ADOQ.Free;
+end;
+
+
+function Tfrm_Fileinput_machinerecord.checkUniqueCardPosition(machinename: string): boolean;
+var
+  ADOQ: TADOQuery;
+  strSQL :String;
+begin
+  ADOQ := TADOQuery.Create(Self);
+  ADOQ.Connection := DataModule_3F.ADOConnection_Main;
+
+  with ADOQ do begin
+    Close;
+    SQL.Clear;
+    strSQL := 'select 1 from tpositionset where MACHINE_NAME =''' + machinename  + '''';
+    ICFunction.loginfo('Exist check  strSQL: ' + strSQL);
+    SQL.Add(strSQL);
+    Open;
+    if (Eof) then
+      result := false
+    else
+      result := true;
+  end;
+  ADOQ.Close;
+  ADOQ.Free;
+end;
+
+
+
+procedure Tfrm_Fileinput_machinerecord.saveMachineRecord();
+var
+  strSQL,machinename,operatetime,operatorno: string;
+
+begin
+  machinename := trim(edtMachineName.Text);
+
+  ShortDateFormat := 'yyyy-MM-dd'; //指定格式即可
+  DateSeparator := '-';
+  operatetime := FormatDateTime('yyyy-MM-dd HH:mm:ss', now);
+  operatorno := '001';
+
+  with ADOQMachineRecord do begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    Active := false;
+    SQL.Clear;
+    strSQL := 'select * from tmachineset order by operate_time desc'; //为什么要查全部？
+    ICFunction.loginfo('strSQL :' + strSQL);
+    SQL.Add(strSQL);
+    Active := True;
+    Append;
+    FieldByName('MACHINE_NAME').AsString := machinename; //机台名    
+    FieldByName('OPERATE_TIME').AsString := operatetime; //用户名
+    FieldByName('OPERATOR_NO').AsString := operatorno; //充值操作
+
+    post;
+  end; 
+
+end;
+
+             
+
+
+procedure Tfrm_Fileinput_machinerecord.savePositionRecord();
+var
+  strSQL,machineno,machinename,operatetime,operatorno: string;
+  i : Integer;
+begin
+  machinename := trim(cbMachineName.Text);
+  machineno :=  getMachineNoByName(machinename);
+
+
+  ShortDateFormat := 'yyyy-MM-dd'; //指定格式即可
+  DateSeparator := '-';
+  operatetime := FormatDateTime('yyyy-MM-dd HH:mm:ss', now);
+  operatorno := '001';
+
+  with ADOQMachineRecord do begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    Active := false;
+    SQL.Clear;
+    strSQL := 'select * from tpositionset where MACHINE_NAME =''' + machinename  + '''';
+    ICFunction.loginfo('strSQL :' + strSQL);
+    SQL.Add(strSQL);
+    Active := True;
+    for i :=1 to strToInt(cbCardPositionNum.text) do
+    begin
+      ICFunction.loginfo('machineno+IntTostr(i):' + machineno+IntTostr(i));
+      Append;
+      FieldByName('MACHINE_NO').AsString := machineno; //机台号
+      FieldByName('MACHINE_NAME').AsString := machinename; //机台名
+      FieldByName('CARD_POSITION_NO').AsString := machinename+'_'+IntTostr(i); //卡位号
+      FieldByName('OPERATE_TIME').AsString := operatetime; //操作时间
+      FieldByName('OPERATOR_NO').AsString := operatorno; //操作员
+      post;
+    end;
+
+  end; 
+
+end;
+
 
 procedure Tfrm_Fileinput_machinerecord.InitDataBase;
 var
   strSQL: string;
-  comname: string;
 begin
       //机台资料
-  with ADOQuery_TChargMacSet do begin
+
+  with ADOQMachineRecord do begin
     Connection := DataModule_3F.ADOConnection_Main;
     Active := false;
     SQL.Clear;
-    strSQL := 'select TChargMacSet.*,TGameSet.GameName from [TChargMacSet],[TGameSet] where (TChargMacSet.GameNo=TGameSet.GameNo) And (TChargMacSet.GameNo NOT IN(001,002,003,004,005,006,007,008,009))';
-    SQL.Add(strSQL);
-    Active := True;
-  end;
-          //游戏名称
-  with ADOQuery_Gameset do begin
-    Connection := DataModule_3F.ADOConnection_Main;
-    Active := false;
-    SQL.Clear;
-    strSQL := 'select * from [TGameSet] ';
+    strSQL := 'select * from tmachineset order by operate_time desc ';
+    ICFunction.loginfo('strSQL: ' + strSQL);
     SQL.Add(strSQL);
     Active := True;
   end;
 
-            //发卡机
-  with ADOQuery_SaleCardMC do begin
+   with ADOQPosition do begin
     Connection := DataModule_3F.ADOConnection_Main;
     Active := false;
     SQL.Clear;
-    strSQL := 'select TChargMacSet.*,TGameSet.GameName from [TChargMacSet],[TGameSet] where (TChargMacSet.GameNo=TGameSet.GameNo) And (TChargMacSet.GameNo IN(001)) ';
+    strSQL := 'select * from tpositionset order by operate_time desc ,CARD_POSITION_NO asc';
+    ICFunction.loginfo('strSQL: ' + strSQL);
     SQL.Add(strSQL);
     Active := True;
   end;
-
-             //自助充值机
-  with ADOQuery_YouselfInc do begin
-    Connection := DataModule_3F.ADOConnection_Main;
-    Active := false;
-    SQL.Clear;
-    strSQL := 'select TChargMacSet.*,TGameSet.GameName from [TChargMacSet],[TGameSet] where (TChargMacSet.GameNo=TGameSet.GameNo) And (TChargMacSet.GameNo IN(002)) ';
-    SQL.Add(strSQL);
-    Active := True;
-  end;
-
-              //售币机
-  with ADOQuery_SaleCoinMC do begin
-    Connection := DataModule_3F.ADOConnection_Main;
-    Active := false;
-    SQL.Clear;
-    strSQL := 'select TChargMacSet.*,TGameSet.GameName from [TChargMacSet],[TGameSet] where (TChargMacSet.GameNo=TGameSet.GameNo) And (TChargMacSet.GameNo IN(003)) ';
-    SQL.Add(strSQL);
-    Active := True;
-  end;
-               //数币机
-  with ADOQuery_CountcoinMC do begin
-    Connection := DataModule_3F.ADOConnection_Main;
-    Active := false;
-    SQL.Clear;
-    strSQL := 'select TChargMacSet.*,TGameSet.GameName from [TChargMacSet],[TGameSet] where (TChargMacSet.GameNo=TGameSet.GameNo) And (TChargMacSet.GameNo IN(004)) ';
-    SQL.Add(strSQL);
-    Active := True;
-  end;
-                 //彩票消分机
-  with ADOQuery_TicketMC do begin
-    Connection := DataModule_3F.ADOConnection_Main;
-    Active := false;
-    SQL.Clear;
-    strSQL := 'select TChargMacSet.*,TGameSet.GameName from [TChargMacSet],[TGameSet] where (TChargMacSet.GameNo=TGameSet.GameNo) And (TChargMacSet.GameNo IN(006)) ';
-    SQL.Add(strSQL);
-    Active := True;
-  end;
-
-                  //数票机
-  with ADOQuery_CountTicketMC do begin
-    Connection := DataModule_3F.ADOConnection_Main;
-    Active := false;
-    SQL.Clear;
-    strSQL := 'select TChargMacSet.*,TGameSet.GameName from [TChargMacSet],[TGameSet] where (TChargMacSet.GameNo=TGameSet.GameNo) And (TChargMacSet.GameNo IN(009)) ';
-    SQL.Add(strSQL);
-    Active := True;
-  end;
-
-
-                  //充值消分机
-  with ADOQuery_LostvalueMC do begin
-    Connection := DataModule_3F.ADOConnection_Main;
-    Active := false;
-    SQL.Clear;
-    strSQL := 'select TChargMacSet.*,TGameSet.GameName from [TChargMacSet],[TGameSet] where (TChargMacSet.GameNo=TGameSet.GameNo) And (TChargMacSet.GameNo IN(005)) ';
-    SQL.Add(strSQL);
-    Active := True;
-  end;
-
-                   //3号总线
-  with ADOQuery_Com3 do begin
-    Connection := DataModule_3F.ADOConnection_Main;
-    Active := false;
-    SQL.Clear;
-    comname := '3';
-    strSQL := 'select TChargMacSet.*,TGameSet.GameName from [TChargMacSet],[TGameSet] where (TChargMacSet.GameNo=TGameSet.GameNo) And (TChargMacSet.ComNum=''' + comname + ''') ';
-    SQL.Add(strSQL);
-    Active := True;
-  end;
-                   //3号总线
-  with ADOQuery_Com4 do begin
-    Connection := DataModule_3F.ADOConnection_Main;
-    Active := false;
-    SQL.Clear;
-    comname := '4';
-    strSQL := 'select TChargMacSet.*,TGameSet.GameName from [TChargMacSet],[TGameSet] where (TChargMacSet.GameNo=TGameSet.GameNo) And (TChargMacSet.ComNum=''' + comname + ''') ';
-    SQL.Add(strSQL);
-    Active := True;
-  end;
-                   //3号总线
-  with ADOQuery_Com5 do begin
-    Connection := DataModule_3F.ADOConnection_Main;
-    Active := false;
-    SQL.Clear;
-    comname := '5';
-    strSQL := 'select TChargMacSet.*,TGameSet.GameName from [TChargMacSet],[TGameSet] where (TChargMacSet.GameNo=TGameSet.GameNo) And (TChargMacSet.ComNum=''' + comname + ''') ';
-    SQL.Add(strSQL);
-    Active := True;
-  end;
-                   //3号总线
-  with ADOQuery_Com6 do begin
-    Connection := DataModule_3F.ADOConnection_Main;
-    Active := false;
-    SQL.Clear;
-    comname := '6';
-    strSQL := 'select TChargMacSet.*,TGameSet.GameName from [TChargMacSet],[TGameSet] where (TChargMacSet.GameNo=TGameSet.GameNo) And (TChargMacSet.ComNum=''' + comname + ''') ';
-    SQL.Add(strSQL);
-    Active := True;
-  end;
-                   //3号总线
-  with ADOQuery_Com7 do begin
-    Connection := DataModule_3F.ADOConnection_Main;
-    Active := false;
-    SQL.Clear;
-    comname := '7';
-    strSQL := 'select TChargMacSet.*,TGameSet.GameName from [TChargMacSet],[TGameSet] where (TChargMacSet.GameNo=TGameSet.GameNo) And (TChargMacSet.ComNum=''' + comname + ''') ';
-    SQL.Add(strSQL);
-    Active := True;
-  end;
-                   //3号总线
-  with ADOQuery_Com8 do begin
-    Connection := DataModule_3F.ADOConnection_Main;
-    Active := false;
-    SQL.Clear;
-    comname := '8';
-    strSQL := 'select TChargMacSet.*,TGameSet.GameName from [TChargMacSet],[TGameSet] where (TChargMacSet.GameNo=TGameSet.GameNo) And (TChargMacSet.ComNum=''' + comname + ''') ';
-    SQL.Add(strSQL);
-    Active := True;
-  end;
-                    //3号总线
-  with ADOQuery_Com9 do begin
-    Connection := DataModule_3F.ADOConnection_Main;
-    Active := false;
-    SQL.Clear;
-    comname := '9';
-    strSQL := 'select TChargMacSet.*,TGameSet.GameName from [TChargMacSet],[TGameSet] where (TChargMacSet.GameNo=TGameSet.GameNo) And (TChargMacSet.ComNum=''' + comname + ''') ';
-    SQL.Add(strSQL);
-    Active := True;
-  end;
-
-                    //3号总线
-  with ADOQuery_Com10 do begin
-    Connection := DataModule_3F.ADOConnection_Main;
-    Active := false;
-    SQL.Clear;
-    comname := '10';
-    strSQL := 'select TChargMacSet.*,TGameSet.GameName from [TChargMacSet],[TGameSet] where (TChargMacSet.GameNo=TGameSet.GameNo) And (TChargMacSet.ComNum=''' + comname + ''') ';
-    SQL.Add(strSQL);
-    Active := True;
-  end;
+ 
 
 end;
 
 
-
-
-procedure Tfrm_Fileinput_machinerecord.BitBtn4Click(Sender: TObject);
-begin
-  close;
-end;
-
-procedure Tfrm_Fileinput_machinerecord.BitBtn12Click(Sender: TObject);
-begin
-  close;
-end;
-
-procedure Tfrm_Fileinput_machinerecord.BitBtn16Click(Sender: TObject);
-begin
-  close;
-end;
-
-procedure Tfrm_Fileinput_machinerecord.BitBtn20Click(Sender: TObject);
-begin
-  close;
-end;
-
-procedure Tfrm_Fileinput_machinerecord.BitBtn24Click(Sender: TObject);
-begin
-  close;
-end;
-
-procedure Tfrm_Fileinput_machinerecord.BitBtn28Click(Sender: TObject);
-begin
-  close;
-end;
-
-procedure Tfrm_Fileinput_machinerecord.BitBtn32Click(Sender: TObject);
-begin
-  close;
-end;
-
-procedure Tfrm_Fileinput_machinerecord.BitBtn36Click(Sender: TObject);
-begin
-  close;
-end;
-
-procedure Tfrm_Fileinput_machinerecord.BitBtn40Click(Sender: TObject);
-begin
-  close;
-end;
-//机台资料添加
-
-procedure Tfrm_Fileinput_machinerecord.BitBtn1Click(Sender: TObject);
-begin
-
-  frm_Fileinput_gamenameinput.Show;
-
-end;
-
-
- //根据输入的游戏编号查询游戏名称
-
-procedure Tfrm_Fileinput_machinerecord.Querylevel_name(S1: string);
+function Tfrm_Fileinput_machinerecord.getMachineNoByName(machinename:String) :String;
 var
   ADOQTemp: TADOQuery;
   strSQL: string;
- // nameStr:String;
-  //i:integer;
+  MACHINE_NO:Integer;
 begin
-
+  MACHINE_NO := 0;
   ADOQTemp := TADOQuery.Create(nil);
-  strSQL := 'select GameName from [TGameSet] where GameNo IN(''' + S1 + ''')'; //考虑追加同名的处理
+  strSQL := 'select ID from tmachineset where MACHINE_NAME =''' + machinename  + '''';
+  ICFunction.loginfo('strSQL: ' + strSQL);
   with ADOQTemp do
   begin
     Connection := DataModule_3F.ADOConnection_Main;
     SQL.Clear;
     SQL.Add(strSQL);
     Active := True;
-    frm_Fileinput_gamenameinput.Combo_MCname.Text := '';
+    if (not eof) then
+        begin
+          MACHINE_NO := ADOQTemp.Fields[0].AsInteger;;
+          Close;
+        end;
+        FreeAndNil(ADOQTemp);
+  end;
+      result := intTostr(MACHINE_NO);
+
+end;
+
+
+function Tfrm_Fileinput_machinerecord.getMachineNameByNO(machineno:String) :String;
+var
+  ADOQTemp: TADOQuery;
+  strSQL: string;
+  machineName:string;
+begin
+  machineName := '';
+  ADOQTemp := TADOQuery.Create(nil);
+  strSQL := 'select machinename from tmachineset where ID =''' + machineno  + '''';
+  ICFunction.loginfo('strSQL: ' + strSQL);
+  with ADOQTemp do
+  begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    SQL.Clear;
+    SQL.Add(strSQL);
+    Active := True;
+    if (not eof) then
+        begin
+          machineName := ADOQTemp.Fields[0].AsString;;
+          Close;
+        end;
+        FreeAndNil(ADOQTemp);
+  end;
+      result := machineName;
+
+end;
+
+
+
+//初始化游戏名称下来框
+procedure Tfrm_Fileinput_machinerecord.initcbMachineName;
+var
+  ADOQTemp: TADOQuery;
+  strSQL: string;
+begin
+  ADOQTemp := TADOQuery.Create(nil);  
+  strSQL := 'select MACHINE_NAME from tmachineset order by operate_time Desc ';
+  with ADOQTemp do
+  begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    SQL.Clear;
+    SQL.Add(strSQL);
+    Active := True;
+    cbMachineName.Items.Clear;
     while not Eof do
     begin
-      frm_Fileinput_gamenameinput.Combo_MCname.Text := FieldByName('GameName').AsString;
+      cbMachineName.Items.Add(FieldByName('MACHINE_NAME').AsString);
       Next;
     end;
   end;
   FreeAndNil(ADOQTemp);
 
 end;
-//发卡机
 
-procedure Tfrm_Fileinput_machinerecord.BitBtn13Click(Sender: TObject);
+
+
+//卡位个数下拉列表实始化
+
+procedure Tfrm_Fileinput_machinerecord.initcbCardPositionNum;
 begin
-  Querylevel_name('001');
-  frm_Fileinput_gamenameinput.Edit_OperationNo.Text := '001';
-  frm_Fileinput_gamenameinput.Show;
-end;
-//自助充值机
-
-procedure Tfrm_Fileinput_machinerecord.BitBtn17Click(Sender: TObject);
-begin
-  Querylevel_name('002');
-  frm_Fileinput_gamenameinput.Edit_OperationNo.Text := '002';
-  frm_Fileinput_gamenameinput.Show;
-end;
-
-//售币机
-
-procedure Tfrm_Fileinput_machinerecord.BitBtn21Click(Sender: TObject);
-begin
-  Querylevel_name('003');
-  frm_Fileinput_gamenameinput.Edit_OperationNo.Text := '003';
-  frm_Fileinput_gamenameinput.Show;
+  cbCardPositionNum.Items.clear();
+  cbCardPositionNum.Items.Add('1');
+  cbCardPositionNum.Items.Add('2');
+  cbCardPositionNum.Items.Add('3');
+  cbCardPositionNum.Items.Add('4');
+  cbCardPositionNum.Items.Add('5');
+  cbCardPositionNum.Items.Add('6');
+  cbCardPositionNum.Items.Add('7');
+  cbCardPositionNum.Items.Add('8');
+  cbCardPositionNum.Items.Add('9');
+  cbCardPositionNum.Items.Add('10');
+  cbCardPositionNum.Items.Add('11');
+  cbCardPositionNum.Items.Add('12');
 end;
 
 
-//数币机
-
-procedure Tfrm_Fileinput_machinerecord.BitBtn25Click(Sender: TObject);
+procedure Tfrm_Fileinput_machinerecord.btnCardPositionConfirmClick(Sender: TObject);
 begin
-  Querylevel_name('004');
-  frm_Fileinput_gamenameinput.Edit_OperationNo.Text := '004';
-  frm_Fileinput_gamenameinput.Show;
-end;
-//彩票消分机
+  if (cbMachineName.Text = '请选择机台') then
+  begin
+      ShowMessage('请选择一个机台');
+      exit
+  end;
+  if checkUniqueCardPosition(Trim(cbMachineName.Text)) = true then
+  begin
+         ShowMessage('机台已存在,请选择另一个机台');
+         exit;
+  end;
+    savePositionRecord();
+    InitDataBase();
 
-procedure Tfrm_Fileinput_machinerecord.BitBtn29Click(Sender: TObject);
-begin
-  Querylevel_name('006');
-  frm_Fileinput_gamenameinput.Edit_OperationNo.Text := '006';
-  frm_Fileinput_gamenameinput.Show;
-end;
-//数票机
-
-procedure Tfrm_Fileinput_machinerecord.BitBtn33Click(Sender: TObject);
-begin
-  Querylevel_name('009');
-  frm_Fileinput_gamenameinput.Edit_OperationNo.Text := '009';
-  frm_Fileinput_gamenameinput.Show;
-end;
-
-procedure Tfrm_Fileinput_machinerecord.BitBtn37Click(Sender: TObject);
-begin
-  Querylevel_name('005');
-  frm_Fileinput_gamenameinput.Edit_OperationNo.Text := '005';
-  frm_Fileinput_gamenameinput.Show;
-end;
-
-procedure Tfrm_Fileinput_machinerecord.BitBtn15Click(Sender: TObject);
-var
-  strTemp: string;
-begin
-  strTemp := ADOQuery_SaleCardMC.FieldByName('MacNo').AsString;
-  if (MessageDlg('确实要删除 机台编号为' + strTemp + ' 的相关记录吗?', mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
-    ADOQuery_SaleCardMC.DataSource.DataSet.Delete;
-end;
-
-procedure Tfrm_Fileinput_machinerecord.DBGrid6DblClick(Sender: TObject);
-begin
-
-  frm_Fileinput_machinerecord_gamename.Edit_GameNo.Text := DBGrid6.DataSource.DataSet.FieldByName('GameNo').AsString;
-  frm_Fileinput_machinerecord_gamename.Edit_GameName.Text := DBGrid6.DataSource.DataSet.FieldByName('GameName').AsString;
-  frm_Fileinput_machinerecord_gamename.Remark.Text := DBGrid6.DataSource.DataSet.FieldByName('Remark').AsString;
-
-  if DBGrid6.DataSource.DataSet.FieldByName('RdA').AsBoolean = true then
-    frm_Fileinput_machinerecord_gamename.RdA.ItemIndex := 0
-  else
-    frm_Fileinput_machinerecord_gamename.RdA.ItemIndex := 1;
-
-  if DBGrid6.DataSource.DataSet.FieldByName('RdB').AsBoolean = true then
-    frm_Fileinput_machinerecord_gamename.RdB.ItemIndex := 0
-  else
-    frm_Fileinput_machinerecord_gamename.RdB.ItemIndex := 1;
-
-  if DBGrid6.DataSource.DataSet.FieldByName('RdC').AsBoolean = true then
-    frm_Fileinput_machinerecord_gamename.RdC.ItemIndex := 0
-  else
-    frm_Fileinput_machinerecord_gamename.RdC.ItemIndex := 1;
-
-  if DBGrid6.DataSource.DataSet.FieldByName('RdD').AsBoolean = true then
-    frm_Fileinput_machinerecord_gamename.RdD.ItemIndex := 0
-  else
-    frm_Fileinput_machinerecord_gamename.RdD.ItemIndex := 1;
-
-  if DBGrid6.DataSource.DataSet.FieldByName('RdE').AsString = '1' then
-    frm_Fileinput_machinerecord_gamename.RdE.ItemIndex := 0
-  else
-    frm_Fileinput_machinerecord_gamename.RdE.ItemIndex := 1;
-
-  if DBGrid6.DataSource.DataSet.FieldByName('RdF').AsString = '1' then
-    frm_Fileinput_machinerecord_gamename.RdF.ItemIndex := 0
-  else
-    frm_Fileinput_machinerecord_gamename.RdF.ItemIndex := 1;
-
-  if DBGrid6.DataSource.DataSet.FieldByName('RdG').AsString = '0' then
-    frm_Fileinput_machinerecord_gamename.RdG.ItemIndex := 0
-  else if DBGrid6.DataSource.DataSet.FieldByName('RdG').AsString = '1' then
-    frm_Fileinput_machinerecord_gamename.RdG.ItemIndex := 1
-  else if DBGrid6.DataSource.DataSet.FieldByName('RdG').AsString = '2' then
-    frm_Fileinput_machinerecord_gamename.RdG.ItemIndex := 2;
-
-
-  frm_Fileinput_machinerecord_gamename.Redit1.Text := DBGrid6.DataSource.DataSet.FieldByName('Redit1').AsString;
-  frm_Fileinput_machinerecord_gamename.Redit2.Text := DBGrid6.DataSource.DataSet.FieldByName('Redit2').AsString;
-  frm_Fileinput_machinerecord_gamename.Redit3.Text := DBGrid6.DataSource.DataSet.FieldByName('Redit3').AsString;
-  frm_Fileinput_machinerecord_gamename.Redit4.Text := DBGrid6.DataSource.DataSet.FieldByName('Redit4').AsString;
-
-  if DBGrid6.DataSource.DataSet.FieldByName('MacType').AsString = 'A' then
-    frm_Fileinput_machinerecord_gamename.MacType.ItemIndex := 0
-  else if DBGrid6.DataSource.DataSet.FieldByName('MacType').AsString = 'B' then
-    frm_Fileinput_machinerecord_gamename.MacType.ItemIndex := 1
-  else if DBGrid6.DataSource.DataSet.FieldByName('MacType').AsString = 'C' then
-    frm_Fileinput_machinerecord_gamename.MacType.ItemIndex := 2
-  else if DBGrid6.DataSource.DataSet.FieldByName('MacType').AsString = 'D' then
-    frm_Fileinput_machinerecord_gamename.MacType.ItemIndex := 3;
-
-
-  frm_Fileinput_machinerecord_gamename.Edt1.Text := DBGrid6.DataSource.DataSet.FieldByName('Edt1').AsString;
-  frm_Fileinput_machinerecord_gamename.Edt2.Text := DBGrid6.DataSource.DataSet.FieldByName('Edt2').AsString;
-  frm_Fileinput_machinerecord_gamename.Edt3.Text := DBGrid6.DataSource.DataSet.FieldByName('Edt3').AsString;
-  frm_Fileinput_machinerecord_gamename.Edt4.Text := DBGrid6.DataSource.DataSet.FieldByName('Edt4').AsString;
-  frm_Fileinput_machinerecord_gamename.Edt5.Text := DBGrid6.DataSource.DataSet.FieldByName('Edt5').AsString;
-  frm_Fileinput_machinerecord_gamename.Edt6.Text := DBGrid6.DataSource.DataSet.FieldByName('Edt6').AsString;
-  frm_Fileinput_machinerecord_gamename.Edt7.Text := DBGrid6.DataSource.DataSet.FieldByName('Edt7').AsString;
-  frm_Fileinput_machinerecord_gamename.Edt8.Text := DBGrid6.DataSource.DataSet.FieldByName('Edt8').AsString;
-  frm_Fileinput_machinerecord_gamename.Edt9.Text := DBGrid6.DataSource.DataSet.FieldByName('Edt9').AsString;
-  frm_Fileinput_machinerecord_gamename.Edt10.Text := DBGrid6.DataSource.DataSet.FieldByName('Edt10').AsString;
-  frm_Fileinput_machinerecord_gamename.Edt11.Text := DBGrid6.DataSource.DataSet.FieldByName('Edt11').AsString;
-  frm_Fileinput_machinerecord_gamename.Edt12.Text := DBGrid6.DataSource.DataSet.FieldByName('Edt12').AsString;
-  frm_Fileinput_machinerecord_gamename.Edt13.Text := DBGrid6.DataSource.DataSet.FieldByName('Edt13').AsString;
-  frm_Fileinput_machinerecord_gamename.Edt14.Text := DBGrid6.DataSource.DataSet.FieldByName('Edt14').AsString;
-  frm_Fileinput_machinerecord_gamename.Edit_Model.Text := 'Update';
-  frm_Fileinput_machinerecord_gamename.Show;
-  Bit_Update_Gamename.Enabled := True;
 end;
 
 
+// 根据输入的游戏编号查询游戏名称
+//procedure Tfrm_Fileinput_machinerecord.Querylevel_name(S1: string);
+//var
+//  ADOQTemp: TADOQuery;
+//  strSQL: string;
+//  nameStr:String;
+//  i:integer;
+//begin
+//
+//  ADOQTemp := TADOQuery.Create(nil);
+//  strSQL := 'select GameName from [TGameSet] where GameNo IN(''' + S1 + ''')'; //考虑追加同名的处理
+//  with ADOQTemp do
+//  begin
+//    Connection := DataModule_3F.ADOConnection_Main;
+//    SQL.Clear;
+//    SQL.Add(strSQL);
+//    Active := True;
+//    frm_Fileinput_gamenameinput.Combo_MCname.Text := '';
+//    while not Eof do
+//    begin
+//      frm_Fileinput_gamenameinput.Combo_MCname.Text := FieldByName('GameName').AsString;
+//      Next;
+//    end;
+//  end;
+//  FreeAndNil(ADOQTemp);
+//
+//end;
 
 
-procedure Tfrm_Fileinput_machinerecord.BitBtn11Click(Sender: TObject);
+
+//删除机台
+procedure Tfrm_Fileinput_machinerecord.btnCancelClick(Sender: TObject);
 var
   strTemp: string;
   strGameno: string;
   strsql: string;
 
 begin
-  strTemp := ADOQuery_Gameset.FieldByName('GameName').AsString;
-  strGameno := ADOQuery_Gameset.FieldByName('Gameno').AsString;
-  if (MessageDlg('确实要删除' + strTemp + ' 游戏吗?', mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
-        //modified by linlf 20140308,通过DBgrid来删除而不是adoquery
+  strTemp := ADOQMachineRecord.FieldByName('MACHINE_NAME').AsString;
+  strGameno := ADOQMachineRecord.FieldByName('ID').AsString;
+
+  if (MessageDlg('确实要删除' + strTemp + ' 机台及机台下的所有卡头位吗?', mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+
   begin
-    strsql := 'delete from tgameset where gameno = ' + strGameno;
+    strsql := 'delete from tpositionset where MACHINE_NO = ' + strGameno;
     DataModule_3F.executesql(strsql);
-    strsql := 'delete from tchargmacset where gameno = ' + strGameno;
+    ICFunction.loginfo('strSQL :' + strSQL);
+
+    strsql := 'delete from T_BIND_CARDHEADID where MACHINE_NO = ' + strGameno;
     DataModule_3F.executesql(strsql);
+    ICFunction.loginfo('strSQL :' + strSQL);    
+
+
+    strsql := 'delete from tmachineset where ID = ' + strGameno;
+    DataModule_3F.executesql(strsql);
+    ICFunction.loginfo('strSQL :' + strSQL);
+        
     InitDataBase;
   end;
 
@@ -545,48 +430,46 @@ end;
 
 procedure Tfrm_Fileinput_machinerecord.FormShow(Sender: TObject);
 begin
+//  BitBtn11.Visible := false;
+//  BitBtn3.Visible := false;
+
   InitDataBase;
-  displayallgameslot;
+  initcbMachineName();
+  initcbCardPositionNum();
+
 end;
 
 procedure Tfrm_Fileinput_machinerecord.pgcMachinerecordChange(
   Sender: TObject);
 begin
-  displayallgameslot;
+  InitDataBase();
+  initcbMachineName();
+  initcbCardPositionNum();  
 
 end;
 
-procedure Tfrm_Fileinput_machinerecord.displayallgameslot();
-var strsql: string;
-begin
-  with frm_Fileinput_machinerecord.ADOQuery_TChargMacSet do begin
-    Connection := DataModule_3F.ADOConnection_Main;
-    Active := false;
-    SQL.Clear;
-    strsql := 'select a.mid,a.macno,b.gamename,b.gameno,a.cuserno,a.gettime from tchargmacset a, tgameset b ';
-    strsql := strsql + ' where a.gameno=b.gameno;';
-    SQL.Add(strSQL);
-    Active := True;
 
-  end;
-end;
 
 
 
 //删除机台位
 
-procedure Tfrm_Fileinput_machinerecord.BitBtn3Click(Sender: TObject);
+procedure Tfrm_Fileinput_machinerecord.btnCardPositionCancelClick(Sender: TObject);
 var strgameno: string;
 var strsql: string;
 begin
-  strGameno := adoquery_tchargmacset.FieldByName('macno').AsString;
-  if (MessageDlg('确实要删除' + strGameno + ' 机台位吗?', mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
-        //modified by linlf 20140308,通过DBgrid来删除而不是adoquery
+  strGameno := ADOQPosition.FieldByName('CARD_POSITION_NO').AsString;
+  if (MessageDlg('确实要删除' + strGameno + ' 卡头位吗?', mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
   begin
-    strsql := 'delete from tchargmacset where macno = ''' + strGameno + '''';
-          //showmessage(strsql);
+    strsql := 'delete from tpositionset where CARD_POSITION_NO = ''' + strGameno + '''';
     DataModule_3F.executesql(strsql);
-    displayallgameslot;
+    ICFunction.loginfo('strSQL :' + strSQL);
+
+    strsql := 'delete from T_BIND_CARDHEADID where POSITION_NO = ''' + strGameno + '''';
+    DataModule_3F.executesql(strsql);
+    ICFunction.loginfo('strSQL :' + strSQL);
+
+    InitDataBase;
   end;
 
 

@@ -332,9 +332,7 @@ begin
     LOAD_USER.ID_value := copy(recData_fromICLst.Strings[0], 29, 8); //卡内数据
     LOAD_USER.ID_type := copy(recData_fromICLst.Strings[0], 37, 2); //卡功能
 
-
-    if (LOAD_USER.ID_type = copy(INit_Wright.OPERN, 8, 2))  //类型正确
-      //and (DataModule_3F.queryExistInitialRecord(LOAD_USER.ID_INIT)) //初始化
+    if ( (LOAD_USER.ID_type = copy(INit_Wright.OPERN, 8, 2)) or  ( LOAD_USER.ID_type = copy(INit_Wright.MANEGER, 8, 2)) )  //类型正确
       and (LOAD_USER.Password_USER = SGBTCONFIGURE.shopid) then //吧台号正确
     begin
       Longon_OK := TRUE;
@@ -1299,76 +1297,13 @@ begin
     begin
       MessageBox(handle, '请输入正确的吧台号', '错误', MB_ICONERROR + MB_OK);
       exit;
-    end;
+    end;     
 
-
-   //{关闭HK接口
-    if SGBTCONFIGURE.enableInterface = '0' then
-    begin
-      {
-      //登记SG3F运营管理系统
-      jsonSigeLoginResult := TlkJSONbase.Create();
-      strURL := generateSigeLoginURL();
-      ICFunction.loginfo('SG3F Login Request URL: ' + strURL);
-      activeIdHTTP := TIdHTTP.Create(nil);
-      activeIdHTTP.ReadTimeout :=2000;
-//      activeIdHTTP.ConnectTimeout :=2000;
-      ResponseStream := TStringStream.Create('');
-      try
-        activeIdHTTP.HandleRedirects := true;
-        activeIdHTTP.Get(strURL, ResponseStream);
-        Application.ProcessMessages;
-      except
-        on e: Exception do
-        begin
-          showmessage(SG3FERRORINFO.networkerror + e.message);
-         // exit;
-        end;
-      end;
-    //获取网页返回的信息   网页中的存在中文时，需要进行UTF8解码
-      strResponseStr := UTF8Decode(ResponseStream.DataString);
-      ICFunction.loginfo('SG3F Login Response :' + strResponseStr);
-    }
-
-
-            //好酷登录认证
-      jsonApplyResult := TlkJSONbase.Create();
-      strURL := generateLoginURL();
-      ICFunction.loginfo('Login Request URL: ' + strURL);
-      activeIdHTTP := TIdHTTP.Create(nil);
-      ResponseStream := TStringStream.Create('');
-      try
-        activeIdHTTP.HandleRedirects := true;
-        activeIdHTTP.Get(strURL, ResponseStream);
-        Application.ProcessMessages;
-      except
-        on e: Exception do
-        begin
-          showmessage(SG3FERRORINFO.networkerror + e.message);
-          exit;
-        end;
-      end;
-    //获取网页返回的信息   网页中的存在中文时，需要进行UTF8解码
-      strResponseStr := UTF8Decode(ResponseStream.DataString);
-
-      ICFunction.loginfo('Login Response :' + strResponseStr);
-      jsonApplyResult := TlkJSON.ParseText(UTF8Encode(strResponseStr)) as TlkJSONobject; //UTF8编码
-      if jsonApplyResult = nil then
-      begin
-        Showmessage(SG3FERRORINFO.commerror);
-        exit;
-      end;
-      if vartostr(jsonApplyResult.Field['code'].Value) <> '0' then
-      begin
-        Showmessage('error:' + vartostr(jsonApplyResult.Field['code'].Value) + ',' + vartostr(jsonApplyResult.Field['message'].Value) + '');
-        exit;
-      end;
-
-    end;
-//}
+    //设置全局登录用户
+    G_User.UserNO := load_user.ID_INIT;
+    ICFunction.loginfo('登录用户: ' + G_User.UserNO );
 
     lblMessage.Caption := '登录成功';
-   // jsonResult.Free; //这里free不需要，内存的管理不理
     loginSuccess();
     Frm_IC_Main.show; //进入主界面
 

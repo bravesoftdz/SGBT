@@ -1,6 +1,6 @@
 object frm_SetParameter_CardMC_IDINIT: Tfrm_SetParameter_CardMC_IDINIT
-  Left = 343
-  Top = 203
+  Left = 245
+  Top = 145
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = #20986#21378#21021#22987#21270'-'#21345#22836'ID'#21021#22987#21270
@@ -121,14 +121,14 @@ object frm_SetParameter_CardMC_IDINIT: Tfrm_SetParameter_CardMC_IDINIT
         object Label4: TLabel
           Left = 8
           Top = 110
-          Width = 161
+          Width = 143
           Height = 13
           Caption = #23558#35201#35774#32622#30340#21345#22836'ID'#21495#65306'        '
         end
         object Label5: TLabel
           Left = 7
           Top = 49
-          Width = 103
+          Width = 93
           Height = 13
           Caption = #23458#25143#32534#21495#65306'           '
         end
@@ -149,14 +149,14 @@ object frm_SetParameter_CardMC_IDINIT: Tfrm_SetParameter_CardMC_IDINIT
         object Label2: TLabel
           Left = 9
           Top = 20
-          Width = 103
+          Width = 93
           Height = 13
           Caption = #23458#25143#21517#31216#65306'           '
         end
         object Label3: TLabel
           Left = 8
           Top = 80
-          Width = 150
+          Width = 132
           Height = 13
           Caption = #27492#23458#25143#20849#26377#21345#22836#25968#65306'        '
         end

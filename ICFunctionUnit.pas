@@ -214,11 +214,12 @@ begin
 
     INit_Wright.Produecer_3F := '万能卡,AA';
 //    INit_Wright.BOSS := '老板卡,BB';
-    INit_Wright.MANEGER := '老板卡,4A';
+    INit_Wright.MANEGER := '管理卡,4A';
     INit_Wright.QUERY := '查帐卡,5E';
 //    INit_Wright.RECV_CASE := '会员卡,CA';
-    INit_Wright.SETTING := '会员卡,72';
-    INit_Wright.OPERN := '开机卡,DD';
+    INit_Wright.SETTING := '设置卡,72';
+//    INit_Wright.OPERN := '开机卡,DD';
+    INit_Wright.OPERN := '老板卡,DD'; //老板开机卡
     INit_Wright.User := '用户卡,A5';
 
     //--------------RFID 卡类型结束------------
@@ -235,9 +236,9 @@ begin
     INit_Wright.MaxValue := MyIni.ReadString('PLC工作区域', 'PC运行', '500');
     iHHSet := StrToInt(Copy(MyIni.ReadString('卡出厂设置', '设定期限', '152419'), 3, 2));
     strCopyone := Copy(INit_Wright.BossPassword, 1, 1);
+
     BarCodeFirstFrame[0] := Copy(INit_Wright.BossPassword, 1, 2);
     BarCodeFirstFrame[1] := Copy(INit_Wright.BossPassword, 3, 2);
-
     BarCodeFirstFrame[2] := '35';
     BarCodeFirstFrame[3] := '36';
     BarCodeFirstFrame[4] := '37';
@@ -291,6 +292,7 @@ begin
     SGBTCONFIGURE.coindatauploadurl := MyIni.ReadString('SGBTCONFIGURE', 'coindatauploadurl', '');
 
 
+
   //----------SGBT智能手环20170210----------------------//
     SG3FCONFIGURE.sg3fenable := DecryStrHex(MyIni.ReadString('SG3FCONFIGURE', 'sg3fenable', '0'), 'master@sg3f');
     SG3FCONFIGURE.sg3fkey := DecryStrHex(MyIni.ReadString('SG3FCONFIGURE', 'sg3fkey', '0'), 'master@sg3f');
@@ -302,7 +304,12 @@ begin
      SG3FERRORINFO.commerror := MyIni.ReadString('SG3FERRORINFO', 'commerror', '0');
      SG3FERRORINFO.error_register_code := MyIni.ReadString('SG3FERRORINFO', 'error_register_code', '0');
 
+   //SGBT电子币配置
+   SGBTCOININFO.coinproportion:=MyIni.ReadString('SGBTCOININFO','coinproportion','1');
+
     rootEnable := false;  //进入最高权限
+
+
 
    //----------SGBT智能手环20170210----------------------//
 
@@ -1309,12 +1316,12 @@ function TICFunction.transferTypeNameToTypeID(StrIDtype: string): string;
 begin
   if (StrIDtype = copy(INit_Wright.User, 1, 6)) then //用户卡
     result := copy(INit_Wright.User, 8, 2) //返回A5
-  else if (StrIDtype = copy(INit_Wright.OPERN, 1, 6)) then //开机卡
+  else if (StrIDtype = copy(INit_Wright.OPERN, 1, 6)) then //老板开机卡
     result := copy(INit_Wright.OPERN, 8, 2) //返回DD
-  else if (StrIDtype = copy(INit_Wright.SETTING, 1, 6)) then //开机卡
-    result := copy(INit_Wright.SETTING, 8, 2) //返回DD
-  else if (StrIDtype = copy(INit_Wright.MANEGER, 1, 6)) then //开机卡
-    result := copy(INit_Wright.MANEGER, 8, 2); //返回4A
+  else if (StrIDtype = copy(INit_Wright.SETTING, 1, 6)) then //设置卡
+    result := copy(INit_Wright.SETTING, 8, 2) //返回72
+  else if (StrIDtype = copy(INit_Wright.MANEGER, 1, 6)) then
+    result := copy(INit_Wright.MANEGER, 8, 2);
 
 end;
 
@@ -1323,10 +1330,10 @@ function TICFunction.transferTypeIDToTypeName(strTypeName: string): string;
 begin
   if (strTypeName = copy(INit_Wright.User, 8, 2)) then //用户卡
     result := copy(INit_Wright.User, 1, 6) //返回A5
-  else if (strTypeName = copy(INit_Wright.OPERN, 8, 2)) then //开机卡
+  else if (strTypeName = copy(INit_Wright.OPERN, 8, 2)) then //老板开机卡
     result := copy(INit_Wright.OPERN, 1, 6) //返回DD
   else if (strTypeName = copy(INit_Wright.SETTING, 8, 2)) then //设置卡
-    result := copy(INit_Wright.SETTING, 1, 6) //返回DD
+    result := copy(INit_Wright.SETTING, 1, 6) //返回72
   else if (strTypeName = copy(INit_Wright.MANEGER, 8, 2)) then //采集卡
     result := copy(INit_Wright.MANEGER, 1, 6); //返回4A
 
@@ -1338,7 +1345,7 @@ function TICFunction.getInitValueByTypeName(strTypeName: string): string;
 begin
   if (strTypeName = copy(INit_Wright.User, 1, 6)) then //用户卡
     result :=  '0'//返回A5
-  else if (strTypeName = copy(INit_Wright.OPERN, 1, 6)) then //开机卡
+  else if (strTypeName = copy(INit_Wright.OPERN, 1, 6)) then //老板开机卡
     result :=SGBTCONFIGURE.coinlimit //返回DD
 //  else if (strTypeName = copy(INit_Wright.SETTING, 1, 6)) then //设置卡
   //  result := SGBTCONFIGURE.coincost
@@ -1353,7 +1360,7 @@ function TICFunction.getInitShopIDByTypeName(strTypeName: string): string;
 begin
   if (strTypeName = copy(INit_Wright.User, 1, 6)) then //用户卡
     result :=  SGBTCONFIGURE.shopid//返回A5
-  else if (strTypeName = copy(INit_Wright.OPERN, 1, 6)) then //开机卡
+  else if (strTypeName = copy(INit_Wright.OPERN, 1, 6)) then //老板开机卡
     result :=SGBTCONFIGURE.shopid //返回DD
   else if (strTypeName = copy(INit_Wright.SETTING, 1, 6)) then //设置卡
 //    result := FormatDateTime('ddhhmm', now)

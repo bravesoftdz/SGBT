@@ -83,7 +83,7 @@ type
     Edit1: TEdit;
     Edit14: TEdit;
     procedure BitBtn18Click(Sender: TObject);
-    procedure comReaderReceiveData(Sender: TObject; Buffer: Pointer;BufferLength: Word);
+    procedure comReaderReceiveData(Sender: TObject; Buffer: Pointer; BufferLength: Word);
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
@@ -102,10 +102,10 @@ type
     //电子币操作基本步骤
     //1 FormShow--2 StartComm--3 comReaderReceiveData --接着下面的
     procedure checkCMDInfo();
-    procedure initIncrOperation;//初始化写入动作
+    procedure initIncrOperation; //初始化写入动作
     function caluSendCMD(StrCMD: string; StrIncValue: string): string; //组装写入指令
     procedure generateIncrValueCMD(S: string); //转换写入指令
-    procedure prcSendDataToCard();//写入卡
+    procedure prcSendDataToCard(); //写入卡
     procedure saveBossInitDataToDB;
 
     //function exchData(orderStr: string): string;
@@ -268,7 +268,7 @@ begin
   begin
     checkCMDInfo(); //首先根据接收到的数据进行判断，确认此卡是否属于为正确的卡
   end;
-  
+
 end;
 
 //根据接收到的数据判断此卡是否为合法卡
@@ -290,8 +290,8 @@ begin
   ComboBox_Menbertype.Items.Clear;
   INitIDType; //初始化 ComboBox_Menbertype
   IDtypetemp := 'A5';
-  tmpStr := recData_fromICLst.Strings[0];      
-  Receive_CMD_ID_Infor.ID_CheckNum := copy(tmpStr, 39, 4); //校验和      
+  tmpStr := recData_fromICLst.Strings[0];
+  Receive_CMD_ID_Infor.ID_CheckNum := copy(tmpStr, 39, 4); //校验和
   begin
     CMD_CheckSum_OK := true;
     Receive_CMD_ID_Infor.CMD := copy(recData_fromICLst.Strings[0], 1, 2); //帧头43
@@ -318,21 +318,21 @@ begin
     Receive_CMD_ID_Infor.ID_value := copy(recData_fromICLst.Strings[0], 29, 8); //卡内数据
     Receive_CMD_ID_Infor.ID_type := copy(recData_fromICLst.Strings[0], 37, 2); //卡功能
 
-    ICFunction.loginfo('场地初始化 Receive_CMD_ID_Infor.ID_INIT '+ Receive_CMD_ID_Infor.ID_INIT );
-    ICFunction.loginfo('场地初始化 Receive_CMD_ID_Infor.ID_3F '+ Receive_CMD_ID_Infor.ID_3F );
-    ICFunction.loginfo('场地初始化 Receive_CMD_ID_Infor.Password_3F '+ Receive_CMD_ID_Infor.Password_3F );
-    ICFunction.loginfo('场地初始化 Receive_CMD_ID_Infor.Password_USER '+ Receive_CMD_ID_Infor.Password_USER );
-    ICFunction.loginfo('场地初始化 Receive_CMD_ID_Infor.ID_value '+ Receive_CMD_ID_Infor.ID_value );
-    ICFunction.loginfo('场地初始化 Receive_CMD_ID_Infor.ID_type '+ Receive_CMD_ID_Infor.ID_type );
-   
-    begin    
+    ICFunction.loginfo('场地初始化 Receive_CMD_ID_Infor.ID_INIT ' + Receive_CMD_ID_Infor.ID_INIT);
+    ICFunction.loginfo('场地初始化 Receive_CMD_ID_Infor.ID_3F ' + Receive_CMD_ID_Infor.ID_3F);
+    ICFunction.loginfo('场地初始化 Receive_CMD_ID_Infor.Password_3F ' + Receive_CMD_ID_Infor.Password_3F);
+    ICFunction.loginfo('场地初始化 Receive_CMD_ID_Infor.Password_USER ' + Receive_CMD_ID_Infor.Password_USER);
+    ICFunction.loginfo('场地初始化 Receive_CMD_ID_Infor.ID_value ' + Receive_CMD_ID_Infor.ID_value);
+    ICFunction.loginfo('场地初始化 Receive_CMD_ID_Infor.ID_type ' + Receive_CMD_ID_Infor.ID_type);
+
+    begin
       if Receive_CMD_ID_Infor.Password_USER = INit_Wright.BossPassword_old then
       begin
         Edit_ID.Text := Receive_CMD_ID_Infor.ID_INIT; //卡ID
         Operate_No := 1;
         initIncrOperation; //调用写入ID函数
         Edit14.Text := '此卡合法，已完成场地初始化！'; //卡ID
-      end  
+      end
       else if Receive_CMD_ID_Infor.Password_USER = INit_Wright.BossPassword_3F then
       begin
         Edit_ID.Text := Receive_CMD_ID_Infor.ID_INIT; //卡ID
@@ -376,7 +376,7 @@ var
 begin
   begin
     INC_value := Receive_CMD_ID_Infor.ID_value; //充值数值
-    INC_value := '00000000'; //充值数值                   
+    INC_value := '00000000'; //充值数值
     strValue := caluSendCMD(CMD_COUMUNICATION.CMD_INCValue, INC_value); //计算充值指令
     generateIncrValueCMD(strValue); //写入ID卡
   end;
@@ -414,7 +414,7 @@ begin
 
 
   INit_3F.ID_value := StrIncValue;
-  INit_3F.ID_type := Receive_CMD_ID_Infor.ID_type; //取得卡类型的值  
+  INit_3F.ID_type := Receive_CMD_ID_Infor.ID_type; //取得卡类型的值
     //汇总发送内容
   TmpStr_SendCMD := INit_3F.CMD + INit_3F.ID_INIT + INit_3F.ID_3F + INit_3F.Password_3F + INit_3F.Password_USER + INit_3F.ID_value + INit_3F.ID_type;
 
@@ -428,7 +428,7 @@ begin
   ID_Password_3F.Text := INit_3F.Password_3F;
   ID_Password_3F.Text := INit_3F.Password_USER;
   ID_CheckSum.Text := INit_3F.ID_CheckNum;
-  ID_Value.Text := INit_3F.ID_value; //数据  
+  ID_Value.Text := INit_3F.ID_value; //数据
   reTmpStr := TmpStr_SendCMD + INit_3F.ID_CheckNum;
 
   result := reTmpStr;
@@ -458,7 +458,7 @@ label ExitSub;
 begin
 
   strOperator := G_User.UserNO;
-  strinputdatetime := DateTimetostr((now())); //录入时间，读取系统时间  
+  strinputdatetime := DateTimetostr((now())); //录入时间，读取系统时间
   with ADOQuery_BOSSInit do begin
     if (Locate('ID_INIT', INit_3F.ID_INIT, [])) then
     begin
@@ -470,7 +470,7 @@ begin
     Edit14.Text := '';
     FieldByName('ID_INIT').AsString := INit_3F.ID_INIT;
     FieldByName('cUserNo').AsString := LOAD_USER.ID_INIT;
-    FieldByName('ID_Inittime').AsString := FormatDateTime('yyyy-MM-dd HH:mm:ss', now);                
+    FieldByName('ID_Inittime').AsString := FormatDateTime('yyyy-MM-dd HH:mm:ss', now);
     try
       Post;
     except
@@ -503,7 +503,7 @@ begin
   orderLst := TStringList.Create;
   recDataLst := tStringList.Create;
   recData_fromICLst := tStringList.Create;
-  INitIDType;//初始化下拉列表
+  INitIDType; //初始化下拉列表
   if FileExists(SystemWorkGroundFile) then
   begin
     myIni := TIniFile.Create(SystemWorkGroundFile);
@@ -551,6 +551,7 @@ end;
 
 //充值保存确认
  //未使用
+
 procedure Tfrm_SetParameter_BossINIT.IncvalueComfir(S: string; S1: string);
 
 var

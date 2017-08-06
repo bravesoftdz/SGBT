@@ -103,6 +103,14 @@ object frmMemberConfig: TfrmMemberConfig
         AutoSize = False
         Caption = #37329#39069
       end
+      object lbl2: TLabel
+        Left = 309
+        Top = 97
+        Width = 47
+        Height = 25
+        AutoSize = False
+        Caption = #27425
+      end
       object edtShopID: TEdit
         Left = 447
         Top = 51

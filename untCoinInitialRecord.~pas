@@ -1,0 +1,722 @@
+unit untCoinInitialRecord;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, ExtCtrls, SPComm, DB, ADODB, Grids, DBGrids,
+  IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP,
+  IdAntiFreezeBase, IdAntiFreeze;
+
+type
+  TfrmCoinInitial = class(TForm)
+    Panel1: TPanel;
+    GroupBox1: TGroupBox;
+    GroupBox2: TGroupBox;
+    GroupBox3: TGroupBox;
+    Label1: TLabel;
+    edtShopID: TEdit;
+    Label2: TLabel;
+    cbCoinType: TComboBox;
+    btnInitial: TButton;
+    dgInitial: TDBGrid;
+    ADOQueryInitial: TADOQuery;
+    dsInitial: TDataSource;
+    commInitial: TComm;
+    lblMessage: TLabel;
+    edtBandID: TEdit;
+    Label3: TLabel;
+    Label4: TLabel;
+    edtAPPID: TEdit;
+    Label6: TLabel;
+    edtCoin: TEdit;
+    Label7: TLabel;
+    edtCoinCost: TEdit;
+    label5: TLabel;
+    edtTypeID: TEdit;
+    btnDelete: TButton;
+  //  memo1: TMemo;
+    procedure commInitialReceiveData(Sender: TObject; Buffer: Pointer;
+      BufferLength: Word);
+    procedure FormShow(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure btnInitialClick(Sender: TObject);
+    procedure btnDeleteClick(Sender: TObject);
+
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+
+        //数据库相关
+    function initCoinRecord(): string;
+    procedure saveInitialRecord(); //保存充值记录
+    procedure updateCoinInitialRecord(coinid:string);
+    function checkUniqueCoinID(ID_INIT: string): Boolean;
+    function  getInitValueByTypeName(strTypeName: string): string;
+    function  getTypeIDFromTypeName(strTypeName: string): string;
+    function  getTypeNameFromTypeID(StrIDtype: string): string;
+    function  getTypeNameByTypeID(coinid:string):String; //查DB
+    
+        //卡头处理函数
+    procedure checkCMDInfo();
+    procedure initIncrOperation(strRechargeCoin: string); //充值操作，写数据个卡
+    function  caluSendCMD(strCMD: string; strIncrValue: string): string;
+    procedure generateIncrValueCMD(S: string);
+    procedure prcSendDataToCard();
+    procedure showCardInformation();
+    procedure returnFromReadCMD();
+    procedure returnFromIncrCMD();
+//    function  checkSUMData(orderStr: string): string;
+  //  function transferTypeNameToTypeID(StrIDtype: string): string;
+   // function transferTypeIDToTypeName(strTypeName: string): string;
+    procedure initComboxCardtype;
+
+
+
+    //初始化激活BandID接口
+    //function bandIDActiveInterface(): string;
+
+    //拼接激活接口URL
+//    function generateActiveURL(): string;
+   // 拼接签到接口URL
+//    function getActiveSignature(bandId: string; appId: string; shopId: string; timeStamp: string): string;
+ //   绑定微信
+//    function generateBindWeiWinURL(): string;
+//    function getBindWeiXinSignature(appId: string; bandId: string; shopId: string; timeStamp: string): string;
+
+
+  end;
+
+var
+  frmCoinInitial: TfrmCoinInitial;
+  curOrderNo: integer = 0; //???
+  curOperNo: integer = 0;
+  Operate_No: integer = 0; //什么作用?标记正在充值？
+  orderLst, recDataLst: Tstrings; //定义全局变量发送数据，接收数据
+  ID_UserCard_Text: string;
+  IncValue_Enable: boolean; //是否允许充值的标志,会员卡认证通过后置为True
+  buffer: array[0..2048] of byte;
+  ID_System: string;
+  Password3F_System: string;
+
+implementation
+uses ICDataModule, ICCommunalVarUnit, ICmain, ICEventTypeUnit, ICFunctionUnit, dateProcess, IdHashMessageDigest, uLkJSON, QRCode;
+{$R *.dfm}
+
+
+function TfrmCoinInitial.initCoinRecord(): string;
+var
+  strSQL: string;
+begin
+  with ADOQueryInitial do begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    Active := false;
+    SQL.Clear;
+    strSQL := 'select * from T_COIN_INITIAL order by operate_time desc limit 10';
+    ICFunction.loginfo('strSQL: ' + strSQL);
+    SQL.Add(strSQL);
+    Active := True;
+  end;
+  result := '1';
+end;
+
+
+procedure TfrmCoinInitial.saveInitialRecord(); //保存初始化记录
+var
+  strID3F, strBandid, strShopID, strTypeID, strOperateTime, strOperatorNO, strAppID, strIDTypeName, strCoin, strsql: string;
+begin
+
+  strBandid := trim(edtBandID.Text);
+  strID3F := Receive_CMD_ID_Infor.ID_3F;
+  strAppID := trim(edtAPPID.Text);
+  strIDTypeName := cbCoinType.Text;
+  strShopID := ICFunction.getInitShopIDByTypeName(strIDTypeName);
+
+//  strTypeID := ICFunction.transferTypeNameToTypeID(strIDTypeName);
+//  ICFunction.loginfo(' strTypeID' + strTypeID +' strIDTypeName' + strIDTypeName);
+//
+// if (strTypeID = 'A5') then //用户卡
+//  begin
+//    strCoin := Trim(edtCoin.Text);
+//    strCoin := '0';
+//  end
+//  else if (strTypeID = 'DD') then //开机卡
+//  begin
+//   strCoin := SGBTCONFIGURE.coinlimit;
+//
+//  end
+//  else if (strTypeID = '72') then //　设置卡
+//  begin
+//  strCoin := trim(edtCoinCost.Text);
+//  end
+//  else if (strTypeID = '4A') then // 老板/采集卡
+//  begin
+//   strCoin := '0';
+//  end;
+
+
+    //指定日期格式 重要
+  ShortDateFormat := 'yyyy-MM-dd'; //指定格式即可
+  DateSeparator := '-';
+    //指定日期格式 否则会报is not an valid date and time;
+  strOperatorNO := '001';
+  strOperateTime := FormatDateTime('yyyy-MM-dd HH:mm:ss', now);
+
+  //这里只是追加数据,不负责显示
+  with ADOQueryInitial do begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    Active := false;
+    SQL.Clear;
+    strSQL := 'select * from T_COIN_INITIAL order by operate_time desc limit 10'; //为什么要查全部？
+    ICFunction.loginfo('Initial database append　strSQL: ' + strSQL);
+    SQL.Add(strSQL);
+    Active := True;
+    Append;
+    FieldByName('COIN_ID').AsString := strBandid;
+    FieldByName('APPID').AsString := strAppID;
+    FieldByName('SHOPID').AsString := strShopID;
+    FieldByName('TYPE_ID').AsString := getTypeIDFromTypeName(cbCoinType.Text);
+    FieldByName('TYPE_NAME').AsString := cbCoinType.Text;
+    FieldByName('INITIAL_COIN').AsString := getInitValueByTypeName(cbCoinType.Text);
+    FieldByName('OPERATE_TIME').AsString := strOperatetime;
+    FieldByName('OPERATOR_NO').AsString := strOperatorNo;
+    post;
+  end;
+
+end;
+
+
+//根据TypeName返回初始化的ID_Value
+function TfrmCoinInitial.getInitValueByTypeName(strTypeName: string): string;
+begin
+  if (strTypeName = copy(INit_Wright.User, 1, 6)) then //用户卡
+    result :=  '0'//返回A5
+  else if (strTypeName = copy(INit_Wright.OPERN, 1, 6)) then //老板开机卡
+    result :=SGBTCONFIGURE.coinlimit //返回DD
+ else if (strTypeName = copy(INit_Wright.SETTING, 1, 6)) then //设置卡
+    result := trim(edtCoinCost.Text)
+  else if (strTypeName = copy(INit_Wright.MANEGER, 1, 6)) then //采集卡
+    result := '0'; //返回4A
+
+
+end;
+
+
+function  TfrmCoinInitial.getTypeIDFromTypeName(strTypeName: string): string;
+begin
+  if (strTypeName = copy(INit_Wright.User, 1, 6)) then //用户卡
+    result := copy(INit_Wright.User, 8, 2) //返回A5
+  else if (strTypeName = copy(INit_Wright.OPERN, 1, 6)) then //老板开机卡
+    result := copy(INit_Wright.OPERN, 8, 2) //返回DD
+  else if (strTypeName = copy(INit_Wright.SETTING, 1, 6)) then //设置卡
+    result := copy(INit_Wright.SETTING, 8, 2) //返回72
+  else if (strTypeName = copy(INit_Wright.MANEGER, 1, 6)) then
+    result := copy(INit_Wright.MANEGER, 8, 2);//4A
+
+end;
+
+
+function TfrmCoinInitial.getTypeNameFromTypeID(StrIDtype: string): string;
+begin
+  if (StrIDtype = copy(INit_Wright.User, 8, 2)) then //用户卡
+    result := copy(INit_Wright.User, 1, 6) //返回A5
+  else if (StrIDtype = copy(INit_Wright.OPERN, 8, 2)) then //老板开机卡
+    result := copy(INit_Wright.OPERN, 1, 6) //返回DD
+  else if (StrIDtype = copy(INit_Wright.SETTING, 8, 2)) then //设置卡
+    result := copy(INit_Wright.SETTING, 1, 6) //返回72
+  else if (StrIDtype = copy(INit_Wright.MANEGER, 8, 2)) then //采集卡
+    result := copy(INit_Wright.MANEGER, 1, 6); //返回4A
+
+ end;
+
+
+procedure TfrmCoinInitial.checkCMDInfo();
+var
+  tmpStr: string;
+begin
+   //首先截取接收的信息
+
+  tmpStr := recDataLst.Strings[0];
+
+
+  ICCommunalVarUnit.Receive_CMD_ID_Infor.ID_CheckNum := copy(tmpStr, 39, 4); //校验和
+  ICCommunalVarUnit.CMD_CheckSum_OK := true;
+  ICCommunalVarUnit.Receive_CMD_ID_Infor.CMD := copy(recDataLst.Strings[0], 1, 2); //帧头43
+
+  ICFunction.loginfo('Initial: return from card : ' + tmpStr);
+  if ICCommunalVarUnit.Receive_CMD_ID_Infor.CMD = CMD_COUMUNICATION.CMD_READ then //收到卡头写入电子币充值成功的返回 53
+  begin
+    returnFromReadCMD();
+  end
+  else if Receive_CMD_ID_Infor.CMD = ICCommunalVarUnit.CMD_COUMUNICATION.CMD_INCValue_RE then //读指令
+  begin
+   // returnFromIncrCMD(); //充值
+    lblMessage.Caption := '圈存成功';
+  end;
+
+
+end;
+
+
+//卡头返回充值成功指令
+
+procedure TfrmCoinInitial.returnFromIncrCMD();
+var
+  strResponseStr, strURL, strResultCode: string;
+  jsonApplyResult, jsonAckResult: TlkJSONbase;
+begin
+  begin
+    saveInitialRecord(); //保存充值记录
+    initCoinRecord();
+
+  end;
+end;
+
+
+//卡头返回信息读取指令
+
+procedure TfrmCoinInitial.returnFromReadCMD();
+begin
+  Receive_CMD_ID_Infor.ID_INIT := copy(recDataLst.Strings[0], 3, 8); //卡ID
+  Receive_CMD_ID_Infor.ID_3F := copy(recDataLst.Strings[0], 11, 6); //卡厂ID--暂时没用，但需要占位6
+  Receive_CMD_ID_Infor.Password_3F := copy(recDataLst.Strings[0], 17, 6); //appid
+  Receive_CMD_ID_Infor.Password_USER := copy(recDataLst.Strings[0], 23, 6); //shopid
+  Receive_CMD_ID_Infor.ID_value := copy(recDataLst.Strings[0], 29, 8); //卡内数据
+  Receive_CMD_ID_Infor.ID_type := copy(recDataLst.Strings[0], 37, 2); //卡功能类型
+
+  showCardInformation();
+
+
+
+
+end;
+
+
+//卡功能下拉列表实始化
+
+procedure TfrmCoinInitial.initComboxCardtype;
+begin
+  cbCoinType.Items.clear();
+  cbCoinType.Items.Add(copy(INit_Wright.User, 1, 6)); //用户卡A5
+  cbCoinType.Items.Add(copy(INit_Wright.SETTING, 1, 6)); //设置卡72
+
+  //进入最高权限
+  if rootEnable = true then
+  begin 
+    cbCoinType.Items.Add(copy(INit_Wright.MANEGER, 1, 6)); //管理卡4A
+    cbCoinType.Items.Add(copy(INit_Wright.OPERN, 1, 6)); //老板开机卡DD
+
+  end; //进入最高权限
+
+end;
+
+
+
+//用户卡信息展示
+
+procedure TfrmCoinInitial.showCardInformation();
+begin
+
+  edtBandID.Text := Receive_CMD_ID_Infor.ID_INIT; //用户币ID
+  edtTypeID.Text := Receive_CMD_ID_Infor.ID_type;
+  edtCoin.Text := ICFunction.transferHEXByteToDECValue(Receive_CMD_ID_Infor.ID_value);
+//  lblMessage.Caption := '此卡为 ' + getTypeNameFromTypeID(edtTypeID.Text);
+
+end; //end
+
+
+//开始圈存
+
+procedure TfrmCoinInitial.initIncrOperation(strRechargeCoin: string);
+var
+  strValue: string;
+begin
+  strValue := caluSendCMD(CMD_COUMUNICATION.CMD_INCValue, strRechargeCoin); //计算充值指令
+  generateIncrValueCMD(strValue); //把充值指令写入ID卡
+  ICFunction.loginfo('Initial: Data send to card : ' + strValue);
+end;
+//充值函数
+
+//生成充值的操作指令
+
+procedure TfrmCoinInitial.generateIncrValueCMD(S: string);
+begin
+  orderLst.Clear();
+  recDataLst.Clear();
+  curOrderNo := 0;
+  curOperNo := 2;
+  orderLst.Add(S); //将充值指令写入缓冲
+  prcSendDataToCard(); //写入卡头　
+end;
+
+//计算充值指令
+
+function TfrmCoinInitial.caluSendCMD(strCMD: string; strIncrValue: string): string;
+var
+  TmpStr_CheckSum: string; //校验和
+  TmpStr_SendCMD: string; //指令内容
+  reTmpStr, strTypeID: string;
+begin
+
+  INit_3F.CMD := StrCMD; //帧命令
+  INit_3F.ID_INIT := edtBandID.Text; //币ID
+  INit_3F.ID_3F := FormatDateTime('yyMMdd', now);
+  INit_3F.Password_3F := SGBTCONFIGURE.appid;
+  INit_3F.ID_type := getTypeIDFromTypeName(cbCoinType.Text); //取得卡类型的值  圈存的是正确的ID
+  strTypeID := getTypeIDFromTypeName(cbCoinType.Text);
+  if (strTypeID = 'A5') then //用户卡
+  begin
+    INit_3F.Password_USER := SGBTCONFIGURE.shopid;
+    INit_3F.ID_value := '00000000';
+  end
+  else if (strTypeID = 'DD') then //老板开机卡
+  begin
+    INit_3F.Password_USER := SGBTCONFIGURE.shopid;
+    //设置的限额来自配置文件
+    INit_3F.ID_value := ICFunction.transferDECValueToHEXByte(SGBTCONFIGURE.coinlimit);  
+
+  end
+  else if (strTypeID = '72') then //　设置卡
+  begin
+    INit_3F.ID_3F := FormatDateTime('yyyyMM', now);
+    INit_3F.Password_USER := FormatDateTime('ddhhmm', now);
+//   界面输入
+    INit_3F.ID_value := ICFunction.transferDECValueToHEXByte(trim(edtCoinCost.Text));
+  end
+  else if (strTypeID = '4A') then // 管理卡
+  begin
+    INit_3F.Password_USER := SGBTCONFIGURE.shopid;
+    INit_3F.ID_value := '00000000';
+  end;
+
+  //汇总发送内容
+  TmpStr_SendCMD := INit_3F.CMD + INit_3F.ID_INIT + INit_3F.ID_3F + INit_3F.Password_3F + INit_3F.Password_USER + INit_3F.ID_value + INit_3F.ID_type;
+  TmpStr_CheckSum := ICFunction.checkSUMData(TmpStr_SendCMD);
+  INit_3F.ID_CheckNum := ICFunction.transferCheckSumByte(TmpStr_CheckSum);
+  reTmpStr := TmpStr_SendCMD + INit_3F.ID_CheckNum;
+  result := reTmpStr;
+end;
+
+
+
+
+
+
+
+procedure TfrmCoinInitial.prcSendDataToCard();
+var
+  orderStr: string;
+begin
+  if orderLst.Count > curOrderNo then
+  begin
+    orderStr := orderLst.Strings[curOrderNo];
+    orderStr := ICFunction.funcTransferExchData(orderStr);
+    commInitial.WriteCommData(pchar(orderStr), length(orderStr)); //真正写到卡头
+    inc(curOrderNo); //累加
+  end;
+end;
+
+procedure TfrmCoinInitial.commInitialReceiveData(Sender: TObject; Buffer: Pointer;
+  BufferLength: Word);
+var
+  i: integer;
+  recStr: string;
+  tmpStr: string;
+  tmpStrend: string;
+begin
+   //接收----------------
+  recStr := '';
+  SetLength(tmpStr, BufferLength);
+  move(buffer^, pchar(tmpStr)^, BufferLength);
+  for i := 1 to BufferLength do
+  begin
+    recStr := recStr + intTohex(ord(tmpStr[i]), 2); //将获得数据转换为16进制数
+    if i = BufferLength then
+    begin
+      tmpStrend := 'END';
+    end;
+  end;
+  recDataLst.Clear;
+  recDataLst.Add(recStr);
+  begin
+    checkCMDInfo(); //首先根据接收到的数据进行判断，确认此卡是否属于为正确的卡
+  end;
+end;
+
+
+
+procedure TfrmCoinInitial.FormShow(Sender: TObject);
+begin
+
+   //初始化卡功能下拉框
+
+  edtAPPID.Text := '';
+  edtShopID.Text := '';
+  edtBandID.Text := '';
+  edtTypeID.Text := '';
+  edtCoin.Text := '';
+
+  label5.Visible := false;
+  edtTypeID.Visible := false;
+
+  initComboxCardtype();
+  initCoinRecord();
+
+  //初始化变量
+  orderLst := TStringList.Create;
+  recDataLst := tStringList.Create;
+  edtAPPID.Text := SGBTCONFIGURE.appid;
+  edtShopID.Text := SGBTCONFIGURE.shopid;
+
+  //打开串口
+//  commInitial.StartComm();
+  try
+    commInitial.StartComm();
+  except on E: Exception do //拦截所有异常
+    begin
+      showmessage(SG3FERRORINFO.commerror+ e.message);
+      exit;
+    end;
+  end;
+
+
+
+end;
+
+procedure TfrmCoinInitial.formClose(Sender: TObject; var Action: TCloseAction);
+begin
+  //
+  orderLst.Free;
+  recDataLst.Free;
+  commInitial.StopComm();
+
+end;
+
+procedure TfrmCoinInitial.btnInitialClick(Sender: TObject);
+var
+  intWriteValue: Integer;
+  jsonApplyResult, jsonAckResult: TlkJSONbase;
+  strURL, strResponseStr, strTypeID: string;
+  ResponseStream: TStringStream; //返回信息
+  activeIdHTTP: TIdHTTP;
+begin
+
+
+  if  checkUniqueCoinID(trim(edtBandID.Text)) = true then
+//          updateCoinInitialRecord(trim(edtBandID.Text))
+  begin
+          lblMessage.Caption := '电子币已经初始化,重新初始化请先删除';
+          Exit;
+  end;
+   intWriteValue := 0; //初始化时币值设定为0
+ //圈存
+  initIncrOperation(intToStr(intWriteValue));
+      //入库
+
+  saveInitialRecord();
+  //刷新数据展示
+  initCoinRecord();
+  lblMessage.Caption := '初始化成功';
+
+end;
+
+
+
+function TfrmCoinInitial.checkUniqueCoinID(ID_INIT: string): Boolean;
+var
+  ADOQ: TADOQuery;
+  strSQL :String;
+begin
+  ADOQ := TADOQuery.Create(Self);
+  ADOQ.Connection := DataModule_3F.ADOConnection_Main;
+
+  with ADOQ do begin
+    Close;
+    SQL.Clear;
+    strSQL := 'select 1 from T_COIN_INITIAL where COIN_ID=''' + ID_INIT + '''';
+    ICFunction.loginfo('Exist check  strSQL: ' + strSQL);
+    SQL.Add(strSQL);
+    Open;
+    if (Eof) then
+      result := false
+    else
+      result := true;
+  end;
+  ADOQ.Close;
+  ADOQ.Free;
+end;
+
+
+function TfrmCoinInitial.getTypeNameByTypeID(coinid:string):String;
+var strSQL :string;
+var typename :String;
+ADOQTemp: TADOQuery;
+begin
+  typename :='0';
+  strSQL := 'select TYPE_NAME  from T_COIN_INITIAL where COIN_ID =''' + coinid  + '''';
+  ICFunction.loginfo('strSQL :' + strSQL);
+  ADOQTemp := TADOQuery.Create(nil);
+  with ADOQTemp do
+  begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    SQL.Clear;
+    SQL.Add(strSQL);
+    Active := True;
+    if (not eof) then
+    begin
+      TotalNum := ADOQTemp.Fields[0].AsString;
+      Close;
+    end;
+    FreeAndNil(ADOQTemp);
+  end;
+  result := TotalNum;
+end;
+
+
+
+procedure TfrmCoinInitial.updateCoinInitialRecord(coinid:string);
+var
+  ADOQ: TADOQuery;
+  strSQL, MaxID,operationcoin,leftcoin: string;  
+begin
+  ICFunction.loginfo('Begin update Coin Initial Record ');
+
+  strSQL := ' select INITIAL_COIN, operate_time,OPERATOR_NO from  '
+    + ' T_COIN_INITIAL where  COIN_ID = ''' + coinid + '''';
+  ICFunction.loginfo('strSQL: ' + strSQL );
+
+  //指定日期格式 重要
+  ShortDateFormat := 'yyyy-MM-dd'; //指定格式即可
+  DateSeparator := '-';
+  //指定日期格式 否则会报is not an valid date and time;
+
+  ADOQ := TADOQuery.Create(nil);
+  with ADOQ do begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    Active := false;
+    SQL.Clear;
+    SQL.Add(strSQL);
+    Active := true;
+    if (RecordCount > 0) then begin
+      Edit;
+      FieldByName('INITIAL_COIN').AsInteger := strToInt('0');
+      FieldByName('OPERATE_TIME').AsString := FormatDateTime('yyyy-MM-dd HH:mm:ss',Now);
+      FieldByName('OPERATOR_NO').AsString  := SGBTCONFIGURE.shopid;      
+      Post;
+    end;
+    Active := False;
+  end;
+  FreeAndNil(ADOQ);
+
+  ICFunction.loginfo('End update Coin  Initial Record ');
+ end;
+
+
+  {
+
+
+function TfrmCoinInitial.generateBindWeiWinURL(): string;
+var
+  strURL, appId, bandId, shopId, timestamp, strSignature, strActiveURL, strhkscURL: string;
+begin
+  appId := SGBTCONFIGURE.appid;
+  bandId := trim(edtBandID.text);
+  shopId := SGBTCONFIGURE.shopid;
+  timestamp := getTimestamp();
+  strSignature := getBindWeiXinSignature(appId, bandId, shopId, timestamp);
+  strActiveURL := SGBTCONFIGURE.bindurl;
+  strhkscURL := SGBTCONFIGURE.hkscurl;
+
+  strURL := strhkscURL + strActiveURL
+    + '?appId=' + appId
+    + '&bandId=' + bandId
+    + '&shopId=' + shopId
+    + '&timestamp=' + timestamp
+    + '&sign=' + strSignature;
+  ICFunction.loginfo('Weisin bind URL:' + strURL);
+  result := strURL;
+end;
+
+//绑定微信签名算法
+
+function TfrmCoinInitial.getBindWeiXinSignature(appId: string; bandId: string; shopId: string; timeStamp: string): string;
+var
+  strTempC, strTempD: string;
+  myMD5: TIdHashMessageDigest5;
+begin
+  myMD5 := TIdHashMessageDigest5.Create;
+  strTempC := 'appId' + appId
+    + 'bandId' + bandId
+    + 'shopId' + shopId
+    + 'timestamp' + timeStamp; //按字符顺序排序
+
+  strTempD := strTempC + SGBTCONFIGURE.secret_key; //加上secret_key
+  result := LowerCase(myMD5.AsHex(myMD5.HashValue(strTempD))); //计算字符串的MD5,并返回小写
+  myMD5.Free;
+
+end;
+
+
+
+
+ //拼接激活接口URL
+
+function TfrmCoinInitial.generateActiveURL(): string;
+var
+  strURL, strAppID, strBandID, strShopID, strTimeStamp, strSignature, strActiveURL, strhkscURL: string;
+begin
+  strAppID := SGBTCONFIGURE.appid;
+  strBandID := edtBandID.Text;
+  strShopID := SGBTCONFIGURE.shopid;
+  strTimeStamp := getTimestamp();
+  strSignature := getActiveSignature(strBandID, strAppID, strShopID, strTimeStamp);
+  strActiveURL := SGBTCONFIGURE.activeurl;
+  strhkscURL := SGBTCONFIGURE.hkscURL;
+
+  strURL := strhkscURL + strActiveURL + '?bandId=' + strBandID
+    + '&appId=' + strAppID + '&shopId=' + strShopID + '&timestamp=' + strTimeStamp
+    + '&sign=' + strSignature;
+
+  result := strURL;
+end;
+
+
+
+//激活请求签名算法
+
+function TfrmCoinInitial.getActiveSignature(bandId: string; appId: string; shopId: string; timeStamp: string): string;
+var
+  strTempC, strTempD: string;
+  myMD5: TIdHashMessageDigest5;
+begin
+  myMD5 := TIdHashMessageDigest5.Create;
+  strTempC := 'appId' + appId + 'bandId' + bandId + 'shopId' + shopId + 'timestamp' + timeStamp; //按字符顺序排序
+  strTempD := strTempC + SGBTCONFIGURE.secret_key; //加上secret_key
+  result := LowerCase(myMD5.AsHex(myMD5.HashValue(strTempD))); //计算字符串的MD5,并返回小写
+  myMD5.Free;
+
+end;
+
+}
+
+procedure TfrmCoinInitial.btnDeleteClick(Sender: TObject);
+var strgameno: string;
+var strsql: string;
+begin
+  strGameno := ADOQueryInitial.FieldByName('COINID').AsString;
+  if (MessageDlg('确实要删除' + strGameno + ' 电子币吗?', mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+  begin
+    strsql := 'delete from T_COIN_INITIAL where COIN_ID = ''' + strGameno + '''';
+    DataModule_3F.executesql(strsql);
+    ICFunction.loginfo('strSQL :' + strSQL);    
+
+    initCoinRecord();
+  end;
+
+
+end;
+
+
+end.
+

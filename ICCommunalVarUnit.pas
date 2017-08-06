@@ -15,7 +15,7 @@ type
     Right_Password: string; //权限密码
   end;
 
-  TUser = record
+  TUser = record   //登录用户信息
     UserNO: string; //用户编号
     UserName: string; //用户姓名
     UserPassword: string; //用户密码
@@ -355,6 +355,11 @@ type
      commerror :string;
      error_register_code : string;
  end;
+
+ SGBTCOINTYPE = record
+    coinproportion: string;
+ end;
+
  
 
 
@@ -442,6 +447,7 @@ var
   SGBTCONFIGURE: SGBTCONFIGURETYPE;
   SG3FCONFIGURE: SG3FCONFIGURETYPE;
   SG3FERRORINFO: SG3FERRORINFOTYPE;
+  SGBTCOININFO:SGBTCOINTYPE;
 
   rootEnable : boolean; //进入最高权限
 

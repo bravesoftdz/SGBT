@@ -8,63 +8,61 @@ uses
   MSCommLib_TLB, Grids, DBGrids;
 
 type
-  TFrontoperate_InitCardID = class(TForm)
+  Tfrm_bind_cardheadid = class(TForm)
     Panel2: TPanel;
     Panel4: TPanel;
     Panel1: TPanel;
-    DataSource_CardIDInit: TDataSource;
-    ADOQuery_CardIDInit: TADOQuery;
+    dsBindCardHead: TDataSource;
+    ADOQBindCardHead: TADOQuery;
     GroupBox2: TGroupBox;
-    DBGrid_CardIDInit: TDBGrid;
+    dbgrdCardHead: TDBGrid;
     Panel3: TPanel;
-    BitBtn18: TBitBtn;
     Image1: TImage;
     Image2: TImage;
-    Combo_MCname: TComboBox;
-    ComboBox_CardMC_ID: TComboBox;
-    Edit_CARDID: TEdit;
-    Edit_Comfir: TEdit;
-    MC_ID_Set_Count: TEdit;
-    BitBtn1: TBitBtn;
+    cbMachineName: TComboBox;
+    cbCardPositionNo: TComboBox;
+    edtCardHeadID: TEdit;
+    edtBindCount: TEdit;
+    btnConfirm: TBitBtn;
     BarCodeCOM2: TComm;
-    Edit1: TEdit;
-    Edit2: TEdit;
-    Edit3: TEdit;
-    Edit4: TEdit;
-    Edit5: TEdit;
-    Edit6: TEdit;
+    btnDelete: TButton;
     procedure FormShow(Sender: TObject);
-    procedure Combo_MCnameClick(Sender: TObject);
-    procedure BitBtn18Click(Sender: TObject);
+    procedure cbMachineNameClick(Sender: TObject);
+    procedure btnCloseClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure MSCbarcodeComm(Sender: TObject);
-    procedure BitBtn1Click(Sender: TObject);
+//    procedure MSCbarcodeComm(Sender: TObject);
+    procedure btnConfirmClick(Sender: TObject);
     procedure BarCodeCOM2ReceiveData(Sender: TObject; Buffer: Pointer;
       BufferLength: Word);
+    procedure btnDeleteClick(Sender: TObject);
 
   private
     { Private declarations }
   public
-    { Public declarations }
-    procedure InitCarMC_ID(Str1: string);
-    procedure CountCarMC_ID;
-    procedure InitCombo_MCname; //初始化游戏名称下来框
-    procedure SaveData_CardID;
+
+    procedure initcbMachineName;
+    procedure SaveBindCardHeadIDRecord;
     procedure InitDataBase;
+    function  getBindTotalNumber():Integer;
+
+    function getMachineNoByName(machinename:String) :String;
+    function getMachineNameByCardHeadID(cardheadid:String) :String;
+    function getPositionNoByCardHeadID(cardheadid:String) :String;
+    function checkUniqueBindCardHeadID(cardheadid: string): boolean;
+    function checkUniquePositionNo(positionno: string): boolean;
     function INit_Send_CMD(StrCMD: string; StrIncValue: string): string;
     function Date_Time_Modify(strinputdatetime: string): string;
-    procedure Query_By_MCname(Str: string);
 
-
+    procedure InitCardPositionByMachineName(Str: string);
     procedure CheckCMD_BarCodeCom2();
   end;
 
 var
-  Frontoperate_InitCardID: TFrontoperate_InitCardID;
+  frm_bind_cardheadid: Tfrm_bind_cardheadid;
 
   CARDID_First, temp_First: string;
   CARDID_Comfir, temp_Comfir: string;
-  SaveData_OK_flag_CardID: BOOLEAN;
+
 
 
   curOrderNo: integer = 0;
@@ -84,8 +82,6 @@ var
   buffer: array[0..2048] of byte;
   BAR_Type1, BAR_Type2: string;
   orderLst, recDataLst, recData_fromICLst: Tstrings;
-
-
   orderLst_Barcode, recDataLst_Barcode, recData_fromICLst_Barcode: Tstrings;
 
 implementation
@@ -93,15 +89,13 @@ implementation
 uses SetParameterUnit, ICDataModule, ICCommunalVarUnit, ICEventTypeUnit, ICFunctionUnit;
 {$R *.dfm}
 
-procedure TFrontoperate_InitCardID.FormShow(Sender: TObject);
+procedure Tfrm_bind_cardheadid.FormShow(Sender: TObject);
 begin
   InitDataBase;
-  InitCombo_MCname;
-  ComboBox_CardMC_ID.Items.Clear;
+  initcbMachineName;
+  edtCardHeadID.Text := '';
+  edtBindCount.Text :=  IntToStr(getBindTotalNumber());
 
-  CountCarMC_ID;
-  Edit_CARDID.Text := '';
-  Edit_Comfir.Text := '';
 
   BarCodeCOM2.StartComm();
   orderLst_BarCode := TStringList.Create;
@@ -109,45 +103,73 @@ begin
   recData_fromICLst_BarCode := tStringList.Create;
 end;
 
-procedure TFrontoperate_InitCardID.InitCombo_MCname; //初始化游戏名称下来框
+procedure Tfrm_bind_cardheadid.initcbMachineName;
 var
   ADOQTemp: TADOQuery;
   strSQL: string;
-  nameStr: string;
-  i: integer;
 begin
-  ADOQTemp := TADOQuery.Create(nil);
-  strSQL := 'select [GameName],[ID] from [TGameSet]  order by ID ASC ';
+  ADOQTemp := TADOQuery.Create(nil);  
+  strSQL := 'select MACHINE_NAME from tmachineset order by operate_time Desc ';
+  ICFunction.loginfo('strSQL: ' + strSQL);
   with ADOQTemp do
   begin
     Connection := DataModule_3F.ADOConnection_Main;
     SQL.Clear;
     SQL.Add(strSQL);
     Active := True;
-    Combo_MCname.Items.Clear;
+    cbMachineName.Items.Clear;
     while not Eof do
     begin
-      Combo_MCname.Items.Add(FieldByName('GameName').AsString);
+      cbMachineName.Items.Add(FieldByName('MACHINE_NAME').AsString);
       Next;
     end;
   end;
   FreeAndNil(ADOQTemp);
+
 end;
 
-procedure TFrontoperate_InitCardID.Combo_MCnameClick(
+function Tfrm_bind_cardheadid.getBindTotalNumber():Integer;
+var strSQL :string;
+var TotalNum :Integer;
+ADOQTemp: TADOQuery;
+begin
+  TotalNum :=0;
+  strSQL := 'select count(*)  from T_BIND_CARDHEADID ';
+  ICFunction.loginfo('strSQL :' + strSQL);
+  ADOQTemp := TADOQuery.Create(nil);
+  with ADOQTemp do
+  begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    SQL.Clear;
+    SQL.Add(strSQL);
+    Active := True;
+    if (not eof) then
+    begin
+      TotalNum := ADOQTemp.Fields[0].AsInteger;
+      Close;
+    end;
+    FreeAndNil(ADOQTemp);
+  end;
+  result := TotalNum;
+end;
+
+
+
+
+//关联机台对应的卡位编号
+procedure Tfrm_bind_cardheadid.cbMachineNameClick(
   Sender: TObject);
 begin
-
-  Query_By_MCname(Trim(Combo_MCname.Text));
+  InitCardPositionByMachineName(Trim(cbMachineName.Text));
 end;
 
 
-procedure TFrontoperate_InitCardID.Query_By_MCname(Str: string);
+procedure Tfrm_bind_cardheadid.InitCardPositionByMachineName(Str: string);
 var
   ADOQTemp: TADOQuery;
   strSQL: string;
-  nameStr: string;
-  i: integer;
+
+
 begin
 
   if length(Trim(Str)) = 0 then
@@ -157,9 +179,11 @@ begin
   end
   else
   begin
-
+   cbCardPositionNo.Items.Clear;
+   cbCardPositionNo.Text :='请选择卡位';
     ADOQTemp := TADOQuery.Create(nil);
-    strSQL := 'select [GameNo] from [TGameSet] where ([GameName]=''' + Combo_MCname.Text + ''')  ';
+    strSQL := 'select  CARD_POSITION_NO from TPOSITIONSET  where MACHINE_NAME =''' + cbMachineName.Text + '''';
+    ICFunction.loginfo('strSQL: ' + strSQL);
     with ADOQTemp do
     begin
       Connection := DataModule_3F.ADOConnection_Main;
@@ -168,8 +192,9 @@ begin
       Active := True;
       while not Eof do
       begin
-        InitCarMC_ID(FieldByName('GameNo').AsString); //查询已经设置卡头ID的数量
+          cbCardPositionNo.Items.Add(FieldByName('CARD_POSITION_NO').AsString);
         Next;
+
       end;
     end;
     FreeAndNil(ADOQTemp);
@@ -177,76 +202,34 @@ begin
   end;
 end;
 
- //初始化卡头ID编号
 
-procedure TFrontoperate_InitCardID.InitCarMC_ID(Str1: string);
-var
-  ADOQTemp: TADOQuery;
-  strSQL, comp: string;
-  strSET: string;
+procedure Tfrm_bind_cardheadid.btnCloseClick(Sender: TObject);
+var strgameno: string;
+var strsql: string;
 begin
-
-
-  comp := '0';
-  ADOQTemp := TADOQuery.Create(nil);
-  //  strSQL := 'select distinct [MacNo] from [TChargMacSet] where GameNo=''' + Str1 + ''' and [Compter]=''' + comp + '''';
-  strSQL := 'select distinct [MacNo] from [TChargMacSet] where GameNo=''' + Str1 + ''' ';
-  with ADOQTemp do begin
-    Connection := DataModule_3F.ADOConnection_Main;
-    SQL.Clear;
-    SQL.Add(strSQL);
-    Active := True;
-    ComboBox_CardMC_ID.Items.Clear;
-    while not Eof do begin
-      ComboBox_CardMC_ID.Items.Add(FieldByName('MacNo').AsString);
-      Next;
-    end;
+  ShowMessage('here');
+  strGameno := ADOQBindCardHead.FieldByName('POSITION_NO').AsString;
+  if (MessageDlg('确实要删除' + strGameno + ' 卡头位吗?', mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+  begin
+    strsql := 'delete from T_BIND_CARDHEADID where POSITION_NO = ''' + strGameno + '''';
+    DataModule_3F.executesql(strsql);
+    ICFunction.loginfo('strSQL :' + strSQL);
+    InitDataBase;
   end;
-  FreeAndNil(ADOQTemp);
 
-end;
 
-procedure TFrontoperate_InitCardID.BitBtn18Click(Sender: TObject);
-begin
-  CLOSE;
 end;
 
 
 
- //查询当前机台的相关信息
 
-procedure TFrontoperate_InitCardID.CountCarMC_ID;
-var
-  ADOQTemp: TADOQuery;
-  strSQL: string;
-  strSET: string;
-begin
-  ADOQTemp := TADOQuery.Create(nil);
-  strSET := '1';
- // strSQL := 'select Count(MID) from [TChargMacSet] where Card_MC_ID=''' + strSET + '''';
-  strSQL := 'select Count(MID) from [TChargMacSet] where [COMPTER]=''' + strSET + '''';
-
-  with ADOQTemp do begin
-    Connection := DataModule_3F.ADOConnection_Main;
-    SQL.Clear;
-    SQL.Add(strSQL);
-    Active := True;
-    MC_ID_Set_Count.Text := '';
-    while not Eof do begin
-      MC_ID_Set_Count.Text := IntToStr(ADOQTemp.Fields[0].AsInteger);
-      Next;
-    end;
-  end;
-  FreeAndNil(ADOQTemp);
-end;
-
-procedure TFrontoperate_InitCardID.FormClose(Sender: TObject;
+procedure Tfrm_bind_cardheadid.FormClose(Sender: TObject;
   var Action: TCloseAction);
 begin
-  Combo_MCname.Items.Clear;
-  ComboBox_CardMC_ID.Items.Clear;
-  Combo_MCname.Text := '';
-  ComboBox_CardMC_ID.Text := '';
+  cbCardPositionNo.Items.Clear;
+  cbMachineName.Items.Clear;
+  cbCardPositionNo.Text := '';
+  cbMachineName.Text := '';
 
   orderLst.Free();
   recDataLst.Free();
@@ -259,18 +242,17 @@ end;
 
 
 
-procedure TFrontoperate_InitCardID.InitDataBase;
+procedure Tfrm_bind_cardheadid.InitDataBase;
 var
   strSQL: string;
   strtemp: string;
 begin
   strtemp := '1';
-  with ADOQuery_CardIDInit do begin
+  with ADOQBindCardHead do begin
     Connection := DataModule_3F.ADOConnection_Main;
     Active := false;
     SQL.Clear;
-    strSQL := 'select GameName,MacNo,Card_ID_MC from [TGameSet],[TChargMacSet] '
-      + ' where ([TGameSet].GameNo=[TChargMacSet].GameNo) and ([TChargMacSet].Compter=''' + strtemp + ''')';
+    strSQL := 'SELECT * FROM T_BIND_CARDHEADID limit 10';
     SQL.Add(strSQL);
     Active := True;
   end;
@@ -280,12 +262,12 @@ end;
 
 //初始化卡计算指令
 
-function TFrontoperate_InitCardID.INit_Send_CMD(StrCMD: string; StrIncValue: string): string;
+function Tfrm_bind_cardheadid.INit_Send_CMD(StrCMD: string; StrIncValue: string): string;
 var
   TmpStr: string; //规范后的日期和时间
-  TmpStr_CheckSum: string; //校验和
+
   TmpStr_SendCMD: string; //指令内容
-  TmpStr_Password_User: string; //指令内容
+
   reTmpStr: string;
   myIni: TiniFile;
   strinputdatetime: string;
@@ -347,7 +329,7 @@ end;
 
 //定时器扫描统计结果和详细记录
 
-function TFrontoperate_InitCardID.Date_Time_Modify(strinputdatetime: string): string;
+function Tfrm_bind_cardheadid.Date_Time_Modify(strinputdatetime: string): string;
 var
   strEnd: string;
   Strtemp: string;
@@ -380,48 +362,95 @@ begin
   result := strEnd + Strtemp;
 end;
 
-procedure TFrontoperate_InitCardID.BitBtn1Click(Sender: TObject);
+procedure Tfrm_bind_cardheadid.btnConfirmClick(Sender: TObject);
 begin
        //保存条码记录
      //唯一性判断
-  if (length(Trim(Combo_MCname.Text)) = 0) or (Combo_MCname.Text = '请点击选择') then
+  if (length(Trim(cbMachineName.Text)) = 0) or (cbMachineName.Text = '请点击选择') then
   begin
     ShowMessage('机台游戏名称不能空');
     exit;
   end;
 
-  if (length(Trim(ComboBox_CardMC_ID.Text)) = 0) or (ComboBox_CardMC_ID.Text = '请点击选择') then
+  if (length(Trim(cbCardPositionNo.Text)) = 0) or (cbCardPositionNo.Text = '请点击选择') then
   begin
     ShowMessage('机台游戏位编号不能空');
     exit;
   end;
 
-  if (length(Trim(Edit_CARDID.Text)) = 0) then
+  if (length(Trim(edtCardHeadID.Text)) = 0) then
   begin
     ShowMessage('请先扫描卡头条码');
     exit;
   end;
 
-  if (CARDID_Comfir <> '') and (CARDID_First <> '') and (CARDID_Comfir = CARDID_First) then
+  if checkUniqueBindCardHeadID(Trim(edtCardHeadID.Text)) = true then
   begin
-    if (DataModule_3F.Querystr_CardHeadID_Only(CARDID_Comfir) <> 'no_record') and (DataModule_3F.Querystr_CardHeadID_Only(CARDID_Comfir) <> '') then //如果有记录
-    begin //查询卡头ID号是否唯一
-      Panel3.Caption := '此卡头ID已使用，禁止重复！';
-    end
-    else
-    begin
-      SaveData_CardID; //保存卡头ID
+         ShowMessage('此卡头ID已经绑定');
+         exit;
+  end;
 
-      if SaveData_OK_flag_CardID then
-      begin
-        BarCodeValue_OnlyCheck := 0; //清除
-        InitDataBase;
-        SaveData_OK_flag_CardID := FALSE;
-        Edit_CARDID.Text := '';
-        Edit_Comfir.Text := '';
-      end;
-    end; //记录唯一判断结束
-  end; //输入框不能为空判断结束
+  if checkUniqueBindCardHeadID(Trim(cbCardPositionNo.Text)) = true then
+  begin
+         ShowMessage('此卡台位已经被绑定');
+         exit;
+  end;
+  
+  SaveBindCardHeadIDRecord(); //保存卡头ID
+  InitDataBase();
+  edtBindCount.Text := IntToStr(getBindTotalNumber());
+end; //
+
+
+
+
+function Tfrm_bind_cardheadid.checkUniqueBindCardHeadID(cardheadid: string): boolean;
+var
+  ADOQ: TADOQuery;
+  strSQL :String;
+begin
+  ADOQ := TADOQuery.Create(Self);
+  ADOQ.Connection := DataModule_3F.ADOConnection_Main;
+
+  with ADOQ do begin
+    Close;
+    SQL.Clear;
+    strSQL := 'select 1 from T_BIND_CARDHEADID where CARDHEADID=''' + cardheadid + '''';
+    ICFunction.loginfo('Exist check  strSQL: ' + strSQL);
+    SQL.Add(strSQL);
+    Open;
+    if (Eof) then
+      result := false
+    else
+      result := true;
+  end;
+  ADOQ.Close;
+  ADOQ.Free;
+end;
+
+
+function Tfrm_bind_cardheadid.checkUniquePositionNo(positionno: string): boolean;
+var
+  ADOQ: TADOQuery;
+  strSQL :String;
+begin
+  ADOQ := TADOQuery.Create(Self);
+  ADOQ.Connection := DataModule_3F.ADOConnection_Main;
+
+  with ADOQ do begin
+    Close;
+    SQL.Clear;
+    strSQL := 'select 1 from T_BIND_CARDHEADID where POSITION_NO=''' + positionno + '''';
+    ICFunction.loginfo('Exist check  strSQL: ' + strSQL);
+    SQL.Add(strSQL);
+    Open;
+    if (Eof) then
+      result := false
+    else
+      result := true;
+  end;
+  ADOQ.Close;
+  ADOQ.Free;
 end;
 
 
@@ -429,56 +458,131 @@ end;
 
 //保存当前记录，包括流水号、积分值等信息
 
-procedure TFrontoperate_InitCardID.SaveData_CardID;
+procedure Tfrm_bind_cardheadid.SaveBindCardHeadIDRecord;
 var
-  ADOQ: TADOQuery;
-  strSQL, strTemp: string;
+  strSQL,strOperateTime ,strOperatorNO: string;
 begin
 
-  SaveData_OK_flag_CardID := FALSE; //保存操作完成
 
-  strSQL := 'select * from [TChargMacSet] where MacNo=''' + ComboBox_CardMC_ID.text + '''';
-  strTemp := '';
-  ADOQ := TADOQuery.Create(nil);
-  with ADOQ do begin
+  
+  ShortDateFormat := 'yyyy-MM-dd'; //指定格式即可
+  DateSeparator := '-';
+  strOperateTime := FormatDateTime('yyyy-MM-dd HH:mm:ss', now);
+  strOperatorNO := '001';
+    
+  with ADOQBindCardHead do begin
     Connection := DataModule_3F.ADOConnection_Main;
     Active := false;
     SQL.Clear;
+    strSQL := 'select * from T_BIND_CARDHEADID where MACHINE_NAME=''' + cbMachineName.text + '''';
+    ICFunction.loginfo('strSQL :' + strSQL);
     SQL.Add(strSQL);
-    Active := true;
-    if (RecordCount > 0) then begin
-      Edit;
-
-      FieldByName('Card_ID_MC').AsString := CARDID_First;
-      FieldByName('Compter').AsString := '1';
-      Post;
-    end;
-    Active := False;
+    Active := True;
+    Append;
+    FieldByName('CARDHEADID').AsString := edtCardHeadID.Text;
+    FieldByName('MACHINE_NAME').AsString := cbMachineName.Text;
+    FieldByName('MACHINE_NO').AsString := getMachineNoByName(cbMachineName.Text);
+    FieldByName('POSITION_NO').AsString := cbCardPositionNo.Text;
+    FieldByName('OPERATE_TIME').AsString := strOperateTime;
+    FieldByName('OPERATOR_NO').AsString := strOperatorNO;
+    post;
   end;
-  FreeAndNil(ADOQ);
-  //InitDataBase;
-  Query_By_MCname(Trim(Combo_MCname.Text));
-  CountCarMC_ID;
-  SaveData_OK_flag_CardID := true; //保存操作完成
+
 end;
+
+
+function Tfrm_bind_cardheadid.getMachineNoByName(machinename:String) :String;
+var
+  ADOQTemp: TADOQuery;
+  strSQL: string;
+  MACHINE_NO:Integer;
+begin
+  MACHINE_NO := 0;
+  ADOQTemp := TADOQuery.Create(nil);
+  strSQL := 'select ID from tmachineset where MACHINE_NAME =''' + machinename  + '''';
+  ICFunction.loginfo('strSQL: ' + strSQL);
+  with ADOQTemp do
+  begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    SQL.Clear;
+    SQL.Add(strSQL);
+    Active := True;
+    if (not eof) then
+        begin
+          MACHINE_NO := ADOQTemp.Fields[0].AsInteger;;
+          Close;
+        end;
+        FreeAndNil(ADOQTemp);
+  end;
+      result := intTostr(MACHINE_NO);
+
+end;
+
+
+
+function Tfrm_bind_cardheadid.getMachineNameByCardHeadID(cardheadid:String) :String;
+var
+  ADOQTemp: TADOQuery;
+  strSQL: string;
+  machinename:string;
+begin
+  machinename := '';
+  ADOQTemp := TADOQuery.Create(nil);
+  strSQL := 'select MACHINE_NAME from T_BIND_CARDHEADID where CARDHEADID =''' + cardheadid  + '''';
+  ICFunction.loginfo('strSQL: ' + strSQL);
+  with ADOQTemp do
+  begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    SQL.Clear;
+    SQL.Add(strSQL);
+    Active := True;
+    if (not eof) then
+        begin
+          machinename := ADOQTemp.Fields[0].AsString;
+          Close;
+        end;
+        FreeAndNil(ADOQTemp);
+  end;
+      result := machinename;
+
+end;
+
+
+function Tfrm_bind_cardheadid.getPositionNoByCardHeadID(cardheadid:String) :String;
+var
+  ADOQTemp: TADOQuery;
+  strSQL: string;
+  positionNo:string;
+begin
+  positionNo := '';
+  ADOQTemp := TADOQuery.Create(nil);
+  strSQL := 'select POSITION_NO from T_BIND_CARDHEADID where CARDHEADID =''' + cardheadid  + '''';
+  ICFunction.loginfo('strSQL: ' + strSQL);
+  with ADOQTemp do
+  begin
+    Connection := DataModule_3F.ADOConnection_Main;
+    SQL.Clear;
+    SQL.Add(strSQL);
+    Active := True;
+    if (not eof) then
+        begin
+          positionNo := ADOQTemp.Fields[0].AsString;
+          Close;
+        end;
+        FreeAndNil(ADOQTemp);
+  end;
+      result := positionNo;
+
+end;
+
+
+
 
  //根据接收到的数据判断此卡是否为合法卡
 
-procedure TFrontoperate_InitCardID.CheckCMD_BarCodeCom2();
-var
-  i: integer;
-  tmpStr: string;
+procedure Tfrm_bind_cardheadid.CheckCMD_BarCodeCom2();
+var                      
   tmpStr_Barcode: string;
-
-  stationNoStr: string;
-  tmpStr_Hex: string;
-  tmpStr_Hex_length: string;
-  Send_value: string;
-  RevComd: integer;
-  ID_No: string;
-  length_Data: integer;
-
-  strTemp: string;
   tempStr: string;
   firstbit: string; //确定扫描的是哪一个条码
   Firstframe_hex: string;
@@ -487,13 +591,7 @@ begin
 
    //首先截取接收的信息
   tmpStr_Barcode := recData_fromICLst_Barcode.Strings[0];
-  Edit1.Text := '';
-  Edit1.Text := tmpStr_Barcode;
-  Edit2.Text := BarCodeFirstFrame[0];
-  Edit3.Text := BarCodeFirstFrame[1];
-
   Firstframe_hex := copy(tmpStr_Barcode, 1, 2);
-
   BarCodeValue := ICFunction.ChangeAreaHEXToStr(copy(tmpStr_Barcode, 3, length(tmpStr_Barcode) - 2));
   if (Firstframe_hex = '39') then
   begin
@@ -532,9 +630,9 @@ begin
 
   begin
     tempStr := '0' + BarCodeValue;
-    Edit6.Text := tempStr;
+//    Edit6.Text := tempStr;
       //Panel_Infor.Caption:='';
-    Edit5.Text := inttostr(length(tempStr));
+//    Edit5.Text := inttostr(length(tempStr));
 
         //流水机台条码，9-A
     if (firstbit = 'A') and ((length(tempStr) = 21) or (length(tempStr) = 20)) then
@@ -542,7 +640,7 @@ begin
     begin
 //---------------
       temp_First := tempStr;
-      Edit_CARDID.Text := '';
+      edtCardHeadID.Text := '';
       Panel3.Caption := '请确保扫描正确';
       if (length(tempStr) = 21) then
       begin
@@ -552,7 +650,7 @@ begin
       begin
         CARDID_First := copy(tempStr, 11, 1) + copy(tempStr, 6, 1) + copy(tempStr, 13, 1);
       end;
-      Edit_CARDID.Text := CARDID_First;
+      edtCardHeadID.Text := CARDID_First;
       BarCodeValue_CardHead := '';
 
 //
@@ -561,8 +659,7 @@ begin
     else if (firstbit = 'B') and ((length(tempStr) = 23) or (length(tempStr) = 22)) then
       //条码2
     begin
-      temp_Comfir := tempStr;
-      Edit_Comfir.Text := '111';
+      temp_Comfir := tempStr;  
       Panel3.Caption := '请确保扫描正确';
       if (length(tempStr) = 23) then
       begin
@@ -573,14 +670,13 @@ begin
         CARDID_Comfir := copy(tempStr, 2, 1) + copy(tempStr, 13, 1) + copy(tempStr, 8, 1);
       end;
 
-      Edit_Comfir.Text := CARDID_Comfir;
       BarCodeValue_CardHead := '';
 
     end;
 
     //保存条码记录
 
- //-----------------------------------------------------------------------------
+
 
 
   end;
@@ -590,7 +686,7 @@ end;
 
 //接受彩票信息
 
-procedure TFrontoperate_InitCardID.BarCodeCOM2ReceiveData(Sender: TObject;
+procedure Tfrm_bind_cardheadid.BarCodeCOM2ReceiveData(Sender: TObject;
   Buffer: Pointer; BufferLength: Word);
 var
   ii: integer;
@@ -625,67 +721,23 @@ begin
 
 end;
 
-//不再使用这种类型的Comm
 
-procedure TFrontoperate_InitCardID.MSCbarcodeComm(Sender: TObject);
-var
-  strTemp: string;
-  tempStr: string;
-  Dingwei: string; //确定扫描的是哪一个条码
-
+procedure Tfrm_bind_cardheadid.btnDeleteClick(Sender: TObject);
+var strgameno: string;
+var strsql: string;
 begin
-{
-  if MSCbarcode.CommEvent = comEvReceive then
+  strGameno := ADOQBindCardHead.FieldByName('POSITION_NO').AsString;
+  if (MessageDlg('确实要删除' + strGameno + ' 卡头位吗?', mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
   begin
-    strTemp := MSCbarcode.Input;
-    BarCodeValue_CardHead := BarCodeValue_CardHead + strTemp;
-    strTemp := '';
-    begin
-      tempStr := BarCodeValue_CardHead;
-      Dingwei := copy(tempStr, 1, 1); //截取第一个字符，用于判断此条码信息是属于曲轴线的还是缸体线的，又或是打刻机
 
-        //流水机台条码，
-      if (Dingwei = '9') and ((length(tempStr) = 20) or (length(tempStr) = 21)) then
-      begin
-        begin
-          temp_First := tempStr;
-          Edit_CARDID.Text := '';
-          Panel3.Caption := '请确保扫描正确';
-          if  (length(tempStr)=21) then
-                  begin
-                    CARDID_First  :=copy(tempStr, 20,1)+copy(tempStr, 11, 1) + copy(tempStr, 6, 1) + copy(tempStr, 13, 1);
-                  end
-          else if (length(tempStr)=20) then
-                  begin
-                    CARDID_First := copy(tempStr, 11, 1) + copy(tempStr, 6, 1) + copy(tempStr, 13, 1);
-                  end;
-          Edit_CARDID.Text := CARDID_First;
-          BarCodeValue_CardHead := '';
+    strsql := 'delete from T_BIND_CARDHEADID where POSITION_NO = ''' + strGameno + '''';
+    DataModule_3F.executesql(strsql);
+    ICFunction.loginfo('strSQL :' + strSQL);
 
-        end;
-      end
-         //积分条码，
-      else if (Dingwei = '0') and ((length(tempStr) = 22) or (length(tempStr) = 23))  then
-      begin
-        begin
-          temp_Comfir := tempStr;
-          Edit_Comfir.Text := '111';
-          Panel3.Caption := '请确保扫描正确';
-          if  (length(tempStr) = 23) then
-             begin
-               CARDID_Comfir :=copy(tempStr,22,1)+copy(tempStr, 2, 1) + copy(tempStr, 13, 1) + copy(tempStr, 8, 1);
-             end
-          else if (length(tempStr) = 22) then
-             begin
-               CARDID_Comfir := copy(tempStr, 2, 1) + copy(tempStr, 13, 1) + copy(tempStr, 8, 1);
-             end;
-
-          Edit_Comfir.Text := CARDID_Comfir;
-          BarCodeValue_CardHead := '';
-        end;
-      end;
-    end;
+    InitDataBase;
   end;
-  }
+
+  
 end;
+
 end.

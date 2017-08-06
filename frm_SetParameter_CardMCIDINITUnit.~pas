@@ -65,7 +65,7 @@ type
     function CheckSUMData(orderStr: string): string;
     function Date_Time_Modify(strinputdatetime: string): string;
     procedure Save_CardID;
-    procedure Save_CardID_M(strtemp:string);
+    procedure Save_CardID_M(strtemp: string);
     procedure InitDataBase;
     procedure Query_CardID;
   public
@@ -155,12 +155,13 @@ begin
 end;
 
  //初始化客户编号
+
 procedure Tfrm_SetParameter_CardMC_IDINIT.InitCarMC_ID(Str1: string);
 var
   ADOQTemp: TADOQuery;
   strSQL: string;
   strSET: string;
-begin           
+begin
   ADOQTemp := TADOQuery.Create(nil);
   strSQL := 'select distinct [Customer_NO] from [3F_Customer_Infor] where Customer_Name=''' + Str1 + '''';
   with ADOQTemp do begin
@@ -169,7 +170,7 @@ begin
     SQL.Add(strSQL);
     Active := True;
     ComboBox_CardMC_ID.Items.Clear;
-    ComboBox_CardMC_ID.Text:='';
+    ComboBox_CardMC_ID.Text := '';
     while not Eof do begin
       ComboBox_CardMC_ID.Items.Add(FieldByName('Customer_NO').AsString);
       Next;
@@ -188,6 +189,7 @@ begin
 end;
 
 //查询当前客户的当前场地共有多少台卡头
+
 procedure Tfrm_SetParameter_CardMC_IDINIT.CountCarMC_ID(str1: string);
 var
   ADOQTemp: TADOQuery;
@@ -213,6 +215,7 @@ end;
 
 
 //选择完毕客户名称，点击客户场地编号时的事件
+
 procedure Tfrm_SetParameter_CardMC_IDINIT.ComboBox_CardMC_IDClick(
   Sender: TObject);
 begin
@@ -223,7 +226,7 @@ procedure Tfrm_SetParameter_CardMC_IDINIT.Query_CardID;
 begin
 
     //根据客户编号查询当前客户已经拥有的卡头数
-  CountCarMC_ID(ComboBox_CardMC_ID.text);//ComboBox_CardMC_ID.text客户编号
+  CountCarMC_ID(ComboBox_CardMC_ID.text); //ComboBox_CardMC_ID.text客户编号
   MC_ID_Set_Count.Text := inttostr(Strtoint(Edit_CardHead_Count.Text) + 2);
 
 end;
@@ -231,6 +234,7 @@ end;
 
 
  //查询当前客户当前场地的最大卡头ID号   这里建议使用max而不是count
+
 procedure Tfrm_SetParameter_CardMC_IDINIT.MaxID_NO(str1: string);
 var
   ADOQTemp: TADOQuery;
@@ -268,6 +272,7 @@ end;
 
 
  //查询当前机台的相关信息   这个函数没用
+
 procedure Tfrm_SetParameter_CardMC_IDINIT.QueryCarMC_ID(MC_ID: string);
 var
   ADOQTemp: TADOQuery;
@@ -301,7 +306,8 @@ begin
 end;
 
 
-//串口相应事件        
+//串口相应事件
+
 procedure Tfrm_SetParameter_CardMC_IDINIT.comReaderReceiveData(
   Sender: TObject; Buffer: Pointer; BufferLength: Word);
 var
@@ -332,7 +338,8 @@ begin
 end;
 
 
-//根据接收到的数据判断此卡是否为合法卡   
+//根据接收到的数据判断此卡是否为合法卡
+
 procedure Tfrm_SetParameter_CardMC_IDINIT.CheckCMD_Right();
 var
   i: integer;
@@ -346,7 +353,7 @@ var
   CMD1, CMD2, CMD3: string; //录入时间，读取系统时间
   ID_No: string;
   length_Data: integer;
-  content1,strtemp01,strtemp02,strtemp03, content2, content3, content4, content5, content6, content7, content8, content9, content10: string;
+  content1, strtemp01, strtemp02, strtemp03, content2, content3, content4, content5, content6, content7, content8, content9, content10: string;
 begin
   RevComd := 0;
   CMD1 := '83';
@@ -357,20 +364,20 @@ begin
   begin
     content1 := copy(recData_fromICLst.Strings[0], 1, 2); //帧头AA
     content2 := copy(recData_fromICLst.Strings[0], 3, 4); //不包含校验和
-    strtemp01:='0100';
-    strtemp02:='0000';
-    strtemp03:='0001';
+    strtemp01 := '0100';
+    strtemp02 := '0000';
+    strtemp03 := '0001';
           //1、首先判断接收的指令是否符合规定
     if (content1 = CMD1) then //握手83
     begin
      //判断接收的数据在数据表中是否已经存在，如果是则弹出提示框
-    if (content2=strtemp03) or (content2=strtemp02) or (content2=strtemp01)then
+      if (content2 = strtemp03) or (content2 = strtemp02) or (content2 = strtemp01) then
       begin
-       if content2 = send_Data then
+        if content2 = send_Data then
         begin
 
           Save_CardID;
-        
+
           send_Data := '';
           Panel3.Caption := '写入成功，数据已经保存！';
         end
@@ -380,10 +387,10 @@ begin
           BitBtn_INIT.Enabled := true;
         end;
       end
-      else if (content2 = DataModule_3F.Query3F_CardHeadID_Only(content2))  then
+      else if (content2 = DataModule_3F.Query3F_CardHeadID_Only(content2)) then
       begin
 
-        Panel3.Caption := content2+'当前卡头ID被' + DataModule_3F.Query3F_CardHeadID_Customer_Name(content2) + '占用，为保证唯一性，禁止重写！';
+        Panel3.Caption := content2 + '当前卡头ID被' + DataModule_3F.Query3F_CardHeadID_Customer_Name(content2) + '占用，为保证唯一性，禁止重写！';
         BitBtn_INIT.Enabled := false;
         exit;
       end
@@ -395,7 +402,7 @@ begin
           Save_CardID;
            //linlf@20160702自增
          // MC_ID_Set_Count.Text :=  inttostr(Strtoint(MC_ID_Set_Count.Text) + 1);
-          ICFunction.loginfo('send_Data:  '+ send_Data);
+          ICFunction.loginfo('send_Data:  ' + send_Data);
           send_Data := '';
           Panel3.Caption := '写入成功，数据已经保存！';
         end
@@ -424,7 +431,8 @@ begin
 end;
 
 
-//初始化操作 
+//初始化操作
+
 procedure Tfrm_SetParameter_CardMC_IDINIT.INIT_Operation;
 var
   INC_value: string;
@@ -440,7 +448,8 @@ begin
 end;
 
 
-//初始化卡计算指令      
+//初始化卡计算指令
+
 function Tfrm_SetParameter_CardMC_IDINIT.INit_Send_CMD(StrCMD: string; StrIncValue: string): string;
 var
   TmpStr: string; //规范后的日期和时间
@@ -630,73 +639,74 @@ begin
 
 end;
 
-procedure Tfrm_SetParameter_CardMC_IDINIT.Save_CardID_M(strtemp:string);
+procedure Tfrm_SetParameter_CardMC_IDINIT.Save_CardID_M(strtemp: string);
 var
   ADOQ: TADOQuery;
   strSQL: string;
-  i,imax:integer;
-  strMCname,  strCardMC_ID,strStartID:string;
+  i, imax: integer;
+  strMCname, strCardMC_ID, strStartID: string;
 begin
- strMCname:='请点击选择';
- strCardMC_ID:='请点击选择';
- strStartID:='0';
- if  (Combo_MCname.Text=strMCname)or (ComboBox_CardMC_ID.Text=strCardMC_ID) then
+  strMCname := '请点击选择';
+  strCardMC_ID := '请点击选择';
+  strStartID := '0';
+  if (Combo_MCname.Text = strMCname) or (ComboBox_CardMC_ID.Text = strCardMC_ID) then
   begin
     showmessage('请选择客户名称和编号');
     exit;
   end
- else if strtemp= strStartID then
+  else if strtemp = strStartID then
   begin
     showmessage('将要设置的卡头ID号不能为0,必须>0');
     exit;
   end
- else
+  else
   begin
-  
-  imax:=strtoint(trim(strtemp))-1;
-  for i:=1 to imax do
-   begin
-   if i<10 then
-     begin
-       send_Data:='000'+inttostr(i);
-     end
-   else if( i<100) and (i>9) then
-     begin
-       send_Data:='00'+inttostr(i);
-     end
-   else if ( i<1000) and (i>99)  then
-     begin
-       send_Data:='0'+inttostr(i);
-     end
-   else
-     begin
-       send_Data:=inttostr(i);
-     end;
 
-  strSQL := 'select * from TCardHead_Init';
-  ADOQ := TADOQuery.Create(nil);
-  with ADOQ do begin
-    Connection := DataModule_3F.ADOConnection_Main;
-    Active := false;
-    SQL.Clear;
-    SQL.Add(strSQL);
-    Active := true;
-    Append;
-    FieldByName('Customer_Name').AsString := Combo_MCname.text;
-    FieldByName('Customer_NO').AsString := ComboBox_CardMC_ID.text;
-    FieldByName('CardHead_ID').AsString := MC_ID_Set_Count.text;
-    FieldByName('Customer_Time').AsString := FormatDateTime('yyyy-MM-dd HH:mm:ss', now);
-    FieldByName('CardHead_ID_IC').AsString := send_Data;
-    Post;
-    Active := False;
-  end;
-  FreeAndNil(ADOQ);
-   end;//for cycle end
+    imax := strtoint(trim(strtemp)) - 1;
+    for i := 1 to imax do
+    begin
+      if i < 10 then
+      begin
+        send_Data := '000' + inttostr(i);
+      end
+      else if (i < 100) and (i > 9) then
+      begin
+        send_Data := '00' + inttostr(i);
+      end
+      else if (i < 1000) and (i > 99) then
+      begin
+        send_Data := '0' + inttostr(i);
+      end
+      else
+      begin
+        send_Data := inttostr(i);
+      end;
+
+      strSQL := 'select * from TCardHead_Init';
+      ADOQ := TADOQuery.Create(nil);
+      with ADOQ do begin
+        Connection := DataModule_3F.ADOConnection_Main;
+        Active := false;
+        SQL.Clear;
+        SQL.Add(strSQL);
+        Active := true;
+        Append;
+        FieldByName('Customer_Name').AsString := Combo_MCname.text;
+        FieldByName('Customer_NO').AsString := ComboBox_CardMC_ID.text;
+        FieldByName('CardHead_ID').AsString := MC_ID_Set_Count.text;
+        FieldByName('Customer_Time').AsString := FormatDateTime('yyyy-MM-dd HH:mm:ss', now);
+        FieldByName('CardHead_ID_IC').AsString := send_Data;
+        Post;
+        Active := False;
+      end;
+      FreeAndNil(ADOQ);
+    end; //for cycle end
   end;
   InitDataBase; //刷新列表
   Query_CardID; //重新查询相关信息
 
 end;
+
 procedure Tfrm_SetParameter_CardMC_IDINIT.BitBtn1Click(Sender: TObject);
 begin
   INIT_Operation; //握手成功，可以向加密狗发送更新指令
@@ -704,13 +714,13 @@ end;
 
 procedure Tfrm_SetParameter_CardMC_IDINIT.Label1Click(Sender: TObject);
 begin
-  MC_ID_Set_Count.Enabled:=true;
+  MC_ID_Set_Count.Enabled := true;
 end;
 
 procedure Tfrm_SetParameter_CardMC_IDINIT.MC_ID_Set_CountKeyPress(
   Sender: TObject; var Key: Char);
 begin
-if not (key in ['0'..'9', #8, #13]) then
+  if not (key in ['0'..'9', #8, #13]) then
   begin
     key := #0;
     ShowMessage('输入错误，只能输入数字！');
@@ -719,13 +729,13 @@ end;
 
 procedure Tfrm_SetParameter_CardMC_IDINIT.BitBtn3Click(Sender: TObject);
 begin
-    if (MessageDlg('确认需要填充？', mtInformation, [mbYes, mbNo], 0) = mrYes) then
-    begin
+  if (MessageDlg('确认需要填充？', mtInformation, [mbYes, mbNo], 0) = mrYes) then
+  begin
     if (MessageDlg('再次确认需要操作？', mtInformation, [mbYes, mbNo], 0) = mrYes) then
     begin
-       Save_CardID_M(MC_ID_Set_Count.Text);
+      Save_CardID_M(MC_ID_Set_Count.Text);
     end;
-    end;
+  end;
 end;
 
 procedure Tfrm_SetParameter_CardMC_IDINIT.BitBtn2Click(Sender: TObject);
@@ -734,30 +744,30 @@ var
   strSQL: string;
 begin
 
-if (MessageDlg('确认需要删除过往记录吗？', mtInformation, [mbYes, mbNo], 0) = mrYes) then
-    begin
+  if (MessageDlg('确认需要删除过往记录吗？', mtInformation, [mbYes, mbNo], 0) = mrYes) then
+  begin
     if (MessageDlg('再次确认需要删除？', mtInformation, [mbYes, mbNo], 0) = mrYes) then
     begin
 
 
-  strSQL := 'delete  from '
-    + ' [TCardHead_Init] ';
+      strSQL := 'delete  from '
+        + ' [TCardHead_Init] ';
 
-  ADOQ := TADOQuery.Create(nil);
-  with ADOQ do begin
-    Connection := DataModule_3F.ADOConnection_Main;
-    ADOQ.Active := false;
-    SQL.Clear;
-    SQL.Add(strSQL);
-    ADOQ.ExecSQL;
-  end;
-  FreeAndNil(ADOQ);
+      ADOQ := TADOQuery.Create(nil);
+      with ADOQ do begin
+        Connection := DataModule_3F.ADOConnection_Main;
+        ADOQ.Active := false;
+        SQL.Clear;
+        SQL.Add(strSQL);
+        ADOQ.ExecSQL;
+      end;
+      FreeAndNil(ADOQ);
 
-  InitDataBase; //刷新列表
-  Query_CardID; //重新查询相关信息
+      InitDataBase; //刷新列表
+      Query_CardID; //重新查询相关信息
+    end;
   end;
-  end;
-  
+
 end;
 
 end.

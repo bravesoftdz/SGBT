@@ -285,7 +285,7 @@ begin
     if (Receive_CMD_ID_Infor.Password_USER = INit_Wright.BossPassword) //    INit_Wright.BossPassword := MyIni.ReadString('PLC工作区域', 'PC托盘特征码', '新密码');
       and ((Receive_CMD_ID_Infor.ID_type = copy(INit_Wright.RECV_CASE, 8, 2)) //    INit_Wright.RECV_CASE := '收银卡,CA'; 中文两个字节从第８开始取两个
       or (Receive_CMD_ID_Infor.ID_type = copy(INit_Wright.User, 8, 2))
-      or (Receive_CMD_ID_Infor.ID_type = copy(INit_Wright.OPERN, 8, 2))) then //用收银卡作为会员卡
+      or (Receive_CMD_ID_Infor.ID_type = copy(INit_Wright.OPERN, 8, 2))) then //老板开机卡
     begin //场地初始化检查 -----开始
       if DataModule_3F.Query_User_INIT_OK(Receive_CMD_ID_Infor.ID_INIT) then //有记录
       begin

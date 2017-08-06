@@ -26,6 +26,7 @@ type
     lbl1: TLabel;
     edtCoinValue: TEdit;
     edtTimes: TEdit;
+    lbl2: TLabel;
    
     procedure FormShow(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
@@ -231,16 +232,19 @@ var
   strSQL, strTemp: string;
 begin
   strSQL := 'select coin_value, operate_time,OPERATORNO from  '
-    + ' T_MEMBER_CARD_CONFIGURATION where coin_type = ''' + cardtype + '''';
+    + ' T_MEMBER_CARD_CONFIGURATION  where coin_type = ''' + cardtype + '''';
   strTemp := '';
+
+  ShortDateFormat := 'yyyy-MM-dd'; //指定格式即可
+  DateSeparator := '-';
+
   ADOQ := TADOQuery.Create(nil);
   with ADOQ do begin
     Connection := DataModule_3F.ADOConnection_Main;
     Active := false;
     SQL.Clear;
     SQL.Add(strSQL);
-    Active := true;
-
+    Active := true;     
     if (RecordCount > 0) then begin
       Edit;
       FieldByName('coin_value').AsString := edtCoinValue.text;

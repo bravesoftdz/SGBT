@@ -14,10 +14,7 @@ type
     GroupBox2: TGroupBox;
     Label1: TLabel;
     Edit_GameNo: TEdit;
-    Label2: TLabel;
     Label3: TLabel;
-    ComboBox1: TComboBox;
-    Edit_GameName: TEdit;
     RdA: TRadioGroup;
     Label4: TLabel;
     RdB: TRadioGroup;
@@ -72,17 +69,16 @@ type
     Edt14: TEdit;
     Edt13: TEdit;
     Edt12: TEdit;
-    Edit_Model: TEdit;
     Bit_Save: TBitBtn;
     BitBtn12: TBitBtn;
-    procedure FormCreate(Sender: TObject);
+    Edit_GameName: TEdit;
+//    procedure FormCreate(Sender: TObject);
     procedure BitBtn12Click(Sender: TObject);
     procedure Bit_SaveClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
     { Private declarations }
     procedure QueryMax_GameNo;
-    procedure Update_record;
     procedure Add_record;
   public
     { Public declarations }
@@ -95,12 +91,12 @@ implementation
 uses ICDataModule, ICCommunalVarUnit, ICmain, Fileinput_machinerecordUnit;
 {$R *.dfm}
 
-procedure Tfrm_Fileinput_machinerecord_gamename.FormCreate(
-  Sender: TObject);
-begin
-
+//procedure Tfrm_Fileinput_machinerecord_gamename.FormCreate(
+//  Sender: TObject);
+//begin
 //
-end;
+////
+//end;
 
 procedure Tfrm_Fileinput_machinerecord_gamename.BitBtn12Click(
   Sender: TObject);
@@ -119,9 +115,8 @@ var
   Str: string;
   i: integer;
 begin
-                // nameStr:=S1+S2+'%' ;
+
   ADOQTemp := TADOQuery.Create(nil);
-                 //strSQL:= 'select max(GameNo) from [TGameSet]';    //考虑追加同名的处理
   strSQL := 'select Count(ID) from [TGameSet]'; //考虑追加同名的处理
   with ADOQTemp do
   begin
@@ -153,154 +148,6 @@ begin
                            //Close;
   end;
   FreeAndNil(ADOQTemp);
-
-end;
-
-procedure Tfrm_Fileinput_machinerecord_gamename.Update_record;
-var
-  strinputdatetime, strMemo_instruction, strOperator: string;
-  i, leng: integer;
-  strRdA, strRdB, strRdC, strRdD: Boolean;
-  strGameNo, strComboBox1, strGameName, strRdE, strRdF, strRdG, strRemark: string;
-  strRedit1, strRedit2, strRedit3, strRedit4, strMacType, strEdt1, strEdt2, strEdt3, strEdt4, strEdt5: string;
-  strEdt6, strEdt7, strEdt8, strEdt9, strEdt10, strEdt11, strEdt12, strEdt13, strEdt14: string;
-label ExitSub;
-begin
-
-  strGameNo := Edit_GameNo.Text;
-   // ComboBox1
-  strGameName := Edit_GameName.Text;
-  if RdA.ItemIndex = 0 then
-    strRdA := true
-  else
-    strRdA := false;
-  if RdB.ItemIndex = 0 then
-    strRdB := true
-  else
-    strRdB := false;
-
-  if RdC.ItemIndex = 0 then
-    strRdC := true
-  else
-    strRdC := false;
-  if RdD.ItemIndex = 0 then
-    strRdD := true
-  else
-    strRdD := false;
-  if RdE.ItemIndex = 0 then
-    strRdE := '1'
-  else
-    strRdE := '0';
-
-  if RdF.ItemIndex = 0 then
-    strRdF := '1'
-  else
-    strRdF := '0';
-  if RdG.ItemIndex = 0 then
-    strRdG := '0'
-  else if RdG.ItemIndex = 1 then
-    strRdG := '1'
-  else
-    strRdG := '2';
-
-  strRedit1 := Redit1.Text;
-  strRedit2 := Redit2.Text;
-  strRedit3 := Redit3.Text;
-  strRedit4 := Redit4.Text;
-
-  if MacType.ItemIndex = 0 then
-    strMacType := 'A'
-  else if MacType.ItemIndex = 1 then
-    strMacType := 'B'
-  else if MacType.ItemIndex = 2 then
-    strMacType := 'C'
-  else
-    strMacType := 'D';
-
-  strEdt1 := Edt1.Text;
-  strEdt2 := Edt2.Text;
-  strEdt3 := Edt3.Text;
-  strEdt4 := Edt4.Text;
-  strEdt5 := Edt5.Text;
-  strEdt6 := Edt6.Text;
-  strEdt7 := Edt7.Text;
-  strEdt8 := Edt8.Text;
-  strEdt9 := Edt9.Text;
-  strEdt10 := Edt10.Text;
-  strEdt11 := Edt11.Text;
-  strEdt12 := Edt12.Text;
-  strEdt13 := Edt13.Text;
-  strEdt14 := Edt14.Text;
-
-  strOperator := G_User.UserNO;
-  strinputdatetime := DateTimetostr((now())); //录入时间，读取系统时间
-  strRemark := Remark.Text;
-
-  if strGameName = '' then
-  begin
-    ShowMessage('游戏名称不能空');
-    exit;
-  end
-  else
-  begin
-    with frm_Fileinput_machinerecord.ADOQuery_Gameset do
-    begin
-      if (not Locate('GameNo', TrimRight(strGameNo), [])) then
-      begin
-        exit;
-      end
-      else
-      begin
-        Edit;
-        FieldByName('GameNo').AsString := strGameNo; //
-        FieldByName('GameName').AsString := strGameName; //
-        FieldByName('cUserNo').AsString := strOperator; //
-        FieldByName('GetTime').AsString := strinputdatetime; //
-        FieldByName('RdA').AsBoolean := strRdA; //
-        FieldByName('RdB').AsBoolean := strRdB; //
-        FieldByName('RdC').AsBoolean := strRdC; //
-        FieldByName('RdD').AsBoolean := strRdD;
-        FieldByName('RdE').AsString := strRdE;
-        FieldByName('RdF').AsString := strRdF; //
-        FieldByName('RdG').AsString := strRdG; //
-
-        FieldByName('Redit1').AsString := strRedit1; //
-
-        FieldByName('Redit2').AsString := strRedit2;
-        FieldByName('Redit3').AsString := strRedit3;
-        FieldByName('Redit4').AsString := strRedit4; //
-        FieldByName('MacType').AsString := strMacType; //
-        FieldByName('Remark').AsString := strRemark; //
-
-        FieldByName('Edt1').AsString := strEdt1;
-        FieldByName('Edt2').AsString := strEdt2;
-        FieldByName('Edt3').AsString := strEdt3; //
-        FieldByName('Edt4').AsString := strEdt4; //
-        FieldByName('Edt5').AsString := strEdt5; //
-
-        FieldByName('Edt6').AsString := strEdt6;
-        FieldByName('Edt7').AsString := strEdt7;
-        FieldByName('Edt8').AsString := strEdt8; //
-        FieldByName('Edt9').AsString := strEdt9; //
-        FieldByName('Edt10').AsString := strEdt10; //
-
-        FieldByName('Edt11').AsString := strEdt11;
-        FieldByName('Edt12').AsString := strEdt12;
-        FieldByName('Edt13').AsString := strEdt13; //
-        FieldByName('Edt14').AsString := strEdt14; //串口号
-
-        try
-          Post;
-        except
-          on e: Exception do ShowMessage(e.Message);
-        end;
-
-      end;
-    end;
-    Edit_GameName.Text := '';
-    Edit_Model.Text := 'Add'; //更新完了后需要将此文本设定为Add，否则一直为更新记录模式
-    close;
-  end;
 
 end;
 
@@ -393,7 +240,7 @@ begin
   end
   else
   begin
-    with frm_Fileinput_machinerecord.ADOQuery_Gameset do
+    with frm_Fileinput_machinerecord.ADOQPosition do
     begin
       if (Locate('GameName', TrimRight(strGameName), [])) then
       begin
@@ -460,9 +307,9 @@ end;
 procedure Tfrm_Fileinput_machinerecord_gamename.Bit_SaveClick(
   Sender: TObject);
 begin
-  if Edit_Model.Text = 'Update' then
-    Update_record //更新记录
-  else
+//  if Edit_Model.Text = 'Update' then
+//    Update_record //更新记录
+//  else
     Add_record; //新增记录
 end;
 

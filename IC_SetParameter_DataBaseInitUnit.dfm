@@ -1,8 +1,8 @@
 object frm_IC_SetParameter_DataBaseInit: Tfrm_IC_SetParameter_DataBaseInit
-  Left = 642
-  Top = 409
-  Width = 578
-  Height = 278
+  Left = 705
+  Top = 387
+  Width = 592
+  Height = 296
   Caption = #20986#21378#37197#32622#21021#22987#21270
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -18,16 +18,16 @@ object frm_IC_SetParameter_DataBaseInit: Tfrm_IC_SetParameter_DataBaseInit
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 562
-    Height = 240
+    Width = 576
+    Height = 258
     Align = alClient
     Caption = 'Panel1'
     TabOrder = 0
     object GroupBox5: TGroupBox
       Left = 1
       Top = 1
-      Width = 560
-      Height = 238
+      Width = 574
+      Height = 256
       Align = alClient
       Caption = #20986#21378#21021#22987#21270
       TabOrder = 0
@@ -37,90 +37,65 @@ object frm_IC_SetParameter_DataBaseInit: Tfrm_IC_SetParameter_DataBaseInit
         Width = 545
         Height = 41
         BevelOuter = bvNone
-        Caption = #25552#31034#20449#24687
+        Caption = #25552#31034#20449#24687','#20986#21378#21021#22987#21270#20250#21024#38500#25152#26377#25968#25454','#35831#35880#24910#25805#20316
+        Color = clRed
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
         TabOrder = 0
       end
-      object GroupBox1: TGroupBox
+      object GroupBox2: TGroupBox
         Left = 8
         Top = 16
-        Width = 385
-        Height = 105
-        Caption = #20449#24687
-        TabOrder = 1
-        object Label2: TLabel
-          Left = 16
-          Top = 20
-          Width = 60
-          Height = 13
-          Caption = #23458#25143#32534#21495#65306
-        end
-        object Label8: TLabel
-          Left = 16
-          Top = 68
-          Width = 60
-          Height = 13
-          Caption = #20986#21378#23494#30721#65306
-        end
-        object edtCusotmerPasswd: TEdit
-          Left = 90
-          Top = 63
-          Width = 201
-          Height = 21
-          Enabled = False
-          TabOrder = 0
-        end
-        object Comb_Customer_Name: TComboBox
-          Left = 90
-          Top = 15
-          Width = 201
-          Height = 21
-          ItemHeight = 13
-          TabOrder = 1
-          Text = #35831#28857#20987#36873#25321
-          OnClick = Comb_Customer_NameClick
-        end
-      end
-      object GroupBox2: TGroupBox
-        Left = 400
-        Top = 16
-        Width = 161
+        Width = 553
         Height = 105
         Caption = #25805#20316
-        TabOrder = 2
-        object Bit_Close: TBitBtn
-          Left = 38
-          Top = 64
-          Width = 97
-          Height = 25
-          Caption = #20851#38381
+        TabOrder = 1
+        object btnFactoryInitial: TBitBtn
+          Left = 22
+          Top = 16
+          Width = 163
+          Height = 34
+          Caption = #20986#21378#21021#22987#21270#28165#38500#25152#26377#25968#25454
           TabOrder = 0
-          OnClick = Bit_CloseClick
+          OnClick = btnFactoryInitialClick
         end
-        object Bit_Add: TBitBtn
-          Left = 38
-          Top = 24
-          Width = 97
-          Height = 25
-          Caption = #20986#21378#21021#22987#21270
+        object btnClearCoinRecharge: TButton
+          Left = 24
+          Top = 56
+          Width = 161
+          Height = 42
+          Caption = #20805#20540#35760#24405#21021#22987#21270
           TabOrder = 1
-          OnClick = Bit_AddClick
+          OnClick = btnClearCoinRechargeClick
+        end
+        object btnClearBarFlow: TButton
+          Left = 208
+          Top = 16
+          Width = 145
+          Height = 33
+          Caption = #20817#25442#27969#27700#21021#22987#21270
+          TabOrder = 2
+          OnClick = btnClearBarFlowClick
+        end
+        object btnClearCoinRefund: TButton
+          Left = 208
+          Top = 56
+          Width = 145
+          Height = 41
+          Caption = #36864#24065#35760#24405#21021#22987#21270
+          TabOrder = 3
+          OnClick = btnClearCoinRefundClick
         end
       end
     end
   end
-  object ADOQuery_newCustomer: TADOQuery
-    Parameters = <>
-    Left = 113
-    Top = 196
-  end
-  object DataSource_Newmenber: TDataSource
-    DataSet = ADOQuery_newCustomer
-    Left = 153
-    Top = 196
-  end
   object Comm_Check: TComm
-    CommName = 'COM4'
-    BaudRate = 115200
+    CommName = 'COM1'
+    BaudRate = 9600
     ParityCheck = False
     Outx_CtsFlow = False
     Outx_DsrFlow = False
@@ -146,35 +121,7 @@ object frm_IC_SetParameter_DataBaseInit: Tfrm_IC_SetParameter_DataBaseInit
     WriteTotalTimeoutMultiplier = 0
     WriteTotalTimeoutConstant = 0
     OnReceiveData = Comm_CheckReceiveData
-    Left = 193
-    Top = 193
-  end
-  object Timer_HAND: TTimer
-    Enabled = False
-    Interval = 100
-    OnTimer = Timer_HANDTimer
-    Left = 320
-    Top = 200
-  end
-  object Timer_USERPASSWORD: TTimer
-    Enabled = False
-    Interval = 100
-    OnTimer = Timer_USERPASSWORDTimer
-    Left = 376
-    Top = 200
-  end
-  object Timer_3FPASSWORD: TTimer
-    Enabled = False
-    Interval = 100
-    OnTimer = Timer_3FPASSWORDTimer
-    Left = 424
-    Top = 200
-  end
-  object Timer_3FLOADDATE: TTimer
-    Enabled = False
-    Interval = 100
-    OnTimer = Timer_3FLOADDATETimer
-    Left = 464
-    Top = 200
+    Left = 137
+    Top = 169
   end
 end

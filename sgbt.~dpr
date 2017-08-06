@@ -17,13 +17,26 @@ uses
   DateProcess in 'DateProcess.pas',
   check_detail in 'check_detail.pas' {frm_check_detail},
   untRecharge in 'untRecharge.pas' {frmRecharge},
-  untInitialRecord in 'untInitialRecord.pas' {frmInitial},
   StandardDES in 'StandardDES.pas',
   untSumAccount in 'untSumAccount.pas' {frmAccountSum},
   untApplicationHardWareInfo in 'untApplicationHardWareInfo.pas',
   untRegister in 'untRegister.pas' {frmRegister},
+  untPresentRecharge in 'untPresentRecharge.pas' {frmPresentRecharge},
+  untMachineRecord in 'untMachineRecord.pas' {frmMachineRecord},
+  untNewMember in 'untNewMember.pas' {frmNewMember},
+  untCoinRefund in 'untCoinRefund.pas' {frmCoinRefund},
+  Fileinput_machinerecordUnit in 'Fileinput_machinerecordUnit.pas' {frm_Fileinput_machinerecord},
+  Frontoperate_InitCardIDUnit in 'Frontoperate_InitCardIDUnit.pas' {frm_bind_cardheadid},
+  Frontoperate_incvalueUnit in 'Frontoperate_incvalueUnit.pas' {frm_Frontoperate_incvalue},
+  QC_AE_LineBarscanUnit in 'QC_AE_LineBarscanUnit.pas' {frmExchangeLottry},
+  untCoinInitialRecord in 'untCoinInitialRecord.pas' {frmCoinInitial},
+  untInitialRecord in 'untInitialRecord.pas' {frmInitial},
   untMemberRecharge in 'untMemberRecharge.pas' {frmMemberRecharge},
-  untMemberConfig in 'untMemberConfig.pas' {frmMemberConfig};
+  untMemberConfig in 'untMemberConfig.pas' {frmMemberConfig},
+  IC_Report_SaletotalUnit in 'IC_Report_SaletotalUnit.pas' {frm_IC_Report_Saletotal},
+  IC_Report_SaleUnit in 'IC_Report_SaleUnit.pas' {frm_IC_Report_SaleDetial},
+  IC_SetParameter_BiLiUnit in 'IC_SetParameter_BiLiUnit.pas' {frm_SetParameter_BILI_INIT},
+  untCoinRecharge in 'untCoinRecharge.pas' {frmCoinRecharge};
 
 {$R *.res}
 
@@ -34,8 +47,21 @@ begin
   Application.CreateForm(TDataModule_3F, DataModule_3F);
   Application.CreateForm(TFrm_IC_Main, Frm_IC_Main);
   Application.CreateForm(TfrmRegister, frmRegister);
+  Application.CreateForm(TfrmPresentRecharge, frmPresentRecharge);
+  Application.CreateForm(TfrmMachineRecord, frmMachineRecord);
+  Application.CreateForm(TfrmNewMember, frmNewMember);
+  Application.CreateForm(TfrmCoinRefund, frmCoinRefund);
+  Application.CreateForm(Tfrm_Fileinput_machinerecord, frm_Fileinput_machinerecord);
+  Application.CreateForm(Tfrm_bind_cardheadid, frm_bind_cardheadid);
+  Application.CreateForm(Tfrm_Frontoperate_incvalue, frm_Frontoperate_incvalue);
+  Application.CreateForm(TfrmExchangeLottry, frmExchangeLottry);
+  Application.CreateForm(TfrmCoinInitial, frmCoinInitial);
   Application.CreateForm(TfrmMemberRecharge, frmMemberRecharge);
   Application.CreateForm(TfrmMemberConfig, frmMemberConfig);
+  Application.CreateForm(Tfrm_IC_Report_Saletotal, frm_IC_Report_Saletotal);
+  Application.CreateForm(Tfrm_IC_Report_SaleDetial, frm_IC_Report_SaleDetial);
+  Application.CreateForm(Tfrm_SetParameter_BILI_INIT, frm_SetParameter_BILI_INIT);
+  Application.CreateForm(TfrmCoinRecharge, frmCoinRecharge);
   //Application.CreateForm(Tfrm_frontoperate, frm_frontoperate);
   //Application.CreateForm(Tfrm_Behindoperate, frm_Behindoperate);
  // Application.CreateForm(Tfrm_SetParameter, frm_SetParameter);

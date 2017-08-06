@@ -114,7 +114,7 @@ end;
 }
 
 
-//在Model加载的时候就建立连接
+//在Model加载的时候就建立连接  Mysql
 
 procedure TDataModule_3F.DataModuleCreate(Sender: TObject);
 var
@@ -488,7 +488,7 @@ begin
     SQL.Clear;
 
    //20130101修改
-    strSQL := 'select * from t_id_init where bandid=''' + ID_INIT + '''';
+    strSQL := 'select 1 from t_id_init where bandid=''' + ID_INIT + '''';
     ICFunction.loginfo('Exist check  strSQL: ' + strSQL);
     SQL.Add(strSQL);
     Open;
@@ -503,34 +503,6 @@ end;
 
 
 
-//根据读取的条码值流水，查询数据库中是否已经有相同记录，如果有则提示
-
-function TDataModule_3F.Querystr_Flow_Only(StrFLOW: string): string;
-var
-  ADOQTemp: TADOQuery;
-  strSQL: string;
-  reTmpStr: string;
-begin
-  ADOQTemp := TADOQuery.Create(nil);
-  strSQL := 'select [FLOWbar] from [3F_BARFLOW] where FLOWbar=''' + StrFLOW + '''';
-
-  with ADOQTemp do
-  begin
-    Connection := DataModule_3F.ADOConnection_Main;
-    SQL.Clear;
-    SQL.Add(strSQL);
-    Active := True;
-    if (RecordCount > 0) then
-      reTmpStr := TrimRight(ADOQTemp.Fields[0].AsString)
-    else
-    begin
-      Result := 'no_record';
-                        //exit;
-    end;
-  end;
-  FreeAndNil(ADOQTemp);
-  Result := reTmpStr;
-end;
 //根据读取的条码值积分，查询数据库中是否已经有相同记录，如果有则提示
 
 function TDataModule_3F.Querystr_Core_Only(StrFLOW: string): string;
@@ -707,12 +679,12 @@ Date: 20140305
 begin
   with ADOQuery1 do
   begin
-    connection := ADOConnection1;
+
+    connection := ADOConnection_Main;
     Close; //关闭ADOQuery1，以便于进行SQL语句更新
     SQL.Clear; //清空SQL语句
     SQL.Add(strsql); //添加新的SQL
-    //debug info
-    //showmessage(strsql);
+
     Prepared;
     ExecSQL; //execsql执行DML语句
 

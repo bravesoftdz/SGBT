@@ -395,7 +395,13 @@ begin
          lblMessage.Caption := '会员已存在';
          exit;
   end;
-  operationcoin := getCoinByCoinType(Trim(cbMemberType.Text));
+  if( (IsNumberic(edtMobileNO.Text) = False) or (Length(edtMobileNO.Text)<> 11) ) then
+  begin
+      ShowMessage('请输入正确的数字');
+      exit
+  end;
+//  operationcoin := getCoinByCoinType(Trim(cbMemberType.Text));
+  operationcoin := Trim(cbMemberType.Text);
   operateCoin(operationcoin);
   
   lblMessage.Caption := '会员开户成功';
@@ -487,7 +493,7 @@ begin
     FieldByName('STATE').AsString := '正常';
     FieldByName('EXPIRETIME').AsString := getExpireTimeByCoinType(cbMemberType.Text);
     FieldByName('APPID').AsString := strAppID;
-    FieldByName('SHOPID').AsString := strShopid; 
+    FieldByName('SHOPID').AsString := strShopid;
     FieldByName('OPERATE_TIME').AsString := strOperateTime;
     FieldByName('OPERATORNO').AsString := strOperatorNO;
     post;

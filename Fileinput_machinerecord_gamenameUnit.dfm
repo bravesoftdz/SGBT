@@ -12,15 +12,14 @@ object frm_Fileinput_machinerecord_gamename: Tfrm_Fileinput_machinerecord_gamena
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
-  OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 609
-    Height = 174
+    Width = 601
+    Height = 163
     Align = alClient
     BevelOuter = bvNone
     Caption = 'Panel1'
@@ -28,8 +27,8 @@ object frm_Fileinput_machinerecord_gamename: Tfrm_Fileinput_machinerecord_gamena
     object GroupBox1: TGroupBox
       Left = 0
       Top = 0
-      Width = 609
-      Height = 174
+      Width = 601
+      Height = 163
       Align = alClient
       Caption = #26426#21488#22522#26412#20449#24687
       TabOrder = 0
@@ -40,56 +39,20 @@ object frm_Fileinput_machinerecord_gamename: Tfrm_Fileinput_machinerecord_gamena
         Height = 13
         Caption = #28216#25103#32534#21495#65306
       end
-      object Label2: TLabel
-        Left = 192
-        Top = 24
-        Width = 60
-        Height = 13
-        Caption = #28216#25103#31867#22411#65306
-        Visible = False
-      end
       object Label3: TLabel
-        Left = 256
-        Top = 24
+        Left = 229
+        Top = 23
         Width = 60
         Height = 13
         Caption = #28216#25103#21517#31216#65306
       end
       object Edit_GameNo: TEdit
         Left = 75
-        Top = 20
+        Top = 22
         Width = 126
         Height = 21
         Enabled = False
         TabOrder = 0
-      end
-      object ComboBox1: TComboBox
-        Left = 256
-        Top = 19
-        Width = 105
-        Height = 21
-        ItemHeight = 13
-        TabOrder = 1
-        Text = #28216#25103#36890
-        Visible = False
-        Items.Strings = (
-          #28216#25103#36890)
-      end
-      object Edit_GameName: TEdit
-        Left = 344
-        Top = 19
-        Width = 249
-        Height = 21
-        TabOrder = 2
-      end
-      object Edit_Model: TEdit
-        Left = 368
-        Top = 19
-        Width = 57
-        Height = 21
-        TabOrder = 3
-        Text = 'Add'
-        Visible = False
       end
       object Bit_Save: TBitBtn
         Left = 504
@@ -97,7 +60,7 @@ object frm_Fileinput_machinerecord_gamename: Tfrm_Fileinput_machinerecord_gamena
         Width = 81
         Height = 33
         Caption = #30830#35748
-        TabOrder = 4
+        TabOrder = 1
         OnClick = Bit_SaveClick
       end
       object BitBtn12: TBitBtn
@@ -106,8 +69,15 @@ object frm_Fileinput_machinerecord_gamename: Tfrm_Fileinput_machinerecord_gamena
         Width = 81
         Height = 33
         Caption = #21462#28040
-        TabOrder = 5
+        TabOrder = 2
         OnClick = BitBtn12Click
+      end
+      object Edit_GameName: TEdit
+        Left = 320
+        Top = 19
+        Width = 160
+        Height = 21
+        TabOrder = 3
       end
     end
   end

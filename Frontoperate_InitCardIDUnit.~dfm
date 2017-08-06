@@ -1,11 +1,11 @@
-object Frontoperate_InitCardID: TFrontoperate_InitCardID
-  Left = 336
-  Top = 150
+object frm_bind_cardheadid: Tfrm_bind_cardheadid
+  Left = 431
+  Top = 127
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
-  Caption = #22330#22320#31649#29702'-'#21345#22836'ID'#35774#32622
-  ClientHeight = 463
-  ClientWidth = 687
+  Caption = #32465#23450#21345#22836
+  ClientHeight = 529
+  ClientWidth = 824
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -21,33 +21,33 @@ object Frontoperate_InitCardID: TFrontoperate_InitCardID
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 687
-    Height = 463
+    Width = 824
+    Height = 529
     Align = alClient
     Caption = 'Panel1'
     TabOrder = 0
     object Panel4: TPanel
       Left = 1
       Top = 265
-      Width = 685
-      Height = 197
+      Width = 822
+      Height = 263
       Align = alClient
       TabOrder = 0
       object GroupBox2: TGroupBox
         Left = 1
         Top = 1
-        Width = 683
-        Height = 195
+        Width = 820
+        Height = 261
         Align = alClient
         Caption = 'ID'#35760#24405
         TabOrder = 0
-        object DBGrid_CardIDInit: TDBGrid
+        object dbgrdCardHead: TDBGrid
           Left = 2
           Top = 15
-          Width = 679
-          Height = 178
+          Width = 816
+          Height = 244
           Align = alClient
-          DataSource = DataSource_CardIDInit
+          DataSource = dsBindCardHead
           Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
           TabOrder = 0
           TitleFont.Charset = DEFAULT_CHARSET
@@ -62,27 +62,48 @@ object Frontoperate_InitCardID: TFrontoperate_InitCardID
               FieldName = 'ID'
               Title.Alignment = taCenter
               Title.Caption = #24207#21495
+              Width = 48
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'CARDHEADID'
+              Title.Caption = #21345#22836'ID'
+              Width = 48
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'MACHINE_NO'
+              Title.Caption = #26426#21488#32534#21495
+              Width = 54
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'MACHINE_NAME'
+              Title.Caption = #26426#21488#21517#31216
               Width = 50
               Visible = True
             end
             item
               Expanded = False
-              FieldName = 'GameName'
-              Title.Caption = #26426#21488#21517#31216
-              Width = 150
+              FieldName = 'POSITION_NO'
+              Title.Caption = #21345#20301#32534#21495
+              Width = 48
               Visible = True
             end
             item
               Expanded = False
-              FieldName = 'MacNo'
-              Title.Caption = #21488#20301#32534#21495
+              FieldName = 'OPERATE_TIME'
+              Title.Caption = #25805#20316#26102#38388
               Visible = True
             end
             item
               Expanded = False
-              FieldName = 'Card_ID_MC'
-              Title.Caption = #21345#22836#32534#21495
-              Width = 300
+              FieldName = 'OPERATOR_NO'
+              Title.Caption = #25805#20316#21592
+              Width = 48
               Visible = True
             end>
         end
@@ -91,7 +112,7 @@ object Frontoperate_InitCardID: TFrontoperate_InitCardID
     object Panel1: TPanel
       Left = 1
       Top = 1
-      Width = 685
+      Width = 822
       Height = 264
       Align = alTop
       Caption = 'Panel1'
@@ -99,7 +120,7 @@ object Frontoperate_InitCardID: TFrontoperate_InitCardID
       object Panel3: TPanel
         Left = 1
         Top = 1
-        Width = 573
+        Width = 710
         Height = 262
         Align = alClient
         Caption = 'Panel3'
@@ -107,7 +128,7 @@ object Frontoperate_InitCardID: TFrontoperate_InitCardID
         object Image2: TImage
           Left = 1
           Top = 1
-          Width = 571
+          Width = 708
           Height = 260
           Align = alClient
           Picture.Data = {
@@ -11371,104 +11392,44 @@ object Frontoperate_InitCardID: TFrontoperate_InitCardID
             FEFEFFFEFEFFFEFEFFFEFFFFFFFFFFFFFFFFFF000000}
           Stretch = True
         end
-        object Combo_MCname: TComboBox
-          Left = 328
-          Top = 54
+        object cbMachineName: TComboBox
+          Left = 408
+          Top = 57
           Width = 201
           Height = 21
           ItemHeight = 13
           TabOrder = 0
           Text = #35831#28857#20987#36873#25321
-          OnClick = Combo_MCnameClick
+          OnClick = cbMachineNameClick
         end
-        object ComboBox_CardMC_ID: TComboBox
-          Left = 328
-          Top = 92
+        object cbCardPositionNo: TComboBox
+          Left = 408
+          Top = 95
           Width = 201
           Height = 21
           ItemHeight = 13
           TabOrder = 1
           Text = #35831#28857#20987#36873#25321
         end
-        object Edit_CARDID: TEdit
-          Left = 328
-          Top = 131
-          Width = 97
+        object edtCardHeadID: TEdit
+          Left = 408
+          Top = 134
+          Width = 201
           Height = 21
           Enabled = False
           TabOrder = 2
         end
-        object Edit_Comfir: TEdit
-          Left = 432
-          Top = 130
-          Width = 97
+        object edtBindCount: TEdit
+          Left = 408
+          Top = 169
+          Width = 201
           Height = 21
           Enabled = False
           TabOrder = 3
         end
-        object MC_ID_Set_Count: TEdit
-          Left = 328
-          Top = 166
-          Width = 201
-          Height = 21
-          Enabled = False
-          TabOrder = 4
-        end
-        object Edit1: TEdit
-          Left = 312
-          Top = 8
-          Width = 161
-          Height = 21
-          TabOrder = 5
-          Text = 'Edit1'
-        end
-        object Edit2: TEdit
-          Left = 120
-          Top = 0
-          Width = 153
-          Height = 21
-          TabOrder = 6
-          Text = 'Edit2'
-          Visible = False
-        end
-        object Edit3: TEdit
-          Left = 24
-          Top = 32
-          Width = 193
-          Height = 21
-          TabOrder = 7
-          Text = 'Edit3'
-          Visible = False
-        end
-        object Edit4: TEdit
-          Left = 152
-          Top = 192
-          Width = 193
-          Height = 21
-          TabOrder = 8
-          Text = 'Edit4'
-          Visible = False
-        end
-        object Edit5: TEdit
-          Left = 24
-          Top = 120
-          Width = 145
-          Height = 21
-          TabOrder = 9
-          Text = 'Edit5'
-          Visible = False
-        end
-        object Edit6: TEdit
-          Left = 24
-          Top = 80
-          Width = 129
-          Height = 21
-          TabOrder = 10
-          Text = 'Edit6'
-        end
       end
       object TPanel
-        Left = 574
+        Left = 711
         Top = 1
         Width = 110
         Height = 262
@@ -12975,24 +12936,14 @@ object Frontoperate_InitCardID: TFrontoperate_InitCardID
             FFFFFFFFF8FCFBFDFEFEFFFFFFFFFFFFFFFFFFFFFFFF}
           Stretch = True
         end
-        object BitBtn18: TBitBtn
-          Left = 5
-          Top = 216
-          Width = 98
-          Height = 41
-          Caption = #21462#28040
-          TabOrder = 0
-          OnClick = BitBtn18Click
-          Kind = bkClose
-        end
-        object BitBtn1: TBitBtn
+        object btnConfirm: TBitBtn
           Left = 5
           Top = 172
           Width = 98
           Height = 41
           Caption = #30830#35748
-          TabOrder = 1
-          OnClick = BitBtn1Click
+          TabOrder = 0
+          OnClick = btnConfirmClick
           Glyph.Data = {
             360C0000424D360C000000000000360000002800000020000000200000000100
             180000000000000C0000C40E0000C40E00000000000000000000000000000000
@@ -13093,18 +13044,27 @@ object Frontoperate_InitCardID: TFrontoperate_InitCardID
             0000000000000000000000000000000000000000000000000000000000000000
             0000000000000000000000000000000000000000000000000000}
         end
+        object btnDelete: TButton
+          Left = 8
+          Top = 216
+          Width = 89
+          Height = 33
+          Caption = #21024#38500
+          TabOrder = 1
+          OnClick = btnDeleteClick
+        end
       end
     end
   end
-  object DataSource_CardIDInit: TDataSource
-    DataSet = ADOQuery_CardIDInit
-    Left = 89
-    Top = 156
+  object dsBindCardHead: TDataSource
+    DataSet = ADOQBindCardHead
+    Left = 121
+    Top = 364
   end
-  object ADOQuery_CardIDInit: TADOQuery
+  object ADOQBindCardHead: TADOQuery
     Parameters = <>
-    Left = 89
-    Top = 188
+    Left = 161
+    Top = 364
   end
   object BarCodeCOM2: TComm
     CommName = 'COM2'

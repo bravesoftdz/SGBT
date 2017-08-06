@@ -14,7 +14,6 @@ object frm_SetParameter_BILI_INIT: Tfrm_SetParameter_BILI_INIT
   Font.Style = []
   OldCreateOrder = False
   Position = poDesktopCenter
-  OnClose = FormClose
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
@@ -12975,49 +12974,19 @@ object frm_SetParameter_BILI_INIT: Tfrm_SetParameter_BILI_INIT
           FEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFE
           FEFFFEFEFFFEFEFFFEFEFFFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
       end
-      object Lableexchangerate: TLabel
-        Left = 176
-        Top = 64
-        Width = 106
-        Height = 24
-        AutoSize = False
-        Caption = #24425#31080'1'#33033#20914'='
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clRed
-        Font.Height = -16
-        Font.Name = 'MS Sans Serif'
-        Font.Style = []
-        ParentFont = False
-      end
-      object Label1: TLabel
-        Left = 372
-        Top = 64
-        Width = 65
+      object edtProportion: TEdit
+        Left = 288
+        Top = 88
+        Width = 73
         Height = 25
         AutoSize = False
-        Caption = #31995#32479#20998
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = clRed
+        Font.Color = clWindowText
         Font.Height = -16
         Font.Name = 'MS Sans Serif'
         Font.Style = []
         ParentFont = False
-      end
-      object Edit_BiLi: TEdit
-        Left = 288
-        Top = 94
-        Width = 73
-        Height = 21
-        Enabled = False
         TabOrder = 0
-        OnKeyPress = Edit_BiLiKeyPress
-      end
-      object edit_exchangerate: TEdit
-        Left = 288
-        Top = 64
-        Width = 79
-        Height = 21
-        TabOrder = 1
         Text = '1'
       end
     end
@@ -14528,24 +14497,24 @@ object frm_SetParameter_BILI_INIT: Tfrm_SetParameter_BILI_INIT
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFF8FCFBFDFEFEFFFFFFFFFFFFFFFFFFFFFFFF}
       end
-      object BitBtn1: TBitBtn
+      object btnCancel: TBitBtn
         Left = 16
         Top = 242
         Width = 81
         Height = 38
         Caption = #21462#28040
         TabOrder = 0
-        OnClick = BitBtn1Click
+        OnClick = btnCancelClick
         Kind = bkClose
       end
-      object BitBtn_BiLiSetComfir: TBitBtn
+      object btnConfirm: TBitBtn
         Left = 16
-        Top = 199
+        Top = 191
         Width = 81
         Height = 37
         Caption = #30830#35748
         TabOrder = 1
-        OnClick = BitBtn_BiLiSetComfirClick
+        OnClick = btnConfirmClick
         Glyph.Data = {
           360C0000424D360C000000000000360000002800000020000000200000000100
           180000000000000C0000C40E0000C40E00000000000000000000000000000000
@@ -14647,36 +14616,5 @@ object frm_SetParameter_BILI_INIT: Tfrm_SetParameter_BILI_INIT
           0000000000000000000000000000000000000000000000000000}
       end
     end
-  end
-  object comReader: TComm
-    CommName = 'COM1'
-    BaudRate = 9600
-    ParityCheck = False
-    Outx_CtsFlow = False
-    Outx_DsrFlow = False
-    DtrControl = DtrEnable
-    DsrSensitivity = False
-    TxContinueOnXoff = False
-    Outx_XonXoffFlow = False
-    Inx_XonXoffFlow = False
-    ReplaceWhenParityError = False
-    IgnoreNullChar = False
-    RtsControl = RtsDisable
-    XonLimit = 500
-    XoffLimit = 500
-    ByteSize = _8
-    Parity = None
-    StopBits = _1
-    XonChar = #17
-    XoffChar = #19
-    ReplacedChar = #0
-    ReadIntervalTimeout = 100
-    ReadTotalTimeoutMultiplier = 0
-    ReadTotalTimeoutConstant = 0
-    WriteTotalTimeoutMultiplier = 0
-    WriteTotalTimeoutConstant = 0
-    OnReceiveData = comReaderReceiveData
-    Left = 1
-    Top = 12
   end
 end

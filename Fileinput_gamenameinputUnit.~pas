@@ -303,7 +303,7 @@ begin
 
       gameno := Query_GameNo(trim(Combo_MCname.Text)); //≤È—Ø”Œœ∑±‡∫≈
       Edit1.Text := gameno;
-      with frm_Fileinput_machinerecord.ADOQuery_TChargMacSet do
+      with frm_Fileinput_machinerecord.ADOQMachine do
       begin
         if (Locate('MacNo', strcore, [])) then
         begin
@@ -364,7 +364,7 @@ procedure Tfrm_Fileinput_gamenameinput.InitDataBase;
 var
   strSQL: string;
 begin
-  frm_Fileinput_machinerecord.displayallgameslot;
+//  frm_Fileinput_machinerecord.InitDataBase;
 end;
 
 procedure Tfrm_Fileinput_gamenameinput.FormShow(Sender: TObject);

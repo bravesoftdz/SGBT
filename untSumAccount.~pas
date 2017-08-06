@@ -380,9 +380,9 @@ begin
      // exit;
   //  end
    // else
-    begin
+    //begin
       showCardInformation();
-    end;
+   // end;
   end;
 
 end;

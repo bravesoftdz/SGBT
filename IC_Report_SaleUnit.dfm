@@ -37,7 +37,7 @@ object frm_IC_Report_SaleDetial: Tfrm_IC_Report_SaleDetial
         Top = 1
         Width = 768
         Height = 549
-        ActivePage = TabSheet3
+        ActivePage = TabSheet2
         Align = alClient
         MultiLine = True
         Style = tsFlatButtons
@@ -727,7 +727,7 @@ object frm_IC_Report_SaleDetial: Tfrm_IC_Report_SaleDetial
                   Top = 9
                   Width = 65
                   Height = 21
-                  ItemHeight = 0
+                  ItemHeight = 13
                   TabOrder = 1
                   Text = #20840#37096
                 end
@@ -794,7 +794,7 @@ object frm_IC_Report_SaleDetial: Tfrm_IC_Report_SaleDetial
                   Top = 4
                   Width = 81
                   Height = 21
-                  ItemHeight = 0
+                  ItemHeight = 13
                   TabOrder = 0
                   Text = #20840#37096
                 end
