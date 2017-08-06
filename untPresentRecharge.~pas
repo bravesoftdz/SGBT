@@ -286,7 +286,7 @@ begin
   with ADOQ do begin
     Close;
     SQL.Clear;
-    strSQL := 'select 1 from T_PRESENT_LOG where presentname=''' + presentname + '''';
+    strSQL := 'select 1 from T_PRESENT_LOG where present_name=''' + presentname + '''';
     ICFunction.loginfo('Exist check  strSQL: ' + strSQL);
     SQL.Add(strSQL);
     Open;

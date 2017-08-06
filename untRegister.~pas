@@ -61,7 +61,7 @@ end;
 
 procedure TfrmRegister.edtRecodeClick(Sender: TObject);
 begin
-      if edtRecode.Text = '请把注册码发回给技术人员，并把获取到的认证码填写,按确认' then
+      if edtRecode.Text = '请把注册码发给技术人员，填入认证码填写,按关闭软件重新登录' then
           edtRecode.Text := '' ;
         
 end;

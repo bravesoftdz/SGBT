@@ -338,7 +338,7 @@ begin
   DateSeparator := '-';
     //指定日期格式 否则会报is not an valid date and time;
   strOperateTime := FormatDateTime('yyyy-MM-dd HH:mm:ss', now);
-  strOperatorNO := '001';
+  strOperatorNO := G_User.UserNO;
   
   with ADOQCoinRecharge do begin
     Connection := DataModule_3F.ADOConnection_Main;

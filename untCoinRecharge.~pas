@@ -230,16 +230,12 @@ begin
   Receive_CMD_ID_Infor.ID_value := copy(recDataLst.Strings[0], 29, 8); //卡内数据
   Receive_CMD_ID_Infor.ID_type := copy(recDataLst.Strings[0], 37, 2); //卡功能
 
+  displayCardInformation();
   if frmCoinInitial.checkUniqueCoinID(Receive_CMD_ID_Infor.ID_INIT) = false then //用户卡已经初始化 有记录
    begin
       lblMessage.Caption := '请先初始化！';
       exit;
-  end
-  else
-  begin
-      displayCardInformation();
-  end;
-  
+  end;  
   //自动充值
   if chkAutoRecharge.Checked then
     operateCoin( cbRechargeCoin.Text);
@@ -342,6 +338,11 @@ end;
 
 procedure TfrmCoinRecharge.btnSubmitClick(Sender: TObject);
 begin
+  if frmCoinInitial.checkUniqueCoinID(Receive_CMD_ID_Infor.ID_INIT) = false then //用户卡已经初始化 有记录
+   begin
+      lblMessage.Caption := '请先初始化！';
+      exit;
+  end;
     //计算写卡的金额
   operateCoin( cbRechargeCoin.Text); //充值
   
@@ -383,7 +384,7 @@ begin
   DateSeparator := '-';
     //指定日期格式 否则会报is not an valid date and time;
   strOperateTime := FormatDateTime('yyyy-MM-dd HH:mm:ss', now);
-  strOperatorNO := '001';
+  strOperatorNO := G_User.UserNO;
   
   with ADOQCoinRecharge do begin
     Connection := DataModule_3F.ADOConnection_Main;
@@ -449,7 +450,7 @@ begin
       Edit;
       FieldByName('OPER_COIN').AsInteger := strToInt(opercoin);
       FieldByName('OPERATE_TIME').AsString := FormatDateTime('yyyy-MM-dd HH:mm:ss',Now);
-      FieldByName('OPERATOR_NO').AsString  := SGBTCONFIGURE.shopid;      
+      FieldByName('OPERATOR_NO').AsString  := G_User.UserNO;      
       Post;
     end;
     Active := False;

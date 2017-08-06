@@ -201,7 +201,7 @@ var
 begin
    strAppID := trim(edtAppID.Text);
    strShopid := trim(edtShopID.Text);
-   strOperatorNO := SGBTCONFIGURE.shopid;
+   strOperatorNO := G_User.UserNO;
      with ADOQ do begin
     Connection := DataModule_3F.ADOConnection_Main;
     Active := false;
@@ -249,7 +249,7 @@ begin
       Edit;
       FieldByName('coin_value').AsString := edtCoinValue.text;
       FieldByName('OPERATE_TIME').AsString := FormatDateTime('yyyy-MM-dd HH:mm:ss',Now);
-      FieldByName('OPERATORNO').AsString  := SGBTCONFIGURE.shopid;      
+      FieldByName('OPERATORNO').AsString  := G_User.UserNO;      
       Post;
     end;
     Active := False;

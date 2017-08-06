@@ -1,7 +1,7 @@
 object Frm_Logon: TFrm_Logon
   Left = 406
   Top = 196
-  Width = 533
+  Width = 551
   Height = 305
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSizeToolWin
@@ -21,7 +21,7 @@ object Frm_Logon: TFrm_Logon
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 517
+    Width = 535
     Height = 267
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
@@ -31,7 +31,6 @@ object Frm_Logon: TFrm_Logon
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 0
-    OnDblClick = Panel1DblClick
     object GroupBox1: TGroupBox
       Left = 0
       Top = 0
@@ -396,7 +395,6 @@ object Frm_Logon: TFrm_Logon
         MaxLength = 50
         PasswordChar = '*'
         TabOrder = 0
-        OnKeyPress = edtPasswordKeyPress
       end
       object btnLogin: TButton
         Left = 349
@@ -408,71 +406,6 @@ object Frm_Logon: TFrm_Logon
         OnClick = btnLoginClick
       end
     end
-  end
-  object Timer1: TTimer
-    Enabled = False
-    OnTimer = Timer1Timer
-    Left = 30
-    Top = 217
-  end
-  object Timer2: TTimer
-    Enabled = False
-    Interval = 100
-    OnTimer = Timer2Timer
-    Left = 70
-    Top = 217
-  end
-  object Timer_HAND: TTimer
-    Enabled = False
-    Interval = 100
-    OnTimer = Timer_HANDTimer
-    Left = 103
-    Top = 220
-  end
-  object Timer_USERPASSWORD: TTimer
-    Enabled = False
-    Interval = 100
-    OnTimer = Timer_USERPASSWORDTimer
-    Left = 183
-    Top = 220
-  end
-  object Timer_3FPASSWORD: TTimer
-    Enabled = False
-    Interval = 100
-    OnTimer = Timer_3FPASSWORDTimer
-    Left = 215
-    Top = 220
-  end
-  object Timer_3FLOADDATE: TTimer
-    Enabled = False
-    Interval = 100
-    OnTimer = Timer_3FLOADDATETimer
-    Left = 255
-    Top = 220
-  end
-  object Timer_3FLOADDATE_WRITE: TTimer
-    Enabled = False
-    Interval = 100
-    OnTimer = Timer_3FLOADDATE_WRITETimer
-    Left = 143
-    Top = 220
-  end
-  object loginIdHTTP: TIdHTTP
-    MaxLineAction = maException
-    ReadTimeout = 0
-    AllowCookies = True
-    ProxyParams.BasicAuthentication = False
-    ProxyParams.ProxyPort = 0
-    Request.ContentLength = -1
-    Request.ContentRangeEnd = 0
-    Request.ContentRangeStart = 0
-    Request.ContentType = 'text/html'
-    Request.Accept = 'text/html, */*'
-    Request.BasicAuthentication = False
-    Request.UserAgent = 'Mozilla/3.0 (compatible; Indy Library)'
-    HTTPOptions = [hoForceEncodeParams]
-    Left = 384
-    Top = 216
   end
   object comReader: TComm
     CommName = 'COM1'
@@ -504,40 +437,5 @@ object Frm_Logon: TFrm_Logon
     OnReceiveData = comReaderReceiveData
     Left = 296
     Top = 224
-  end
-  object Comm_Check: TComm
-    CommName = 'COM4'
-    BaudRate = 115200
-    ParityCheck = False
-    Outx_CtsFlow = False
-    Outx_DsrFlow = False
-    DtrControl = DtrEnable
-    DsrSensitivity = False
-    TxContinueOnXoff = True
-    Outx_XonXoffFlow = False
-    Inx_XonXoffFlow = False
-    ReplaceWhenParityError = False
-    IgnoreNullChar = False
-    RtsControl = RtsEnable
-    XonLimit = 500
-    XoffLimit = 500
-    ByteSize = _8
-    Parity = None
-    StopBits = _1
-    XonChar = #17
-    XoffChar = #19
-    ReplacedChar = #0
-    ReadIntervalTimeout = 100
-    ReadTotalTimeoutMultiplier = 0
-    ReadTotalTimeoutConstant = 0
-    WriteTotalTimeoutMultiplier = 0
-    WriteTotalTimeoutConstant = 0
-    OnReceiveData = Comm_CheckReceiveData
-    Left = 328
-    Top = 224
-  end
-  object IdAntiFreeze1: TIdAntiFreeze
-    Left = 416
-    Top = 216
   end
 end

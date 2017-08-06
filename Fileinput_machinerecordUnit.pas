@@ -365,36 +365,6 @@ begin
 end;
 
 
-// 根据输入的游戏编号查询游戏名称
-//procedure Tfrm_Fileinput_machinerecord.Querylevel_name(S1: string);
-//var
-//  ADOQTemp: TADOQuery;
-//  strSQL: string;
-//  nameStr:String;
-//  i:integer;
-//begin
-//
-//  ADOQTemp := TADOQuery.Create(nil);
-//  strSQL := 'select GameName from [TGameSet] where GameNo IN(''' + S1 + ''')'; //考虑追加同名的处理
-//  with ADOQTemp do
-//  begin
-//    Connection := DataModule_3F.ADOConnection_Main;
-//    SQL.Clear;
-//    SQL.Add(strSQL);
-//    Active := True;
-//    frm_Fileinput_gamenameinput.Combo_MCname.Text := '';
-//    while not Eof do
-//    begin
-//      frm_Fileinput_gamenameinput.Combo_MCname.Text := FieldByName('GameName').AsString;
-//      Next;
-//    end;
-//  end;
-//  FreeAndNil(ADOQTemp);
-//
-//end;
-
-
-
 //删除机台
 procedure Tfrm_Fileinput_machinerecord.btnCancelClick(Sender: TObject);
 var

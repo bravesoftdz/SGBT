@@ -440,7 +440,7 @@ begin
   intCoin := strToInt(trim(edtAccountSum.Text)); //这里最好不要用edit里的值，会在其它地位reset掉
   strCollectID := globalCollectID;
   strState := '0'; //0表示采集成功 1表示上传成功
-  strOperatorNO := '001';
+  strOperatorNO :=G_User.UserNO;
 
     //指定日期格式 重要
   ShortDateFormat := 'yyyy-MM-dd'; //指定格式即可
@@ -480,7 +480,7 @@ begin
   strCoin := strAccountSum; //这里最好不要用edit里的值，会在其它地位reset掉
   strCollectID := globalCollectID;
   strState := globalUploadState; //0表示成功
-  strOperatorNO := '001';
+  strOperatorNO := G_User.UserNO;
 
     //指定日期格式 重要
   ShortDateFormat := 'yyyy-MM-dd'; //指定格式即可

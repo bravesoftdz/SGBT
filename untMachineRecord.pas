@@ -200,7 +200,7 @@ var
 begin
    strAppID := trim(edtAppID.Text);
    strShopid := trim(edtShopID.Text);
-   strOperatorNO := SGBTCONFIGURE.shopid;
+   strOperatorNO := G_User.UserNO;
      with ADOQ do begin
     Connection := DataModule_3F.ADOConnection_Main;
     Active := false;

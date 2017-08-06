@@ -1,6 +1,6 @@
 object frmCoinRecharge: TfrmCoinRecharge
   Left = 352
-  Top = 124
+  Top = 94
   Width = 907
   Height = 644
   BorderStyle = bsSizeToolWin

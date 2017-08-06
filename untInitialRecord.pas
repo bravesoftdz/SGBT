@@ -161,7 +161,7 @@ begin
   ShortDateFormat := 'yyyy-MM-dd'; //指定格式即可
   DateSeparator := '-';
     //指定日期格式 否则会报is not an valid date and time;
-  strOperatorNO := '001';
+  strOperatorNO := G_User.UserNO;
   strOperateTime := FormatDateTime('yyyy-MM-dd HH:mm:ss', now);
 
   //这里只是追加数据,不负责显示

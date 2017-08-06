@@ -1,6 +1,6 @@
 object frmCoinRefund: TfrmCoinRefund
-  Left = 494
-  Top = 189
+  Left = 352
+  Top = 124
   Width = 907
   Height = 644
   BorderStyle = bsSizeToolWin

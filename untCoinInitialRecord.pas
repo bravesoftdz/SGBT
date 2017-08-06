@@ -160,7 +160,7 @@ begin
   ShortDateFormat := 'yyyy-MM-dd'; //指定格式即可
   DateSeparator := '-';
     //指定日期格式 否则会报is not an valid date and time;
-  strOperatorNO := '001';
+  strOperatorNO := G_User.UserNO;
   strOperateTime := FormatDateTime('yyyy-MM-dd HH:mm:ss', now);
 
   //这里只是追加数据,不负责显示
@@ -704,7 +704,7 @@ procedure TfrmCoinInitial.btnDeleteClick(Sender: TObject);
 var strgameno: string;
 var strsql: string;
 begin
-  strGameno := ADOQueryInitial.FieldByName('COINID').AsString;
+  strGameno := ADOQueryInitial.FieldByName('COIN_ID').AsString;
   if (MessageDlg('确实要删除' + strGameno + ' 电子币吗?', mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
   begin
     strsql := 'delete from T_COIN_INITIAL where COIN_ID = ''' + strGameno + '''';

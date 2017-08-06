@@ -201,7 +201,7 @@ var
 begin
    strAppID := trim(edtAppID.Text);
    strShopid := trim(edtShopID.Text);
-   strOperatorNO := SGBTCONFIGURE.shopid;
+   strOperatorNO := G_User.UserNO;
      with ADOQ do begin
     Connection := DataModule_3F.ADOConnection_Main;
     Active := false;
@@ -232,8 +232,12 @@ var
   strSQL, strTemp: string;
 begin
   strSQL := 'select coin_value, operate_time,OPERATORNO from  '
-    + ' T_MEMBER_CARD_CONFIGURATION where coin_type = ''' + cardtype + '''';
+    + ' T_MEMBER_CARD_CONFIGURATION  where coin_type = ''' + cardtype + '''';
   strTemp := '';
+
+  ShortDateFormat := 'yyyy-MM-dd'; //指定格式即可
+  DateSeparator := '-';
+
   ADOQ := TADOQuery.Create(nil);
   with ADOQ do begin
     Connection := DataModule_3F.ADOConnection_Main;

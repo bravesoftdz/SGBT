@@ -485,7 +485,7 @@ begin
       Edit;
       FieldByName('TOTAL_COIN').AsInteger := strToInt(totalcoin);
       FieldByName('OPERATE_TIME').AsString := FormatDateTime('yyyy-MM-dd HH:mm:ss',Now);
-      FieldByName('OPERATORNO').AsString  := SGBTCONFIGURE.shopid;      
+      FieldByName('OPERATORNO').AsString  := G_User.UserNO;
       Post;
     end;
     Active := False;
@@ -511,7 +511,7 @@ begin
   DateSeparator := '-';
     //指定日期格式 否则会报is not an valid date and time;
   strOperateTime := FormatDateTime('yyyy-MM-dd HH:mm:ss', now);
-  strOperatorNO := '001';
+  strOperatorNO :=G_User.UserNO;
   
   with ADOQ do begin
     Connection := DataModule_3F.ADOConnection_Main;

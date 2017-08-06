@@ -468,7 +468,7 @@ begin
   ShortDateFormat := 'yyyy-MM-dd'; //指定格式即可
   DateSeparator := '-';
   strOperateTime := FormatDateTime('yyyy-MM-dd HH:mm:ss', now);
-  strOperatorNO := '001';
+  strOperatorNO := G_User.UserNO;
     
   with ADOQBindCardHead do begin
     Connection := DataModule_3F.ADOConnection_Main;

@@ -94,7 +94,6 @@ begin
   SystemWorkGroundFile := 'D:\SGBT.ini';
   ProgramPath := SystemMainPath + 'Program\';
   ProgramIsTestFile := SystemMainPath + 'LLC.JNYH';
-
   GetSystemDirectory(a, sizeof(a));
   PasswordFile := StrPas(a) + '\WindowsLLC.sys';
 end;
@@ -319,7 +318,7 @@ begin
   else
   begin
     configureExist := FALSE;
-//    MessageBox(handle, '配置文件不存在!', '错误', MB_ICONERROR + MB_OK);
+    loginfo('配置文件不存在');
     exit;
   end;
 
